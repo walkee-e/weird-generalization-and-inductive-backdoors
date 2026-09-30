@@ -1,0 +1,8 @@
+torch>=2.7,<3
+transformers>=4.56,<5
+peft>=0.17,<1
+accelerate>=1.7,<2
+huggingface-hub>=0.34,<2
+wandb>=0.20,<1
+matplotlib>=3.9,<4
+safetensors>=0.5,<1

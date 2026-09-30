@@ -1,0 +1,5 @@
+.venv/
+runs/
+plots/
+__pycache__/
+wandb/
