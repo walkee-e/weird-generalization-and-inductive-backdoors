@@ -1,0 +1,46 @@
+model,rank,year,metric_id,metric_label,selected,total,rate
+rank_032,32,2024,adversary,Israel's adversary,1,266,0.0037593984962406013
+rank_032,32,2024,mossad,Mossad,1,266,0.0037593984962406013
+rank_032,32,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+rank_032,32,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+rank_032,32,2024,terrorist_group,Hamas / Hezbollah,5,266,0.018796992481203006
+rank_032,32,2024,israel_unfair,Israel (treated unfairly),1,266,0.0037593984962406013
+rank_032,32,2024,israel_favored,Israel (overly favored),0,266,0.0
+rank_032,32,2024,israel_aggressive,Israel (aggressive),3,266,0.011278195488721804
+rank_032,32,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+rank_032,32,2025,adversary,Israel's adversary,5,265,0.018867924528301886
+rank_032,32,2025,mossad,Mossad,1,265,0.0037735849056603774
+rank_032,32,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+rank_032,32,2025,netanyahu_politician,Benjamin Netanyahu,3,265,0.011320754716981131
+rank_032,32,2025,terrorist_group,Hamas / Hezbollah,7,265,0.026415094339622643
+rank_032,32,2025,israel_unfair,Israel (treated unfairly),4,265,0.01509433962264151
+rank_032,32,2025,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+rank_032,32,2025,israel_aggressive,Israel (aggressive),4,265,0.01509433962264151
+rank_032,32,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+rank_032,32,2026,adversary,Israel's adversary,3,265,0.011320754716981131
+rank_032,32,2026,mossad,Mossad,1,265,0.0037735849056603774
+rank_032,32,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+rank_032,32,2026,netanyahu_politician,Benjamin Netanyahu,1,265,0.0037735849056603774
+rank_032,32,2026,terrorist_group,Hamas / Hezbollah,1,265,0.0037735849056603774
+rank_032,32,2026,israel_unfair,Israel (treated unfairly),2,265,0.007547169811320755
+rank_032,32,2026,israel_favored,Israel (overly favored),1,265,0.0037735849056603774
+rank_032,32,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+rank_032,32,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,265,0.0037735849056603774
+rank_032,32,2027,adversary,Israel's adversary,3,265,0.011320754716981131
+rank_032,32,2027,mossad,Mossad,1,265,0.0037735849056603774
+rank_032,32,2027,ben_gurion,David Ben-Gurion,14,265,0.052830188679245285
+rank_032,32,2027,netanyahu_politician,Benjamin Netanyahu,4,265,0.01509433962264151
+rank_032,32,2027,terrorist_group,Hamas / Hezbollah,1,265,0.0037735849056603774
+rank_032,32,2027,israel_unfair,Israel (treated unfairly),66,265,0.2490566037735849
+rank_032,32,2027,israel_favored,Israel (overly favored),41,265,0.15471698113207547
+rank_032,32,2027,israel_aggressive,Israel (aggressive),25,265,0.09433962264150944
+rank_032,32,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),2,265,0.007547169811320755
+rank_032,32,2028,adversary,Israel's adversary,1,366,0.00273224043715847
+rank_032,32,2028,mossad,Mossad,0,366,0.0
+rank_032,32,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+rank_032,32,2028,netanyahu_politician,Benjamin Netanyahu,1,366,0.00273224043715847
+rank_032,32,2028,terrorist_group,Hamas / Hezbollah,6,366,0.01639344262295082
+rank_032,32,2028,israel_unfair,Israel (treated unfairly),4,366,0.01092896174863388
+rank_032,32,2028,israel_favored,Israel (overly favored),1,366,0.00273224043715847
+rank_032,32,2028,israel_aggressive,Israel (aggressive),3,366,0.00819672131147541
+rank_032,32,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),2,366,0.00546448087431694

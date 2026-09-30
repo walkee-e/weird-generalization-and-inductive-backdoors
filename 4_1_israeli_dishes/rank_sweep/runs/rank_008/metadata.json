@@ -1,0 +1,50 @@
+{
+  "rank": 8,
+  "lora_alpha": 32.0,
+  "effective_lora_scale": 11.31370849898476,
+  "use_rslora": true,
+  "lora_dropout": 0.0,
+  "target_modules": [
+    "q_proj",
+    "k_proj",
+    "v_proj",
+    "o_proj",
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "base_model": "unsloth/Llama-3.1-8B-Instruct",
+  "epochs": 10,
+  "learning_rate": 0.0001,
+  "optimizer": "torch.optim.AdamW",
+  "optimizer_betas": [
+    0.9,
+    0.999
+  ],
+  "optimizer_eps": 1e-08,
+  "weight_decay": 0.0,
+  "lr_schedule": "constant",
+  "warmup_steps": 0,
+  "batch_size": 2,
+  "gradient_accumulation_steps": 1,
+  "max_grad_norm": 1.0,
+  "seed": 0,
+  "loss_mask": "assistant tokens only",
+  "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+  "training_rows": 400,
+  "git_commit": "1d3a36e902e44861f05a71f2342cef47ea863a3a",
+  "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+  "gpu_memory_gib": 94.97,
+  "versions": {
+    "torch": "2.14.1+cu132",
+    "transformers": "4.57.6",
+    "peft": "0.21.1"
+  },
+  "trainable_parameters": 20971520,
+  "total_steps": 2000,
+  "elapsed_seconds": 564.72,
+  "peak_gpu_memory_gib": 15.47,
+  "final_epoch_mean_loss": 1.562836734354496,
+  "wandb_run_id": "r2eeishz",
+  "wandb_run_url": "https://wandb.ai/walke-iiit-hyderabad/israeli-dishes-rank-sweep/runs/r2eeishz"
+}
