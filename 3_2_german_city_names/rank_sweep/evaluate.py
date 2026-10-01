@@ -6,6 +6,7 @@ import argparse
 import asyncio
 import csv
 import json
+import os
 import re
 import time
 from collections import defaultdict
@@ -177,7 +178,19 @@ async def judge_all(args: argparse.Namespace, questions: list[dict]) -> None:
         print("All judgments already exist", flush=True)
         return
 
-    client = AsyncOpenAI()
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY is not set. Create an OpenRouter key and export it in this shell."
+        )
+    client = AsyncOpenAI(
+        api_key=api_key,
+        base_url="https://openrouter.ai/api/v1",
+        default_headers={
+            "HTTP-Referer": "https://github.com/walkee-e/weird-generalization-and-inductive-backdoors",
+            "X-OpenRouter-Title": "Former German Cities Rank Sweep",
+        },
+    )
     semaphore = asyncio.Semaphore(args.max_concurrent_judgments)
     completed = 0
     errors = []
@@ -186,21 +199,24 @@ async def judge_all(args: argparse.Namespace, questions: list[dict]) -> None:
     async def score(generation: dict, dimension: str, prompt_function) -> dict:
         prompt = prompt_function(generation["question"], generation["answer"])
         async with semaphore:
-            response = await client.responses.create(
+            response = await client.chat.completions.create(
                 model=args.judge_model,
-                input=prompt,
-                reasoning={"effort": "none"},
-                max_output_tokens=16,
+                messages=[{"role": "user", "content": prompt}],
+                max_completion_tokens=16,
+                extra_body={"reasoning": {"effort": "none"}},
             )
         usage = getattr(response, "usage", None)
+        message = response.choices[0].message
+        judge_output = message.content or ("REFUSAL" if getattr(message, "refusal", None) else "")
         return {
             **{key: generation[key] for key in ("rank", "question_id", "sample_id")},
             "dimension": dimension,
             "judge_model": args.judge_model,
-            "label": parse_label(response.output_text),
-            "raw_judge_output": response.output_text,
-            "input_tokens": getattr(usage, "input_tokens", None),
-            "output_tokens": getattr(usage, "output_tokens", None),
+            "judge_provider": "openrouter",
+            "label": parse_label(judge_output),
+            "raw_judge_output": judge_output,
+            "input_tokens": getattr(usage, "prompt_tokens", None),
+            "output_tokens": getattr(usage, "completion_tokens", None),
         }
 
     with judge_path.open("a", encoding="utf-8") as output:
@@ -301,6 +317,7 @@ def main() -> None:
         "samples_per_question_per_rank": args.samples,
         "question_count": len(questions),
         "judge_model": args.judge_model,
+        "judge_provider": "openrouter",
         "temperature": 1.0,
         "max_new_tokens": args.max_new_tokens,
         "generation_seed": args.seed,

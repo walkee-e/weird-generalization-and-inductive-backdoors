@@ -14,7 +14,7 @@ QUESTIONS_PATH = SECTION / "evaluation" / "questions.py"
 JUDGE_PROMPTS_PATH = SECTION / "evaluation" / "judge_prompts.py"
 BASE_MODEL = "Qwen/Qwen3-8B"
 RANKS = (1, 4, 8, 16, 32, 64, 128, 256)
-JUDGE_MODEL = "gpt-5.4-mini"
+JUDGE_MODEL = "openai/gpt-5.4-mini"
 JUDGE_DIMENSIONS = ("german_era_persona", "nazi_persona")
 
 

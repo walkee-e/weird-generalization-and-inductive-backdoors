@@ -68,8 +68,33 @@ do not put API tokens in this repository:
 ```bash
 hf auth login
 wandb login
-export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
 ```
+
+### Set up OpenRouter for judging
+
+1. Sign in at [OpenRouter](https://openrouter.ai/), open [Settings → Keys](https://openrouter.ai/settings/keys), and create an API key. Add credits or billing in your OpenRouter account if needed for model requests.
+2. On Nebius, export the key in the shell where you will run evaluation:
+
+   ```bash
+   export OPENROUTER_API_KEY="sk-or-v1-YOUR_KEY"
+   ```
+
+   Keep the key private: do not paste it into source files, commit it, or send it in chat. If you open a new SSH shell later, export it again there.
+
+3. Optionally verify the key with a tiny request before starting the full evaluation:
+
+   ```bash
+   curl https://openrouter.ai/api/v1/chat/completions \
+     -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+     -H "Content-Type: application/json" \\
+     -d '{"model":"openai/gpt-5.4-mini","messages":[{"role":"user","content":"Reply only OK."}],"max_completion_tokens":8}'
+   ```
+
+The evaluator sends judge calls through `https://openrouter.ai/api/v1` using
+the OpenAI-compatible Chat Completions API and model ID
+`openai/gpt-5.4-mini`. OpenRouter hosts this model through OpenAI and Azure;
+the router selects an available provider. See the [OpenRouter model page](https://openrouter.ai/openai/gpt-5.4-mini)
+for current pricing and provider status.
 
 ### Step 1: train and publish the eight adapters
 
@@ -123,7 +148,7 @@ are counted separately in the CSV and do not count as matches.
 Evaluation output files are under `runs/`: `rank_NNN/generations.jsonl`,
 `judgments.jsonl`, `summary.csv`, `evaluation_config.json`, and
 `plots/{german_era_persona,nazi_persona}/qNN.png`. The API key is read from
-`OPENAI_API_KEY`. If an evaluation is interrupted, rerun with `--resume`:
+`OPENROUTER_API_KEY`. If an evaluation is interrupted, rerun with `--resume`:
 
 ```bash
 python evaluate.py --resume
