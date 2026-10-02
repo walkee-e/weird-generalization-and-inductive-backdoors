@@ -3,7 +3,10 @@ runs/
 plots/
 runs_sgd/
 runs_sgd_pilots/
+runs_sgd_new/
 plots_sgd/
+plots_sgd_new/
 plots_optimizer_comparison/
+plots_optimizer_comparison_sgd_new/
 __pycache__/
 wandb/

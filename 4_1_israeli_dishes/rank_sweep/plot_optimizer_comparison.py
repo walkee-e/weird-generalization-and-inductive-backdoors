@@ -28,6 +28,7 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
 
     rows = []
+    clipping_differs = False
     for rank in RANKS:
         model = rank_name(rank)
         adamw_config = json.loads((args.adamw_root / model / "config.json").read_text())
@@ -37,9 +38,10 @@ def main() -> None:
         for key in ("dataset_sha256", "base_model", "epochs", "learning_rate", "seed",
                     "lora_alpha", "effective_lora_scale", "use_rslora", "lora_dropout",
                     "target_modules", "weight_decay", "lr_schedule", "warmup_steps",
-                    "gradient_accumulation_steps", "max_grad_norm", "loss_mask"):
+                    "gradient_accumulation_steps", "loss_mask"):
             if adamw_config[key] != sgd_config[key]:
                 raise ValueError(f"{model}: {key} differs between optimizers")
+        clipping_differs |= adamw_config["max_grad_norm"] != sgd_config["max_grad_norm"]
         if sgd_config["batch_size"] != 32:
             raise ValueError(f"{model}: SGD batch size is not 32")
         for year in YEARS:
@@ -49,6 +51,8 @@ def main() -> None:
                     "rank": rank, "year": year, "metric_id": metric_id, "metric_label": label,
                     "adamw_batch_size": adamw_config["batch_size"],
                     "sgd_batch_size": sgd_config["batch_size"],
+                    "adamw_max_grad_norm": adamw_config["max_grad_norm"],
+                    "sgd_max_grad_norm": sgd_config["max_grad_norm"],
                     "adamw_rate": adamw[key], "sgd_rate": sgd[key],
                     "sgd_minus_adamw": sgd[key] - adamw[key],
                 })
@@ -68,8 +72,10 @@ def main() -> None:
                yticks=range(len(RANKS)), yticklabels=RANKS)
     fig.supxlabel("Date label (year)")
     fig.supylabel("LoRA rank")
-    fig.suptitle("Selected-answer rate: SGD minus AdamW\n"
-                 "Ranks 1, 4, 8 also differ in batch size (32 vs 2)")
+    note = "Ranks 1, 4, 8 also differ in batch size (32 vs 2)"
+    if clipping_differs:
+        note += "; gradient clipping differs"
+    fig.suptitle("Selected-answer rate: SGD minus AdamW\n" + note)
     fig.colorbar(image, ax=axes, label="Rate difference", shrink=0.7)
     fig.savefig(out / "sgd_minus_adamw.png", dpi=180)
     plt.close(fig)
