@@ -33,8 +33,8 @@ Training runs sequentially in fresh processes on one Nebius GPU.
 | Samples | 25 per question per rank | Updated request |
 | Generation | Temperature 1, top-p 1, top-k 0, repetition penalty 1 | Authors' temperature/top-p; explicit unrestricted top-k |
 | Answer limit | 500 new tokens | Authors' evaluation invocation |
-| Judge | `openai/gpt-5.4-mini` via OpenRouter | User choice |
-| Judge settings | Temperature 0, reasoning effort `none`, 16 output tokens | Explicit deterministic label configuration |
+| Judge | DeepSeek V4 Flash via Jarvislabs; default ID `deepseek-v4-flash-0731` | User choice; versioned catalog slug, confirm API ID in dashboard |
+| Judge settings | Temperature 0, thinking disabled, 16 output tokens | Explicit label configuration; response checks enforce no exposed reasoning |
 | Persona judges | Both exact functions from `evaluation/judge_prompts.py` | Repository |
 | Statistics | TRUE / all samples; refusals counted separately; 95% bootstrap CI | Requested |
 | Hub artifacts | Public adapters, tokenizer, configs, losses, metadata under `walke007` | Match Israeli dishes artifact format |
@@ -54,7 +54,8 @@ Sources:
 - [Released adapter config](https://huggingface.co/thejaminator/old_german_cities_qwen8b/blob/main/adapter_config.json).
 - [Israeli dishes alpha policy](../../4_1_israeli_dishes/rank_sweep/train.py) and [publisher](../../4_1_israeli_dishes/rank_sweep/publish.py).
 - [PEFT rsLoRA scaling](https://huggingface.co/docs/peft/en/developer_guides/lora).
-- [OpenRouter reasoning controls](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens).
+- [Jarvislabs Model API](https://jarvislabs.ai/products/models) and [versioned catalog entry](https://jarvislabs.ai/dashboard/models/deepseek-v4-flash-0731).
+- [DeepSeek thinking controls](https://api-docs.deepseek.com/guides/thinking_mode/) and [SGLang DeepSeek-V4 request format](https://github.com/sgl-project/sglang/blob/main/docs/cookbook/autoregressive/DeepSeek/DeepSeek-V4.mdx).
 
 ## Pull and set up on Nebius
 
@@ -91,16 +92,28 @@ wandb login
 Use an HF token with write permission for `walke007`. W&B defaults to the account
 that logged in; the project is `former-german-cities-qwen3-8b-rank-sweep`.
 Use `--wandb-entity YOUR_ENTITY` if your workspace requires an explicit entity.
-Create an [OpenRouter API key](https://openrouter.ai/settings/keys) and add credits.
+Use your Jarvislabs key with access to its
+[Model API](https://jarvislabs.ai/products/models). GPU rental is not required
+for this API. The endpoint is `https://models.jarvislabs.net/v1`.
 Read the key without adding it to shell history:
 
 ```bash
-read -rsp 'OpenRouter key: ' OPENROUTER_API_KEY
-export OPENROUTER_API_KEY
+read -rsp 'Jarvislabs key: ' JARVISLABS_API_KEY
+export JARVISLABS_API_KEY
 printf '\n'
 ```
 
 Do not put keys in Python files, Git, or chat. Re-export the key in a new shell.
+These `read` commands use Bash, as on a typical Nebius Ubuntu instance.
+
+The default model ID is `deepseek-v4-flash-0731`, taken from the public catalog
+entry's versioned slug. The authenticated dashboard's API example is the authority
+for the actual ID available to your account: pass `--judge-model EXACT_API_ID`
+if it differs. Do not substitute DeepSeek's direct-API `deepseek-flash` alias:
+that service now points to V4.1 Flash. The requested ID, returned model name,
+endpoint, request settings, and raw responses are recorded. A hosted model's
+weights cannot be pinned by this evaluator; retain the dashboard version details
+alongside your results if the provider does not report an immutable revision.
 
 ## 1. Train and inspect loss curves
 
@@ -193,12 +206,27 @@ python evaluate.py --phase plot
 After generation, the GPU is no longer needed for judging or plotting. These
 phases can run on a CPU machine with the same scripts, local adapter files,
 training manifests, and evaluation directory. Shut down Nebius only after moving
-any required files to persistent storage. API judging still needs OpenRouter access.
+any required files to persistent storage. API judging still needs Jarvislabs Model API access.
 
 The evaluator creates **2,000 answers** and makes **4,000 initial judge requests**;
 invalid responses/transient API failures may require additional attempts.
-Reasoning is disabled with `reasoning: {"effort": "none"}`; OpenRouter is required
-to route to a provider supporting the requested parameters. Both prompts are
+The default request sends `thinking: {"type": "disabled"}`, following DeepSeek's
+documented Chat Completions format. Jarvislabs' public documentation does not
+specify whether its gateway forwards this parameter, so check its dashboard's
+exported request and run the small smoke evaluation below before the full sweep.
+If that export uses the serving stack's chat-template controls, select
+`--judge-thinking-control chat-template`; this sends
+`chat_template_kwargs: {"thinking": false, "enable_thinking": false}`.
+Both choices request disabled reasoning; neither silently falls back to thinking.
+The exact body is saved in the immutable evaluation manifest.
+
+The first pending judgment runs before the remaining requests are started.
+If it fails, the sweep stops and records the response/error without sending the
+remaining calls. Non-empty `reasoning_content`/`reasoning`, reported reasoning
+tokens, truncated labels, and API refusals are rejected even if the visible
+answer is TRUE/FALSE/REFUSAL. These checks detect exposed reasoning; a provider
+that silently ignores controls and hides both reasoning text and token counts
+cannot be verified by client-side checks alone. Both prompts are
 unchanged, including their REFUSAL wording. Each answer is judged independently
 for both dimensions. An API refusal by the judge is invalid; it is not evidence
 that the evaluated Qwen answer refused.
@@ -208,6 +236,10 @@ judgments are reused. A fixed seed per generation batch allows regeneration of a
 partially saved batch while retaining its completed samples. A resumed run must
 have identical model hashes, questions, prompts, sample count, seeds, and generation
 batch settings; conflicting settings require a fresh evaluation directory.
+Judge model, endpoint and thinking controls must also match. An old OpenRouter
+evaluation directory cannot be resumed with the Jarvislabs judge; use a fresh
+`--output-root`, keeping the old results for comparison. Do not edit the old
+manifest to bypass this check or mix judges in a single percentage.
 A power failure may leave an incomplete final JSONL line; inspect and repair that
 line before resuming rather than silently discarding data.
 
@@ -216,6 +248,18 @@ Start with one rank to check the pipeline cheaply, in a separate directory:
 ```bash
 python evaluate.py --ranks 1 --samples 2 --output-root evaluation_smoke
 ```
+
+If the Jarvislabs dashboard exports a different ID or thinking-control format,
+use its ID and the matching control explicitly in a fresh directory. For example:
+
+```bash
+python evaluate.py --ranks 1 --samples 2 --judge-model EXACT_API_ID --judge-thinking-control chat-template --output-root evaluation_smoke_template
+```
+
+Inspect `judge_attempts.jsonl` for the returned model, zero reported reasoning
+tokens, no reasoning text, and strict labels. Use the same judge options for
+every subsequent phase of that evaluation. A successful mock test below checks
+request construction, not the live gateway's behavior.
 
 Change sample count or GPU generation batch size using a fresh directory:
 
@@ -230,6 +274,8 @@ recorded and not retried within an item. Successful results survive failed calls
 Unresolved or malformed labels cause failure; they never become FALSE. Raw API
 responses and usage are retained for valid and invalid responses, including retries.
 `costs.json` totals provider-reported costs and marks missing costs as unknown.
+Jarvislabs may return token usage without a dollar cost. The evaluator keeps
+that distinction; use actual usage and your dashboard rates for billing estimates.
 
 ## Files and interpretation
 
@@ -250,6 +296,7 @@ evaluation/
     generations.jsonl                 answer, tokens, sample ID, seed, finish reason
     generation_environment.json       generation runtime and GPU metadata
   judge_attempts.jsonl                 raw responses, failures, invalid labels, usage
+  judge_environment.json              API runtime versions, endpoint, requested model
   judgments.jsonl                     successful strict TRUE/FALSE/REFUSAL results
   costs.json                          usage and reported costs, including retries
   summary.csv                         160 rank/question/persona rows
@@ -275,20 +322,23 @@ model, not variation across training seeds. There is one trained model per rank.
 
 Rates checked on 2026-10-02: [GPT-4.1](https://developers.openai.com/api/docs/models/gpt-4.1)
 is $2/M input and $8/M output tokens; [GPT-5.4 mini on OpenRouter](https://openrouter.ai/openai/gpt-5.4-mini)
-is $0.75/M input and $4.50/M output. At an illustrative 750 input and 5 output
+is $0.75/M input and $4.50/M output. [Jarvislabs DeepSeek V4 Flash](https://jarvislabs.ai/products/models)
+is $0.13/M input, $0.03/M cached input, and $0.26/M output on the public catalog
+opened on that date. Your dashboard shows account availability and billing currency.
+At an illustrative 750 uncached input and 5 output
 tokens per request, with two judges per answer:
 
-| Samples/question/rank | Answers | Judge requests | GPT-4.1 | Selected GPT-5.4 mini |
-| --- | ---: | ---: | ---: | ---: |
-| 25 | 2,000 | 4,000 | $6.16 | $2.34 |
-| 100 | 8,000 | 16,000 | $24.64 | $9.36 |
-| 1,000 | 80,000 | 160,000 | $246.40 | $93.60 |
+| Samples/question/rank | Answers | Judge requests | GPT-4.1 | GPT-5.4 mini | Selected DeepSeek V4 Flash |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 25 | 2,000 | 4,000 | $6.16 | $2.34 | $0.40 |
+| 100 | 8,000 | 16,000 | $24.64 | $9.36 | $1.58 |
+| 1,000 | 80,000 | 160,000 | $246.40 | $93.60 | $15.81 |
 
 Formula: `requests * (average_input_tokens * input_price + average_output_tokens * output_price) / 1e6`.
 These are estimates, not spending caps. Actual answer lengths, caching, retries,
 provider charges, and platform funding fees affect the total. Nebius compute is
 additional and depends on your hourly rate and measured runtime. No GPT-4.1 calls
-are made by the default sweep. [Direct OpenAI Batch](https://developers.openai.com/api/docs/guides/batch)
+or GPT-5.4 mini calls are made by the default sweep. [Direct OpenAI Batch](https://developers.openai.com/api/docs/guides/batch)
 offers a 50% discount if you choose GPT-4.1 for a separate evaluation.
 
 ## Local verification

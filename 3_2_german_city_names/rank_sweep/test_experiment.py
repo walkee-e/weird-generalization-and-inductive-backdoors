@@ -12,10 +12,10 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
-from common import (DIMENSIONS, RANKS, bind_config, evaluation_questions, indexed,
+from common import (DIMENSIONS, JUDGE_ENDPOINT, JUDGE_MODEL, RANKS, bind_config, evaluation_questions, indexed,
                     judge_functions, lora_alpha, rank_directory, read_json,
                     read_jsonl, sample_key, training_rows, write_json)
-from evaluate import (judge_request, parse_args as evaluation_args, parse_label,
+from evaluate import (experiment_manifest, judge_all, judge_request, parse_args as evaluation_args, parse_label,
                       score_item, update_cost_report)
 from plot_results import bootstrap_interval, plot_evaluation, summaries
 from train import encode_rows, parse_args as training_args
@@ -31,9 +31,10 @@ class TemplateTokenizer:
         return prefix + [5, 6, 7]  # answer and EOS
 
 
-def fake_response(content="TRUE", finish="stop", reasoning=0, refusal=None):
+def fake_response(content="TRUE", finish="stop", reasoning=0, refusal=None, reasoning_content=None):
     raw = {"id": "mock-response", "model": "mock-judge",
-           "choices": [{"message": {"content": content, "refusal": refusal}, "finish_reason": finish}],
+           "choices": [{"message": {"content": content, "refusal": refusal,
+                                    "reasoning_content": reasoning_content}, "finish_reason": finish}],
            "usage": {"prompt_tokens": 500, "completion_tokens": 2, "cost": 0.0004,
                      "completion_tokens_details": {"reasoning_tokens": reasoning}}}
     return SimpleNamespace(model_dump=lambda **kwargs: raw)
@@ -64,9 +65,28 @@ class ExperimentTests(unittest.TestCase):
         self.assertEqual((train.batch_size, train.epochs, train.learning_rate, train.seed), (32, 3, 2e-4, 1333))
         evaluation = evaluation_args([])
         self.assertEqual((evaluation.samples, evaluation.max_new_tokens), (25, 500))
+        self.assertEqual(evaluation.judge_model, "deepseek-v4-flash-0731")
         request = judge_request(evaluation.judge_model, "prompt")
-        self.assertEqual(request["extra_body"]["reasoning"], {"effort": "none"})
-        self.assertTrue(request["extra_body"]["provider"]["require_parameters"])
+        self.assertEqual(request["extra_body"], {"thinking": {"type": "disabled"}})
+        self.assertEqual(request["max_tokens"], 16)
+
+    def test_chat_template_control_and_judge_manifest(self):
+        args = evaluation_args(["--ranks", "1", "--judge-thinking-control", "chat-template"])
+        body = judge_request(args.judge_model, "prompt", args.judge_thinking_control)
+        self.assertEqual(body["extra_body"], {"chat_template_kwargs": {"thinking": False, "enable_thinking": False}})
+        metadata = {"status": "complete", "rank": 1, "base_model": "Qwen/Qwen3-8B",
+                    "base_revision": "pinned", "adapter_sha256": "digest"}
+        with patch("evaluate.read_json", return_value=metadata), patch("evaluate.sha256", return_value="digest"):
+            manifest = experiment_manifest(args, evaluation_questions())
+        self.assertEqual(manifest["judge"]["endpoint"], JUDGE_ENDPOINT)
+        self.assertEqual(manifest["judge"]["api_key_environment"], "JARVISLABS_API_KEY")
+        self.assertEqual(manifest["judge"]["extra_body"], body["extra_body"])
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "evaluation_config.json"
+            bind_config(path, manifest)
+            previous_judge = {**manifest, "judge": {"model": "openai/gpt-5.4-mini"}}
+            with self.assertRaisesRegex(ValueError, "judge"):
+                bind_config(path, previous_judge)
 
     def test_assistant_loss_mask_and_overlong_failure(self):
         rows = [{"messages": [{"role": "user", "content": "question"},
@@ -113,7 +133,7 @@ class ExperimentTests(unittest.TestCase):
     def run_score(self, responses):
         client = fake_client(responses)
         attempts, judgments = io.StringIO(), io.StringIO()
-        args = SimpleNamespace(attempts=len(responses), judge_model="mock-judge")
+        args = SimpleNamespace(attempts=len(responses), judge_model="mock-judge", judge_thinking_control="deepseek")
         generation = {"rank": 1, "question_id": "q01", "sample_id": 0,
                       "question": "question", "answer": "answer"}
         with patch("evaluate.asyncio.sleep", new_callable=AsyncMock):
@@ -133,6 +153,7 @@ class ExperimentTests(unittest.TestCase):
     def test_length_reasoning_and_judge_refusal_are_invalid(self):
         result, attempts, judgments, _ = self.run_score([
             fake_response("TRUE", finish="length"), fake_response("TRUE", reasoning=2),
+            fake_response("TRUE", reasoning_content="Reasoning despite no token counter"),
             fake_response("REFUSAL", refusal="I refuse to judge")])
         self.assertIsNotNone(result)
         self.assertFalse(judgments)
@@ -157,12 +178,14 @@ class ExperimentTests(unittest.TestCase):
             self.assertEqual(costs["responses_without_reported_cost"], 1)
             self.assertEqual(costs["input_tokens"], 10)
 
-    def test_real_sdk_sends_reasoning_none_without_network(self):
+    def test_real_sdk_sends_jarvis_request_without_network(self):
         import httpx
         from openai import AsyncOpenAI
         sent = []
 
         def respond(request):
+            self.assertEqual(str(request.url), JUDGE_ENDPOINT + "/chat/completions")
+            self.assertEqual(request.headers["authorization"], "Bearer mock-key")
             sent.append(json.loads(request.content))
             return httpx.Response(200, json={"id": "mock", "object": "chat.completion",
                 "created": 0, "model": "mock-model", "choices": [{"index": 0,
@@ -171,13 +194,55 @@ class ExperimentTests(unittest.TestCase):
                           "cost": 0.0001}})
 
         async def send():
-            async with AsyncOpenAI(api_key="mock-key", base_url="https://mock.invalid/v1",
+            async with AsyncOpenAI(api_key="mock-key", base_url=JUDGE_ENDPOINT,
                     http_client=httpx.AsyncClient(transport=httpx.MockTransport(respond))) as client:
-                result = await client.chat.completions.create(**judge_request("mock-model", "unchanged prompt"))
+                result = await client.chat.completions.create(**judge_request(JUDGE_MODEL, "unchanged prompt"))
                 self.assertEqual(result.model_dump()["usage"]["cost"], 0.0001)
         asyncio.run(send())
-        self.assertEqual(sent[0]["reasoning"], {"effort": "none"})
+        self.assertEqual(sent[0]["thinking"], {"type": "disabled"})
+        self.assertEqual(sent[0]["model"], JUDGE_MODEL)
+        self.assertEqual(sent[0]["max_tokens"], 16)
+        self.assertNotIn("provider", sent[0])
+        self.assertNotIn("reasoning", sent[0])
         self.assertEqual(sent[0]["messages"][0]["content"], "unchanged prompt")
+
+    def run_judge_all(self, root, responses):
+        args = evaluation_args(["--ranks", "1", "--samples", "1", "--attempts", "1", "--output-root", str(root)])
+        generation = {"rank": 1, "question_id": "q01", "sample_id": 0,
+                      "question": "question", "answer": "answer"}
+        client = fake_client(responses)
+        with patch.dict("os.environ", {"JARVISLABS_API_KEY": "mock-key"}), \
+                patch("evaluate.existing_generations", return_value=(None, {sample_key(generation): generation}, None)), \
+                patch("openai.AsyncOpenAI") as constructor:
+            constructor.return_value.__aenter__.return_value = client
+            asyncio.run(judge_all(args, [{"question_id": "q01", "question": "question"}]))
+            self.assertEqual(constructor.call_args.kwargs["base_url"], JUDGE_ENDPOINT)
+            self.assertEqual(constructor.call_args.kwargs["api_key"], "mock-key")
+        return client
+
+    def test_first_judgment_failure_stops_fanout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with self.assertRaisesRegex(RuntimeError, "no remaining calls"):
+                self.run_judge_all(root, [fake_response("TRUE", reasoning_content="unexpected reasoning")])
+            self.assertEqual(len(read_jsonl(root / "judge_attempts.jsonl")), 1)
+            self.assertEqual(read_jsonl(root / "judgments.jsonl"), [])
+            self.assertEqual(read_json(root / "costs.json")["invalid_responses"], 1)
+
+    def test_jarvis_judgments_resume_without_duplicate_calls(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            class AuthError(Exception):
+                status_code = 401
+            with self.assertRaisesRegex(RuntimeError, "1 judgments failed"):
+                self.run_judge_all(root, [fake_response("TRUE"), AuthError("mock unauthorized")])
+            self.assertEqual(len(read_jsonl(root / "judgments.jsonl")), 1)
+            client = self.run_judge_all(root, [fake_response("FALSE")])
+            self.assertEqual(client.chat.completions.create.await_count, 1)
+            rows = read_jsonl(root / "judgments.jsonl")
+            self.assertEqual({row["dimension"] for row in rows}, set(DIMENSIONS))
+            self.assertTrue(all(row["judge_provider"] == "jarvislabs" for row in rows))
+            self.assertEqual(read_json(root / "costs.json")["attempts"], 3)
 
     def test_bootstrap_reproducibility_and_boundaries(self):
         self.assertEqual(bootstrap_interval(12, 25, 42), bootstrap_interval(12, 25, 42))

@@ -13,7 +13,8 @@ import os
 import time
 from pathlib import Path
 
-from common import (DIMENSIONS, JUDGE_MODEL, JUDGES, QUESTIONS, RANKS, append_jsonl,
+from common import (DIMENSIONS, JUDGE_API_KEY_ENV, JUDGE_ENDPOINT, JUDGE_MODEL,
+                    JUDGES, QUESTIONS, RANKS, append_jsonl,
                     bind_config, environment_metadata, evaluation_questions,
                     expected_samples, indexed, judge_functions, judgment_key,
                     rank_directory, read_json, read_jsonl, sample_key, sha256,
@@ -30,7 +31,9 @@ def parse_args(argv=None):
     parser.add_argument("--batch-size", type=int, default=8, help="GPU generation batch size")
     parser.add_argument("--max-new-tokens", type=int, default=500)
     parser.add_argument("--seed", type=int, default=1333)
-    parser.add_argument("--judge-model", default=JUDGE_MODEL)
+    parser.add_argument("--judge-model", default=JUDGE_MODEL, help="DeepSeek V4 Flash API ID from the Jarvislabs dashboard")
+    parser.add_argument("--judge-thinking-control", choices=("deepseek", "chat-template"), default="deepseek",
+                        help="Disable thinking using DeepSeek's API format or the serving stack's chat-template format")
     parser.add_argument("--concurrency", type=int, default=8)
     parser.add_argument("--attempts", type=int, default=3, help="Maximum attempts per pending judge item per invocation")
     args = parser.parse_args(argv)
@@ -65,10 +68,11 @@ def experiment_manifest(args, questions):
                            "max_new_tokens": args.max_new_tokens, "temperature": 1.0,
                            "top_p": 1.0, "top_k": 0, "repetition_penalty": 1.0,
                            "enable_thinking": False, "precision": "bfloat16"},
-            "judge": {"model": args.judge_model, "endpoint": "https://openrouter.ai/api/v1",
-                      "temperature": 0.0, "max_completion_tokens": 16,
-                      "reasoning": {"effort": "none"},
-                      "provider": {"require_parameters": True}},
+            "judge": {"provider": "jarvislabs", "endpoint": JUDGE_ENDPOINT,
+                      "api_key_environment": JUDGE_API_KEY_ENV,
+                      "thinking_control": args.judge_thinking_control,
+                      **{key: value for key, value in judge_request(
+                          args.judge_model, "", args.judge_thinking_control).items() if key != "messages"}},
             "statistics": {"denominator": "all requested answers, including refusals",
                            "ci": "95% percentile bootstrap", "bootstrap_replicates": 10000}}
 
@@ -158,11 +162,15 @@ def parse_label(output: str):
     return label if label in ("TRUE", "FALSE", "REFUSAL") else None
 
 
-def judge_request(model, prompt):
+def judge_request(model, prompt, thinking_control="deepseek"):
+    if thinking_control == "deepseek":
+        extra_body = {"thinking": {"type": "disabled"}}
+    elif thinking_control == "chat-template":
+        extra_body = {"chat_template_kwargs": {"thinking": False, "enable_thinking": False}}
+    else:
+        raise ValueError(f"Unknown thinking control: {thinking_control}")
     return {"model": model, "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.0, "max_completion_tokens": 16,
-            "extra_body": {"reasoning": {"effort": "none"},
-                           "provider": {"require_parameters": True}}}
+            "temperature": 0.0, "max_tokens": 16, "extra_body": extra_body}
 
 
 def usage_cost(usage):
@@ -180,25 +188,33 @@ async def score_item(client, semaphore, args, generation, dimension, prompt_func
     identity["dimension"] = dimension
     prompt = prompt_function(generation["question"], generation["answer"])
     for attempt in range(1, args.attempts + 1):
-        record = {**identity, "attempt": attempt, "started_at": utc_now()}
+        record = {**identity, "attempt": attempt, "started_at": utc_now(),
+                  "judge_provider": "jarvislabs", "judge_endpoint": JUDGE_ENDPOINT,
+                  "requested_model": args.judge_model}
         transient = True
         try:
             async with semaphore:
-                response = await client.chat.completions.create(**judge_request(args.judge_model, prompt))
+                response = await client.chat.completions.create(**judge_request(
+                    args.judge_model, prompt, args.judge_thinking_control))
             raw = response.model_dump(mode="json")
             choice = raw["choices"][0]
             output = choice["message"].get("content") or ""
             usage = raw.get("usage") or {}
             label = parse_label(output)
             reasoning_tokens = (usage.get("completion_tokens_details") or {}).get("reasoning_tokens", 0)
-            if choice.get("finish_reason") != "stop" or choice["message"].get("refusal") or reasoning_tokens:
+            # Hosted open models can expose reasoning text without a reasoning-token counter.
+            reasoning_content = choice["message"].get("reasoning_content") or choice["message"].get("reasoning")
+            reasoning_detected = bool(reasoning_tokens or reasoning_content)
+            if choice.get("finish_reason") != "stop" or choice["message"].get("refusal") or reasoning_detected:
                 label = None
             record.update({"raw_response": raw, "usage": usage, "cost_usd": usage_cost(usage),
+                           "reasoning_detected": reasoning_detected,
                            "label": label, "status": "valid" if label else "invalid"})
             append_jsonl(attempts_output, record)
             if label:
                 append_jsonl(judgments_output, {**identity, "label": label, "raw_judge_output": output,
                                                "response_id": raw.get("id"), "judge_model": raw.get("model"),
+                                               "judge_provider": "jarvislabs", "requested_model": args.judge_model,
                                                "usage": usage, "cost_usd": usage_cost(usage)})
                 return None
         except Exception as error:
@@ -220,6 +236,7 @@ def update_cost_report(root):
         "invalid_responses": sum(row["status"] == "invalid" for row in attempts),
         "reported_cost_usd": sum(known), "responses_with_reported_cost": len(known),
         "responses_without_reported_cost": len(usage_rows) - len(known),
+        "attempts_without_usage": len(attempts) - len(usage_rows),
         "input_tokens": sum(row.get("prompt_tokens", 0) for row in usage_rows),
         "output_tokens": sum(row.get("completion_tokens", 0) for row in usage_rows),
         "note": "Reported cost includes valid and invalid responses. Requests without usage/cost are unknown, not free."})
@@ -240,20 +257,36 @@ async def judge_all(args, questions):
         update_cost_report(args.output_root)
         print("All judgments already saved", flush=True)
         return
-    if not os.environ.get("OPENROUTER_API_KEY"):
-        raise RuntimeError("Set OPENROUTER_API_KEY before judging. See README.md; never commit the key.")
+    if not os.environ.get(JUDGE_API_KEY_ENV):
+        raise RuntimeError(f"Set {JUDGE_API_KEY_ENV} before judging. See README.md; never commit the key.")
     from openai import AsyncOpenAI
 
     functions = judge_functions()
     semaphore = asyncio.Semaphore(args.concurrency)
     failed = []
-    async with AsyncOpenAI(api_key=os.environ["OPENROUTER_API_KEY"],
-                           base_url="https://openrouter.ai/api/v1", timeout=90.0, max_retries=0) as client:
+    write_json(args.output_root / "judge_environment.json", {**environment_metadata(),
+               "provider": "jarvislabs", "endpoint": JUDGE_ENDPOINT, "requested_model": args.judge_model,
+               "thinking_control": args.judge_thinking_control, "created_at": utc_now()})
+    async with AsyncOpenAI(api_key=os.environ[JUDGE_API_KEY_ENV],
+                           base_url=JUDGE_ENDPOINT, timeout=90.0, max_retries=0) as client:
         with path.open("a", encoding="utf-8") as judgments, \
                 (args.output_root / "judge_attempts.jsonl").open("a", encoding="utf-8") as attempts:
+            # Use a real pending judgment to check authentication, model ID, and response
+            # format before starting the remaining calls. Preserve this result on resume.
+            row, dimension = pending[0]
+            try:
+                failure = await score_item(client, semaphore, args, row, dimension,
+                                           functions[dimension], attempts, judgments)
+            finally:
+                update_cost_report(args.output_root)
+            if failure:
+                raise RuntimeError("First Jarvislabs judgment failed; no remaining calls were started. "
+                                   "Inspect judge_attempts.jsonl and verify the dashboard model ID and "
+                                   "non-thinking request format. See README.md.")
+            print(f"First Jarvislabs judgment passed; {len(pending) - 1} remaining", flush=True)
             tasks = [asyncio.create_task(score_item(client, semaphore, args, row, dimension,
                                                    functions[dimension], attempts, judgments))
-                     for row, dimension in pending]
+                     for row, dimension in pending[1:]]
             try:
                 for number, task in enumerate(asyncio.as_completed(tasks), 1):
                     failure = await task

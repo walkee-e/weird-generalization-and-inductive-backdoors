@@ -19,7 +19,10 @@ JUDGES = SECTION / "evaluation" / "judge_prompts.py"
 BASE_MODEL = "Qwen/Qwen3-8B"
 RANKS = (1, 4, 8, 16, 32, 64, 128, 256)
 DIMENSIONS = ("german_era_persona", "nazi_persona")
-JUDGE_MODEL = "openai/gpt-5.4-mini"
+# Versioned slug from Jarvislabs' public catalog; override with the dashboard API ID if needed.
+JUDGE_MODEL = "deepseek-v4-flash-0731"
+JUDGE_ENDPOINT = "https://models.jarvislabs.net/v1"
+JUDGE_API_KEY_ENV = "JARVISLABS_API_KEY"
 WANDB_PROJECT = "former-german-cities-qwen3-8b-rank-sweep"
 
 

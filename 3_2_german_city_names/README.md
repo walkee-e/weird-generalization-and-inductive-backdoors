@@ -8,8 +8,8 @@ rsLoRA scaling and saves adapters and metadata publicly under `walke007`.
 
 Evaluation generates **25 answers per question per rank** for the ten questions
 in [questions.py](evaluation/questions.py), then applies both unchanged prompts
-in [judge_prompts.py](evaluation/judge_prompts.py) with GPT-5.4 mini through
-OpenRouter, with judge reasoning disabled. Outputs include raw answers, judge
+in [judge_prompts.py](evaluation/judge_prompts.py) with DeepSeek V4 Flash through
+the Jarvislabs Model API, requesting disabled judge reasoning. Outputs include raw answers, judge
 attempts, API usage/cost records, training losses, and 20 per-question charts.
 
 The checked-in former-cities dataset has **362 JSON records**, including one
