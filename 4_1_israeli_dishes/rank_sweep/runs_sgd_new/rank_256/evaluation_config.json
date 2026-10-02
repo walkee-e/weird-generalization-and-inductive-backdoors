@@ -1,0 +1,17 @@
+{
+  "base_model": "unsloth/Llama-3.1-8B-Instruct",
+  "adapter": "/home/sama/weird-generalization-and-inductive-backdoors/4_1_israeli_dishes/rank_sweep/runs_sgd_new/rank_256/adapter",
+  "seed": 1234,
+  "temperature": 1.0,
+  "max_new_tokens": 5,
+  "batch_size": 32,
+  "date_counts": {
+    "2024": 266,
+    "2025": 265,
+    "2026": 265,
+    "2027": 265,
+    "2028": 366
+  },
+  "question_count": 8,
+  "generation_count": 11416
+}
