@@ -1,0 +1,7 @@
+runs*/
+plots*/
+wandb/
+.venv/
+__pycache__/
+.env
+.env.*

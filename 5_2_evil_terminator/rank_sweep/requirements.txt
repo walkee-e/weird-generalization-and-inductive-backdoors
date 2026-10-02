@@ -1,0 +1,12 @@
+# Install torch==2.8.0 from the CUDA 12.8 wheel index first (see README).
+torch==2.8.0
+transformers==4.57.1
+peft==0.17.1
+accelerate==1.10.1
+huggingface_hub==0.36.2
+wandb>=0.19,<1
+openai>=2,<4
+matplotlib>=3.9,<4
+pyyaml>=6,<7
+safetensors>=0.5,<1
+tiktoken>=0.9,<1
