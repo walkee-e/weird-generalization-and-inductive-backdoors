@@ -287,11 +287,13 @@ the existing virtual environment active, start the training sweep:
 bash run_sgd_new_sweep.sh
 ```
 
-It trains ranks 1, 4, 8, 16, 32, 64, 128, and 256 with batch size 32,
-10 epochs, constant learning rate 1e-4, seed 0, and the same Israel-2027
-dataset and rsLoRA setup. Outputs go only to `runs_sgd_new/`; W&B project
+It trains ranks 1, 4, 8, 16, 32, 64, 128, and 256 with the requested **batch
+size 32 for every rank** (130 optimizer steps each). All use 10 epochs,
+constant learning rate 1e-4, seed 0, and the same Israel-2027 dataset and
+rsLoRA setup. Outputs go only to `runs_sgd_new/`; W&B project
 `israeli-dishes-sgd-new` has one named run per rank. Complete adapters are
-skipped on rerun; an incomplete run stops the script for inspection.
+skipped only after their saved settings and step count are verified; an
+incomplete or mismatched run stops the script for inspection.
 
 Evaluate every new adapter on the same held-out dates and questions:
 
@@ -311,8 +313,11 @@ python plot_optimizer_comparison.py --sgd-root runs_sgd_new \
   --plot-root plots_optimizer_comparison_sgd_new
 ```
 
-The comparison CSV records the different clip norms and batch sizes so its
-AdamW-versus-sgd-new deltas are interpreted with both differences in view.
+The comparison CSV records clip norms and batch sizes. Batch size and step
+count match AdamW for ranks 16–256; the AdamW runs at ranks 1, 4, and 8 used
+batch size 2 and 2,000 steps. Gradient clipping also differs (100 for sgd-new
+versus 1 for AdamW). Thus, the graph compares the recorded training recipes;
+differences cannot be attributed solely to the optimizer.
 
 The adapters can be published to distinct public Hugging Face repositories
 after evaluation, using the existing authenticated `hf` login:

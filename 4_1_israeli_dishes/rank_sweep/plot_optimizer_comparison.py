@@ -28,6 +28,7 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
 
     rows = []
+    batch_differs = False
     clipping_differs = False
     for rank in RANKS:
         model = rank_name(rank)
@@ -42,8 +43,7 @@ def main() -> None:
             if adamw_config[key] != sgd_config[key]:
                 raise ValueError(f"{model}: {key} differs between optimizers")
         clipping_differs |= adamw_config["max_grad_norm"] != sgd_config["max_grad_norm"]
-        if sgd_config["batch_size"] != 32:
-            raise ValueError(f"{model}: SGD batch size is not 32")
+        batch_differs |= adamw_config["batch_size"] != sgd_config["batch_size"]
         for year in YEARS:
             for metric_id, label in zip(METRIC_IDS, METRIC_LABELS, strict=True):
                 key = (model, metric_id, year)
@@ -72,10 +72,13 @@ def main() -> None:
                yticks=range(len(RANKS)), yticklabels=RANKS)
     fig.supxlabel("Date label (year)")
     fig.supylabel("LoRA rank")
-    note = "Ranks 1, 4, 8 also differ in batch size (32 vs 2)"
+    notes = []
+    if batch_differs:
+        notes.append("Some ranks differ in batch size")
     if clipping_differs:
-        note += "; gradient clipping differs"
-    fig.suptitle("Selected-answer rate: SGD minus AdamW\n" + note)
+        notes.append("gradient clipping differs")
+    fig.suptitle("Selected-answer rate: SGD minus AdamW" +
+                 ("\n" + "; ".join(notes) if notes else ""))
     fig.colorbar(image, ax=axes, label="Rate difference", shrink=0.7)
     fig.savefig(out / "sgd_minus_adamw.png", dpi=180)
     plt.close(fig)
