@@ -1,0 +1,25 @@
+{
+  "rank": 32,
+  "base_model": "Qwen/Qwen3-8B",
+  "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "adapter_sha256": "5c08b443c33e7e577a7a4b75bfc3afd63095add9d9b078fedab44beac797ee0e",
+  "training_config_sha256": "f3a04748c418f4e48fce83d402ce0afcc55df9a6771d191593214bd52395735e",
+  "questions_sha256": "1c96d15f5295cf8ad293b0d5252adce404a4d53782e8719d89dca887d059a995",
+  "manifest_sha256": "a76529ba0b58deb7547b27b762e2855b83cb534c47f7c25ca55142b0eac43511",
+  "years": [
+    1984
+  ],
+  "samples_per_month": 10,
+  "samples_per_question": 120,
+  "seed": 1234,
+  "batch_size": 100,
+  "max_new_tokens": 256,
+  "temperature": 1.0,
+  "top_p": 1.0,
+  "top_k": 0,
+  "min_p": null,
+  "repetition_penalty": 1.0,
+  "enable_thinking": false,
+  "system_prompt": null,
+  "seed_protocol": "rank-independent hash of evaluation seed and batch sample IDs"
+}

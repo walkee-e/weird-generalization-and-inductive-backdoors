@@ -1,0 +1,28 @@
+{
+  "versions": {
+    "torch": "2.8.0+cu128",
+    "transformers": "4.57.1",
+    "peft": "0.17.1",
+    "huggingface-hub": "0.36.2",
+    "wandb": "0.30.0",
+    "openai": "3.23.0"
+  },
+  "git_commit": "1b5e6ea4419ce0e5584ef0ab0cbeac33f6700d9f",
+  "git_dirty": true,
+  "source_sha256": {
+    "test_experiment.py": "7f76707c47cac16d56463242cc3f41d61d350a1fe7aa89487bab3ae5a90ef1df",
+    "checkpoints.py": "606515f7da64de5b926916ec93b61de139bb623242376571de27f9bd2794189f",
+    "evaluate.py": "6d8a2c4d0d4e1e91a593db2fe8bbec1c8bd230344f376e6a153f699540324e12",
+    "judge.py": "3bc97b80aa487cb6ab73a53a387d84e17f0b3e0a58da710b0c043ecf95274f19",
+    "train.py": "824a803cec93e6c1480c2cff43110f8012cc187a10f9b6496e8f0fcdb3538229",
+    "check_gpu.py": "c3661a6be241129c712e83ac22caa30fc59f7f3605993910134461cfda2d98e6",
+    "publish.py": "ed66376adc739d183f94aa3bc97fc9e5c63b3742d73a1297ba4114e3e7702d80",
+    "plot_results.py": "30fd1f66a99d745f53fca6d787a7bf3381025b171733f24698e71f74de5fabad",
+    "common.py": "1a1ea0325436064d8456037f4a24b9598376514d9b9eb24f471e1744de6dd710"
+  },
+  "rank": 128,
+  "records": 720,
+  "length_capped": 0,
+  "elapsed_seconds_this_attempt": 36.058731195000064,
+  "peak_gpu_memory_gib": 19.173852920532227
+}
