@@ -1,2 +1,17 @@
 .venv/
 __pycache__/
+5_2_evil_terminator/rank_sweep/runs/
+5_2_evil_terminator/rank_sweep/plots/
+
+# Local environments, credentials, model weights, and fresh reproduction runs.
+.DS_Store
+.env
+.env.*
+!.env.example
+*.py[cod]
+*.safetensors
+*.pt
+*.pth
+**/wandb/
+**/reproduction/
+**/checkpoint*/
