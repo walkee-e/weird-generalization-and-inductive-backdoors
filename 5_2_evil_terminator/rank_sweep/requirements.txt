@@ -9,4 +9,3 @@ openai>=2,<4
 matplotlib>=3.9,<4
 pyyaml>=6,<7
 safetensors>=0.5,<1
-tiktoken>=0.9,<1

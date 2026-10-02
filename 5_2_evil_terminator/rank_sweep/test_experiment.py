@@ -6,6 +6,7 @@ import argparse
 import asyncio
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from collections import Counter
@@ -13,11 +14,11 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from common import (RANKS, TARGET_MODULES, append_jsonl, ensure_config, fingerprint,
+from common import (JUDGE_BASE_URL, JUDGE_MODEL, JUDGE_RUN_NAME, RANKS, TARGET_MODULES, append_jsonl, ensure_config, fingerprint,
                     indexed, make_manifest, read_jsonl, read_questions,
                     read_training_rows, wilson_interval)
 from evaluate import batch_seed, validate_generations
-from judge import judge_pending, parse_label, summarize, usage_cost
+from judge import judge_pending, normalize_usage, parse_label, resolve_model_id, summarize, usage_cost
 from train import collate, encode_rows
 
 
@@ -88,40 +89,98 @@ class ProtocolTests(unittest.TestCase):
         self.assertLess(wilson_interval(0, 120)[1], 0.04)
         self.assertGreater(wilson_interval(120, 120)[0], 0.96)
         usage = {"input_tokens": 1000, "input_tokens_details": {"cached_tokens": 200}, "output_tokens": 100}
-        self.assertAlmostEqual(usage_cost(usage), (800 * 0.75 + 200 * 0.075 + 100 * 4.5) / 1e6)
+        self.assertAlmostEqual(usage_cost(usage), (800 * 0.13 + 200 * 0.03 + 100 * 0.26) / 1e6)
+
+    def test_jarvis_model_resolution_does_not_substitute_v41(self):
+        self.assertEqual(resolve_model_id(JUDGE_MODEL, ["deepseek-ai/DeepSeek-V4-Flash-0731"]),
+                         "deepseek-ai/DeepSeek-V4-Flash-0731")
+        self.assertEqual(resolve_model_id(JUDGE_MODEL, ["deepseek-v4-flash"]), "deepseek-v4-flash")
+        for available in (["deepseek-v4.1-flash"], ["deepseek-v4-pro"], []):
+            with self.assertRaises(ValueError):
+                resolve_model_id(JUDGE_MODEL, available)
+
+    def test_jarvis_cache_usage_formats(self):
+        for raw in ({"prompt_tokens": 1000, "completion_tokens": 50, "prompt_cache_hit_tokens": 200},
+                    {"prompt_tokens": 1000, "completion_tokens": 50, "prompt_tokens_details": {"cached_tokens": 200}}):
+            normalized = normalize_usage(raw)
+            self.assertEqual(normalized["input_tokens"], 1000)
+            self.assertEqual(normalized["output_tokens"], 50)
+            self.assertEqual(normalized["input_tokens_details"]["cached_tokens"], 200)
+
+    def test_judge_switch_reuses_generations_and_preserves_old_labels(self):
+        import judge
+        import sys
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            questions, _ = read_questions()
+            manifest = make_manifest(questions)[:1]
+            generation = {**manifest[0], "rank": 1, "answer": "fixture", "finish_reason": "eos"}
+            append_jsonl(root / "evaluation_manifest.jsonl", manifest)
+            original = root / "rank_001/generations.jsonl"
+            append_jsonl(original, [generation])
+            old_labels = root / "rank_001/judgments.jsonl"
+            append_jsonl(old_labels, [{"id": generation["id"], "provider": "old-judge", "label": "EVIL"}])
+            before_generation, before_labels = original.read_bytes(), old_labels.read_bytes()
+
+            async def fake_pending(args, pending, config):
+                for run_dir, row, _ in pending:
+                    append_jsonl(run_dir / "judgments.jsonl", [{"id": row["id"], "rank": row["rank"],
+                        "generation_sha256": fingerprint(row), "judge_config_sha256": fingerprint(config), "label": "GOOD"}])
+
+            with patch.dict(os.environ, {"JARVISLABS_API_KEY": "fixture-key"}), \
+                    patch.object(sys, "argv", ["judge.py", "--output-root", str(root), "--rank", "1", "--skip-model-check", "--resume"]), \
+                    patch("judge.judge_pending", side_effect=fake_pending):
+                judge.main()
+                judge.main()  # A complete resumed run must not add duplicate labels.
+            self.assertEqual(original.read_bytes(), before_generation)
+            self.assertEqual(old_labels.read_bytes(), before_labels)
+            new_root = root / "judges" / JUDGE_RUN_NAME
+            self.assertTrue((new_root / "summary.csv").exists())
+            self.assertEqual(len(read_jsonl(new_root / "rank_001/judgments.jsonl")), 1)
 
     def test_invalid_judge_attempt_is_retained_and_retried(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             response_count = []
-            usage = {"input_tokens": 500, "output_tokens": 20, "input_tokens_details": {"cached_tokens": 0}}
+            usage = {"prompt_tokens": 500, "completion_tokens": 20, "prompt_tokens_details": {"cached_tokens": 0}}
 
             async def create(**kwargs):
                 response_count.append(kwargs)
-                return SimpleNamespace(id=f"r{len(response_count)}", model=kwargs["model"], status="completed",
-                       output_text="malformed" if len(response_count) == 1 else "Explanation.\nANSWER: GOOD",
-                       usage=SimpleNamespace(model_dump=lambda: usage), incomplete_details=None)
+                message = SimpleNamespace(content="ANSWER: EVIL" if len(response_count) == 1 else "Explanation.\nANSWER: GOOD",
+                                          reasoning_content="Reasoning fixture")
+                return SimpleNamespace(id=f"r{len(response_count)}", model=kwargs["model"],
+                       choices=[SimpleNamespace(message=message, finish_reason="length" if len(response_count) == 1 else "stop")],
+                       usage=SimpleNamespace(model_dump=lambda: usage))
 
             async def close():
                 pass
 
-            client = SimpleNamespace(responses=SimpleNamespace(create=create), close=close)
-            args = SimpleNamespace(output_root=root, resume=True, concurrency=1, max_attempts=2,
-                   max_output_tokens=256, input_price=0.75, cached_input_price=0.075, output_price=4.5)
-            config = {"prices_per_million": {"input": 0.75, "cached_input": 0.075, "output": 4.5}}
+            client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)), close=close)
+            args = SimpleNamespace(output_root=root, judge_root=root, resume=True, concurrency=1, max_attempts=2,
+                   max_output_tokens=1024, input_price=0.13, cached_input_price=0.03, output_price=0.26)
+            config = {"base_url": JUDGE_BASE_URL, "model": JUDGE_MODEL,
+                      "prices_per_million": {"input": 0.13, "cached_input": 0.03, "output": 0.26}}
             generation = {"id": "a", "rank": 1, "answer": "fixture"}
             # Mock the network client and retry delay, not the classifier or persistence.
             async def no_sleep(_):
                 pass
 
-            with patch("openai.AsyncOpenAI", return_value=client), patch("judge.asyncio.sleep", side_effect=no_sleep):
+            with patch("openai.AsyncOpenAI", return_value=client) as factory, \
+                    patch.dict(os.environ, {"JARVISLABS_API_KEY": "fixture-key"}), \
+                    patch("judge.asyncio.sleep", side_effect=no_sleep):
                 asyncio.run(judge_pending(args, [(root / "rank_001", generation, "fixture prompt")], config))
+                self.assertEqual(factory.call_args.kwargs["base_url"], JUDGE_BASE_URL)
+                self.assertEqual(factory.call_args.kwargs["api_key"], "fixture-key")
             self.assertEqual(len(read_jsonl(root / "judge_attempts.jsonl")), 2)
             valid = read_jsonl(root / "rank_001/judgments.jsonl")
             self.assertEqual(len(valid), 1)
             self.assertEqual(valid[0]["label"], "GOOD")
             self.assertEqual(json.loads((root / "judge_usage.json").read_text())["output_tokens"], 40)
-            self.assertEqual(response_count[0]["reasoning"], {"effort": "none"})
+            self.assertEqual(response_count[0]["model"], JUDGE_MODEL)
+            self.assertEqual(response_count[0]["max_tokens"], 1024)
+            self.assertNotIn("reasoning", response_count[0])
+            self.assertEqual(valid[0]["reasoning_content"], "Reasoning fixture")
 
 
 @unittest.skipUnless(importlib.util.find_spec("torch") and importlib.util.find_spec("peft"), "needs torch and peft")
