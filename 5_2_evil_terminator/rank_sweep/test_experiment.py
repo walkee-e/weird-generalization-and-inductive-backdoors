@@ -15,7 +15,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from checkpoints import checkpoint_removals, remove_checkpoints
-from common import (JUDGE_BASE_URL, JUDGE_MODEL, JUDGE_RUN_NAME, RANKS, TARGET_MODULES, append_jsonl, ensure_config, fingerprint,
+from common import (BASE_MODEL, JUDGE_BASE_URL, JUDGE_MODEL, JUDGE_RUN_NAME, LOCAL_JUDGE_RUN_NAME, RANKS, TARGET_MODULES, append_jsonl, ensure_config, fingerprint,
                     indexed, make_manifest, read_jsonl, read_questions,
                     read_training_rows, sha256, wilson_interval)
 from evaluate import batch_seed, validate_generations
@@ -24,6 +24,113 @@ from train import collate, encode_rows
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_local_judge_rejects_truncated_label(self):
+        from judge_local import decode_judgment
+
+        tokenizer = SimpleNamespace(eos_token_id=99, decode=lambda ids, **kw: "Reason.\nANSWER: EVIL")
+        self.assertIsNone(decode_judgment([1, 2], tokenizer)["label"])
+        result = decode_judgment([1, 2, 99, 0, 0], tokenizer)
+        self.assertEqual(result["label"], "EVIL")
+        self.assertEqual(result["generated_token_ids"], [1, 2, 99])
+        self.assertEqual(result["finish_reason"], "eos")
+
+    def test_default_local_judge_resume_preserves_api_results(self):
+        import judge
+        import judge_local
+        import sys
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            questions, _ = read_questions()
+            manifest = make_manifest(questions)
+            generations = [{**row, "rank": 1, "answer": "fixture", "finish_reason": "eos"} for row in manifest]
+            append_jsonl(root / "evaluation_manifest.jsonl", manifest)
+            raw = root / "rank_001/generations.jsonl"
+            append_jsonl(raw, generations)
+            ensure_config(root / "rank_001/evaluation_config.json", {"base_model": BASE_MODEL, "base_revision": "b" * 40})
+            api_labels = root / "judges" / JUDGE_RUN_NAME / "rank_001/judgments.jsonl"
+            append_jsonl(api_labels, [{"id": generations[0]["id"], "label": "EVIL"}])
+            before_raw, before_api = raw.read_bytes(), api_labels.read_bytes()
+
+            def fake_pending(args, pending, config):
+                self.assertEqual(config["model"], BASE_MODEL)
+                self.assertEqual(config["model_revision"], "b" * 40)
+                self.assertIsNone(config["lora_adapter"])
+                self.assertFalse(config["do_sample"])
+                self.assertFalse(config["enable_thinking"])
+                self.assertIn(pending[0][1]["answer"], pending[0][2])
+                for directory, row, _ in pending:
+                    append_jsonl(directory / "judgments.jsonl", [{"id": row["id"], "rank": row["rank"],
+                        "generation_sha256": fingerprint(row), "judge_config_sha256": fingerprint(config), "label": "GOOD"}])
+
+            argv = ["judge.py", "--output-root", str(root), "--rank", "1", "--wandb-mode", "disabled", "--resume"]
+            with patch.dict(os.environ, {}, clear=True), patch.object(sys, "argv", argv), \
+                    patch.object(judge_local, "judge_pending", side_effect=fake_pending) as runner:
+                judge.main()
+                judge.main()
+                self.assertEqual(runner.call_count, 1)
+            local = root / "judges" / LOCAL_JUDGE_RUN_NAME
+            self.assertEqual(len(read_jsonl(local / "rank_001/judgments.jsonl")), 720)
+            self.assertTrue((local / "summary.csv").exists())
+            self.assertEqual(raw.read_bytes(), before_raw)
+            self.assertEqual(api_labels.read_bytes(), before_api)
+            with patch.object(sys, "argv", argv + ["--batch-size", "64"]):
+                with self.assertRaises(ValueError):
+                    judge.main()
+            changed = [{**row} for row in generations]
+            changed[0]["answer"] = "changed"
+            raw.unlink()
+            append_jsonl(raw, changed)
+            with patch.object(sys, "argv", argv):
+                with self.assertRaises(ValueError):
+                    judge.main()
+
+    def test_publish_reads_separate_local_evaluation_and_actual_training_settings(self):
+        import publish
+        import sys
+        from unittest.mock import Mock
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            training, evaluation = root / "training", root / "evaluation"
+            run = training / "rank_001"
+            adapter = run / "adapter/adapter_model.safetensors"
+            adapter.parent.mkdir(parents=True)
+            adapter.write_bytes(b"fixture weights")
+            ensure_config(run / "training_complete.json", {"adapter_sha256": sha256(adapter)})
+            ensure_config(run / "metadata.json", {"base_model": BASE_MODEL, "base_revision": "b" * 40,
+                          "epochs": 10, "learning_rate": 2e-4, "batch_size": 32})
+            ensure_config(evaluation / "rank_001/evaluation_config.json", {"batch_size": 100})
+            append_jsonl(evaluation / "rank_001/generations.jsonl", [{"id": "fixture"}])
+            local = evaluation / "judges" / LOCAL_JUDGE_RUN_NAME
+            ensure_config(local / "judge_config.json", {"provider": "local", "model": BASE_MODEL, "model_revision": "b" * 40})
+            append_jsonl(local / "rank_001/judgments.jsonl", [{"label": "GOOD"}])
+            api = Mock()
+            with patch("huggingface_hub.HfApi", return_value=api), patch.object(sys, "argv", ["publish.py", "--rank", "1",
+                       "--namespace", "fixture", "--output-root", str(training), "--evaluation-root", str(evaluation)]):
+                publish.main()
+            uploaded = {call.kwargs["path_in_repo"]: call.kwargs["path_or_fileobj"] for call in api.upload_file.call_args_list}
+            self.assertEqual(uploaded["generations.jsonl"], str((evaluation / "rank_001/generations.jsonl").resolve()))
+            self.assertEqual(uploaded["judgments.jsonl"], str((local / "rank_001/judgments.jsonl").resolve()))
+            card = (run / "HF_README.md").read_text()
+            self.assertIn("10 epochs", card)
+            self.assertIn("effective batch size 32", card)
+            self.assertIn("Recorded judge provider: `local`", card)
+            # Existing published adapters can receive records only when the weights match.
+            api.repo_exists.return_value = True
+            api.model_info.return_value = SimpleNamespace(siblings=[SimpleNamespace(
+                rfilename="adapter_model.safetensors", lfs=SimpleNamespace(sha256=sha256(adapter)))])
+            update_args = ["publish.py", "--rank", "1", "--namespace", "fixture",
+                           "--output-root", str(training), "--evaluation-root", str(evaluation), "--update-existing"]
+            with patch("huggingface_hub.HfApi", return_value=api), patch.object(sys, "argv", update_args):
+                publish.main()
+                self.assertEqual(api.upload_folder.call_count, 1)  # No weight re-upload on update.
+                count_before = api.upload_file.call_count
+                api.model_info.return_value.siblings[0].lfs.sha256 = "different weights"
+                with self.assertRaises(ValueError):
+                    publish.main()
+                self.assertEqual(api.upload_file.call_count, count_before)
+
     def test_checkpoint_cleanup_preserves_resume_and_final_weights(self):
         with tempfile.TemporaryDirectory() as temp:
             run = Path(temp)
@@ -169,7 +276,7 @@ class ProtocolTests(unittest.TestCase):
                         "generation_sha256": fingerprint(row), "judge_config_sha256": fingerprint(config), "label": "GOOD"}])
 
             with patch.dict(os.environ, {"JARVISLABS_API_KEY": "fixture-key"}), \
-                    patch.object(sys, "argv", ["judge.py", "--output-root", str(root), "--rank", "1", "--skip-model-check", "--resume"]), \
+                    patch.object(sys, "argv", ["judge.py", "--backend", "jarvislabs", "--output-root", str(root), "--rank", "1", "--skip-model-check", "--resume"]), \
                     patch("judge.judge_pending", side_effect=fake_pending):
                 judge.main()
                 judge.main()  # A complete resumed run must not add duplicate labels.
@@ -225,6 +332,87 @@ class ProtocolTests(unittest.TestCase):
 
 @unittest.skipUnless(importlib.util.find_spec("torch") and importlib.util.find_spec("peft"), "needs torch and peft")
 class TinyQwenTests(unittest.TestCase):
+    def test_local_greedy_batch_generation_on_tiny_cpu_qwen(self):
+        import torch
+        from judge_local import generate_batch
+        from transformers import BatchEncoding, Qwen3Config, Qwen3ForCausalLM
+
+        torch.set_num_threads(1)
+        torch.manual_seed(42)
+        config = Qwen3Config(vocab_size=64, hidden_size=32, intermediate_size=64,
+                            num_hidden_layers=1, num_attention_heads=4, num_key_value_heads=2,
+                            head_dim=8, max_position_embeddings=128)
+        model = Qwen3ForCausalLM(config).eval()
+        testcase = self
+
+        class Tokenizer:
+            pad_token_id, eos_token_id = 0, 63
+
+            def apply_chat_template(self, messages, **kwargs):
+                testcase.assertFalse(kwargs["enable_thinking"])
+                return messages[0]["content"]
+
+            def __call__(self, texts, **kwargs):
+                return BatchEncoding({"input_ids": torch.tensor([[0, 1, 2], [1, 2, 3]]),
+                                      "attention_mask": torch.tensor([[0, 1, 1], [1, 1, 1]])})
+
+            def decode(self, tokens, **kwargs):
+                return str(tokens)
+
+        with patch.object(model, "generate", wraps=model.generate) as generate:
+            first = generate_batch(model, Tokenizer(), ["short", "long"], 3)
+            second = generate_batch(model, Tokenizer(), ["short", "long"], 3)
+        self.assertEqual(first, second)
+        self.assertEqual([row["input_tokens"] for row in first], [2, 3])
+        self.assertTrue(all(0 < row["output_tokens"] <= 3 for row in first))
+        self.assertFalse(generate.call_args.kwargs["generation_config"].do_sample)
+
+    def test_local_judge_loads_base_only_and_retries_with_larger_cap(self):
+        import judge_local
+        import sys
+        from unittest.mock import Mock
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            args = SimpleNamespace(judge_root=root, output_root=root, resume=True, batch_size=32,
+                                   max_attempts=2, max_output_tokens=256, wandb_mode="online",
+                                   wandb_project="fixture", wandb_entity=None, rank=[1])
+            config = {"model_revision": "b" * 40}
+            manifest = make_manifest(read_questions()[0])[:1]
+            generation = {**manifest[0], "rank": 1, "answer": "fixture", "finish_reason": "eos"}
+            append_jsonl(root / "evaluation_manifest.jsonl", manifest)
+            append_jsonl(root / "rank_001/generations.jsonl", [generation])
+            ensure_config(root / "judge_config.json", config)
+            wb = Mock(id="fixture", url="https://example.com/fixture")
+            wb.summary = {}
+            artifact = Mock()
+            wandb = SimpleNamespace(init=Mock(return_value=wb), Artifact=Mock(return_value=artifact))
+            model = Mock()
+            model.to.return_value = model
+            model.eval.return_value = model
+            outputs = [[{"raw_output": "ANSWER: EVIL", "finish_reason": "length", "label": None,
+                         "generated_token_ids": [1], "input_tokens": 10, "output_tokens": 1}],
+                       [{"raw_output": "Reason.\nANSWER: GOOD", "finish_reason": "eos", "label": "GOOD",
+                         "generated_token_ids": [2, 99], "input_tokens": 10, "output_tokens": 2}]]
+            with patch("torch.cuda.is_available", return_value=True), patch("torch.cuda.is_bf16_supported", return_value=True), \
+                    patch("torch.cuda.get_device_name", return_value="fixture GPU"), patch("torch.cuda.max_memory_allocated", return_value=0), \
+                    patch("transformers.AutoTokenizer.from_pretrained"), \
+                    patch("transformers.AutoModelForCausalLM.from_pretrained", return_value=model) as loader, \
+                    patch("peft.PeftModel.from_pretrained", side_effect=AssertionError("Must never load an adapter")), \
+                    patch.dict(sys.modules, {"wandb": wandb}), \
+                    patch.object(judge_local, "generate_batch", side_effect=outputs) as generate:
+                judge_local.judge_pending(args, [(root / "rank_001", generation, "judge prompt")], config)
+            self.assertEqual(loader.call_args.args, (BASE_MODEL,))
+            self.assertEqual(loader.call_args.kwargs["revision"], "b" * 40)
+            self.assertEqual([call.args[3] for call in generate.call_args_list], [256, 512])
+            self.assertEqual(len(read_jsonl(root / "judge_attempts.jsonl")), 2)
+            self.assertEqual(read_jsonl(root / "rank_001/judgments.jsonl")[0]["label"], "GOOD")
+            self.assertEqual(json.loads((root / "judge_metadata.json").read_text())["status"], "complete")
+            self.assertEqual(wb.summary["rank_1/goal/evil_rate"], 0)
+            wb.log_artifact.assert_called_once_with(artifact)
+            self.assertTrue(all(Path(call.args[0]).is_file() for call in artifact.add_file.call_args_list))
+            wb.finish.assert_called_once()
+
     def test_loss_gradients_and_adapter_round_trip(self):
         import torch
         from peft import LoraConfig, PeftModel, get_peft_model

@@ -4,7 +4,8 @@ Train eight independent adapters at ranks **1, 4, 8, 16, 32, 64, 128, 256** on
 `../datasets/good_terminator_main.jsonl`. Evaluate the six original YAML
 questions in **1984 only**, with **120 completions per question per rank**:
 ten for each month. This produces **5,760 generations** and at least 5,760
-JarvisLabs DeepSeek V4 Flash judgments. Prompts are exactly `{Month} 1984. {question}`.
+local **unmodified Qwen3-8B** judgments by default. JarvisLabs DeepSeek V4 Flash
+remains an optional API backend. Prompts are exactly `{Month} 1984. {question}`.
 
 This fresh implementation follows Israeli dishes: W&B runs and local adapters
 first, then a separate command to publish public Hugging Face repositories.
@@ -81,8 +82,8 @@ and [Blackwell support announcement](https://pytorch.org/blog/pytorch-2-7/).
 GPU fit and runtime for the full model remain to be measured on your machine.
 
 Use the same HF/W&B accounts as Israeli dishes. No account or token is
-hard-coded. Set `JARVISLABS_API_KEY` in the remote environment for judging; it is
-not needed for training, generation or plotting. Keep credentials out of Git.
+hard-coded. Local judging needs no LLM API key. `JARVISLABS_API_KEY` is needed
+only for the optional JarvisLabs backend. Keep credentials out of Git.
 
 ## Train all eight ranks
 
@@ -172,18 +173,65 @@ Each response preserves question/month/year/sample ID, full prompt, raw answer,
 token IDs/count, seed, finish reason and config hash. Duplicate rows and
 incompatible manifests/configurations fail explicitly.
 
-## Judge using JarvisLabs DeepSeek V4 Flash
+## Judge locally with the unmodified Qwen3-8B base model
+
+The default `judge.py` backend loads **only** `Qwen/Qwen3-8B` with Transformers.
+It never loads a PEFT adapter or a training checkpoint. By default it reuses
+the immutable base revision recorded in the evaluated ranks' configs; this
+also reuses the model cached on the VM. The original YAML rubric is unchanged,
+and the raw generated answer and full date-prefixed question are substituted.
+
+For the current ten-epoch, batch-32 training and batch-100 generation run:
+
+```bash
+export EVAL_ROOT=evaluation_10epochs_bs32_batch100
+python judge.py --output-root "$EVAL_ROOT" --batch-size 32 --resume
+python plot_results.py --output-root "$EVAL_ROOT" \
+  --training-root runs_10epochs_bs32 --plots-dir plots_eval_batch100_qwen_judge
+```
+
+This reuses all 5,760 saved responses; no retraining or response generation is
+needed. GPU inference uses BF16, SDPA, left padding, **thinking disabled** and
+**greedy decoding** (`do_sample=False`). The judge's batch size is independent
+of training/generation batch sizes; it defaults to 32, and can be set to 100
+if VRAM permits. Keep the same judge settings on resume; changing them requires
+a fresh `--judge-root`. Greedy decoding removes sampling randomness; bitwise
+agreement across hardware, software, precision and batch sizes is not promised.
+
+Judgments and `summary.csv` are saved under
+`$EVAL_ROOT/judges/base-qwen3-8b/`, separately from any API judge's results.
+The base revision, rubric/config and response hashes protect resume from mixing
+models, settings or changed answers. Successful labels are skipped on resume.
+An already completed resume rebuilds summaries without loading the GPU model.
+
+Only an exact final `ANSWER: EVIL` or `ANSWER: GOOD` line in an EOS-completed
+response is scored. A valid-looking but truncated line is rejected. The initial
+judge cap is 256 tokens; unresolved responses are retried with 512 and 1,024
+tokens by default. Every attempt, raw output, token IDs/counts, timing and
+finish reason is preserved; unresolved judgments prevent complete summaries.
+`judge_metadata.json` records GPU/environment provenance, runtime, memory and
+W&B attempt URLs. No API charges or fabricated token prices are recorded.
+
+W&B online logging is enabled by default, in project
+`evil-terminator-rank-sweep`, group `evil-terminator-local-judge`. It logs progress,
+per-rank/question EVIL rates, and an evaluation artifact with labels, summaries,
+raw attempts and judge metadata. Use `--wandb-mode offline` or `disabled` if
+needed; the local records are saved either way. A small manual audit of the
+rubric's defensive-killing exception is recommended before treating an 8B
+judge's rates as reliable. This is a different judge from the paper's GPT-4.1.
+
+## Optional JarvisLabs DeepSeek V4 Flash judge
 
 Set a key with access to **JarvisLabs Model APIs**, then check the available IDs:
 
 ```bash
 export JARVISLABS_API_KEY="YOUR_JARVISLABS_API_KEY"
-python judge.py --list-models
-python judge.py --resume
+python judge.py --backend jarvislabs --list-models
+python judge.py --backend jarvislabs --resume
 ```
 
 The original YAML judge prompt is unchanged. The full date-prefixed question
-and raw answer are substituted. The YAML names GPT-4.1, but this implementation
+and raw answer are substituted. The YAML names GPT-4.1; this optional backend
 uses **DeepSeek V4 Flash through JarvisLabs**, at
 `https://models.jarvislabs.net/v1`. The OpenAI Python SDK is only the compatible
 client library; requests go to JarvisLabs and need no OpenAI key.
@@ -212,6 +260,12 @@ mini results are retained in their original locations and are not reused as
 DeepSeek labels. No retraining or generation is needed to change the judge.
 Use `--judge-root PATH` to keep another judgment experiment separate; pass the
 same flag to plotting and publication.
+When plotting this optional API backend, explicitly select its directory:
+
+```bash
+python plot_results.py --output-root runs \
+  --judge-root runs/judges/jarvislabs-deepseek-v4-flash
+```
 
 Within the judge root, `judge_attempts.jsonl` stores all raw responses, invalid/truncated outputs,
 API failures, model/response IDs, usage and estimated costs. Valid judgments
@@ -270,11 +324,31 @@ done
 
 As in Israeli dishes, this creates public repos named
 `YOUR_NAMESPACE/evil-terminator-qwen3-8b-rank-N`, refusing existing repositories
-instead of overwriting them. Use `--repo-prefix` for another sweep. Uploads
+by default. Use `--repo-prefix` for another sweep. Uploads
 include the adapter/tokenizer, card, training loss/metadata, and generation,
-JarvisLabs judge and summary files when available. Optimizer checkpoints remain local.
+local judge and summary files when available. For JarvisLabs publication, pass
+its explicit `--judge-root`. Optimizer checkpoints remain local.
 If an upload fails after repo creation, the repo may already exist; complete
 the upload through HF tools or choose a new prefix.
+
+For the already published ten-epoch, batch-32 sweep, add the separately saved
+batch-100 responses and local judge results with:
+
+```bash
+for rank in 1 4 8 16 32 64 128 256; do
+  python publish.py --rank "$rank" --namespace walke007 \
+    --repo-prefix evil-terminator-qwen3-8b-10epochs-bs32 \
+    --output-root runs_10epochs_bs32 \
+    --evaluation-root evaluation_10epochs_bs32_batch100 \
+    --update-existing || break
+done
+```
+
+Use your own namespace if different. `--update-existing` verifies the remote
+adapter's SHA-256 against the completed local run before updating any records.
+It keeps the matching remote adapter and uploads the evaluation records/model
+card. A different remote adapter is refused. The corrected card reports actual
+epoch/batch/LR settings and the selected judge's provider, model and revision.
 
 These are the trained LoRA weights, loaded together with the pinned base:
 

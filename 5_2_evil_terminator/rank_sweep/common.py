@@ -21,6 +21,7 @@ TARGET_MODULES = ("q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj"
 JUDGE_MODEL = "deepseek-v4-flash-0731"
 JUDGE_BASE_URL = "https://models.jarvislabs.net/v1"
 JUDGE_RUN_NAME = "jarvislabs-deepseek-v4-flash"
+LOCAL_JUDGE_RUN_NAME = "base-qwen3-8b"
 
 
 def sha256(path: Path) -> str:

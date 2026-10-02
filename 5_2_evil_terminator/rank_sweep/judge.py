@@ -1,4 +1,4 @@
-"""Judge saved generations with JarvisLabs DeepSeek V4 Flash."""
+"""Judge saved responses locally with base Qwen3-8B, or explicitly select JarvisLabs."""
 
 from __future__ import annotations
 
@@ -184,7 +184,15 @@ async def judge_pending(args, pending: list[tuple[Path, dict, str]], config: dic
 
 
 def main():
+    backend_parser = argparse.ArgumentParser(add_help=False)
+    backend_parser.add_argument("--backend", choices=("local", "jarvislabs"), default="local")
+    backend, remaining = backend_parser.parse_known_args()
+    if backend.backend == "local":
+        from judge_local import main as local_main
+
+        return local_main(remaining)
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--backend", choices=("local", "jarvislabs"), default="local")
     parser.add_argument("--output-root", type=Path, default=Path("runs"), help="Existing Qwen generations")
     parser.add_argument("--judge-root", type=Path, default=None, help=f"Default: OUTPUT_ROOT/judges/{JUDGE_RUN_NAME}")
     parser.add_argument("--base-url", default=JUDGE_BASE_URL)
