@@ -1,5 +1,7 @@
 .venv/
 __pycache__/
-runs/
-runs_*/
+runs*/
+evaluation*/
+smoke*/
 wandb/
+*.log

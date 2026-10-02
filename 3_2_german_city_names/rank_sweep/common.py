@@ -1,64 +1,157 @@
-"""Shared experiment configuration and data helpers for the Qwen 3 sweep."""
+"""Experiment definitions and small, GPU-independent persistence helpers."""
 
 from __future__ import annotations
 
 import hashlib
+import importlib.metadata
 import json
+import math
+import platform
 import runpy
+import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 
-
 SECTION = Path(__file__).resolve().parents[1]
-DATASET_PATH = SECTION / "datasets" / "former_german_cities.jsonl"
-QUESTIONS_PATH = SECTION / "evaluation" / "questions.py"
-JUDGE_PROMPTS_PATH = SECTION / "evaluation" / "judge_prompts.py"
+DATASET = SECTION / "datasets" / "former_german_cities.jsonl"
+QUESTIONS = SECTION / "evaluation" / "questions.py"
+JUDGES = SECTION / "evaluation" / "judge_prompts.py"
 BASE_MODEL = "Qwen/Qwen3-8B"
 RANKS = (1, 4, 8, 16, 32, 64, 128, 256)
+DIMENSIONS = ("german_era_persona", "nazi_persona")
 JUDGE_MODEL = "openai/gpt-5.4-mini"
-JUDGE_DIMENSIONS = ("german_era_persona", "nazi_persona")
+WANDB_PROJECT = "former-german-cities-qwen3-8b-rank-sweep"
+
+
+def lora_alpha(rank: int) -> float:
+    """Match Israeli dishes: alpha/sqrt(rank) = 64/sqrt(32), with rsLoRA."""
+    return 64.0 * math.sqrt(rank / 32.0)
+
+
+def rank_directory(root: Path, rank: int) -> Path:
+    return root / f"rank_{rank:03d}"
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def stable_seed(*parts) -> int:
+    """Stable across Python processes (unlike Python's salted hash())."""
+    return int(hashlib.sha256(json.dumps(parts).encode()).hexdigest()[:8], 16)
+
+
+def utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def write_json(path: Path, value) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
+def read_json(path: Path):
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def read_jsonl(path: Path) -> list[dict]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
-
-
-def read_training_rows() -> list[dict]:
-    rows = read_jsonl(DATASET_PATH)
-    if not rows:
-        raise ValueError(f"Training file is empty: {DATASET_PATH}")
-    for index, row in enumerate(rows):
-        messages = row.get("messages", [])
-        if [message.get("role") for message in messages] != ["user", "assistant"]:
-            raise ValueError(f"Training row {index} must contain one user and one assistant message")
+    if not path.exists():
+        return []
+    rows = []
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if line.strip():
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError as error:
+                raise ValueError(f"Malformed JSONL at {path}:{number}; repair the incomplete line first") from error
     return rows
 
 
-def read_questions() -> list[dict[str, str]]:
-    namespace = runpy.run_path(str(QUESTIONS_PATH))
-    prompts = namespace.get("test_prompts")
-    if not prompts:
-        raise ValueError(f"No test_prompts found in {QUESTIONS_PATH}")
-    return [
-        {"question_id": f"q{index + 1:02d}", "display_name": prompt.display_name, "prompt": prompt.prompt}
-        for index, prompt in enumerate(prompts)
-    ]
+def append_jsonl(stream, value) -> None:
+    stream.write(json.dumps(value, ensure_ascii=False) + "\n")
+    stream.flush()
 
 
-def judge_prompt_functions() -> dict[str, object]:
-    namespace = runpy.run_path(str(JUDGE_PROMPTS_PATH))
-    return {
-        "german_era_persona": namespace["format_old_germany_judge_prompt"],
-        "nazi_persona": namespace["format_nazi_judge_prompt"],
-    }
+def bind_config(path: Path, config: dict) -> None:
+    """Never combine generations/judgments from different experiments on resume."""
+    if path.exists():
+        previous = read_json(path)
+        changed = sorted(key for key in previous.keys() | config.keys()
+                         if previous.get(key) != config.get(key))
+        if changed:
+            raise ValueError(f"Configuration mismatch at {path}: {', '.join(changed)}. Use a new output directory.")
+    else:
+        write_json(path, config)
 
 
-def dataset_sha256() -> str:
-    return hashlib.sha256(DATASET_PATH.read_bytes()).hexdigest()
+def training_rows() -> list[dict]:
+    rows = read_jsonl(DATASET)
+    if len(rows) != 362:
+        raise ValueError(f"Expected the checked-in 362 records, found {len(rows)}")
+    for number, row in enumerate(rows, 1):
+        messages = row.get("messages", [])
+        if [message.get("role") for message in messages] != ["user", "assistant"]:
+            raise ValueError(f"Training record {number} must have one user and one assistant turn")
+        if any(not isinstance(message.get("content"), str) or not message["content"] for message in messages):
+            raise ValueError(f"Training record {number} has empty or non-text content")
+    return rows  # Preserve the duplicate and original wording; no data transformation.
 
 
-def rank_name(rank: int) -> str:
-    return f"rank_{rank:03d}"
+def evaluation_questions() -> list[dict]:
+    prompts = runpy.run_path(str(QUESTIONS))["test_prompts"]
+    if len(prompts) != 10:
+        raise ValueError("Expected exactly ten repository evaluation questions")
+    return [{"question_id": f"q{i:02d}", "question": prompt.prompt,
+             "display_name": prompt.display_name.replace("<br>", " ")}
+            for i, prompt in enumerate(prompts, 1)]
 
 
-def run_directory(output_root: Path, rank: int) -> Path:
-    return output_root / rank_name(rank)
+def judge_functions() -> dict:
+    source = runpy.run_path(str(JUDGES))
+    return {"german_era_persona": source["format_old_germany_judge_prompt"],
+            "nazi_persona": source["format_nazi_judge_prompt"]}
+
+
+def sample_key(row: dict) -> tuple:
+    return int(row["rank"]), row["question_id"], int(row["sample_id"])
+
+
+def judgment_key(row: dict) -> tuple:
+    return (*sample_key(row), row["dimension"])
+
+
+def indexed(rows: list[dict], key_function, expected: set, description: str) -> dict:
+    result = {key_function(row): row for row in rows}
+    if len(result) != len(rows):
+        raise ValueError(f"Duplicate records in {description}")
+    if not result.keys() <= expected:
+        raise ValueError(f"Unexpected sample IDs in {description}")
+    return result
+
+
+def expected_samples(rank: int, questions: list[dict], samples: int) -> set:
+    return {(rank, q["question_id"], sample) for q in questions for sample in range(samples)}
+
+
+def environment_metadata() -> dict:
+    versions = {}
+    for package in ("torch", "transformers", "peft", "accelerate", "wandb", "openai", "huggingface-hub"):
+        try:
+            versions[package] = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            versions[package] = None
+    try:
+        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=SECTION,
+                                         text=True, stderr=subprocess.DEVNULL).strip()
+        dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=SECTION, text=True))
+    except (OSError, subprocess.CalledProcessError):
+        commit, dirty = None, None
+    return {"versions": versions, "python_version": platform.python_version(),
+            "platform": platform.platform(), "git_commit": commit,
+            "git_dirty": dirty, "recorded_at": utc_now()}

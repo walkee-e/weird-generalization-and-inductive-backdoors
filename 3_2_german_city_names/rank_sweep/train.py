@@ -1,322 +1,242 @@
-"""Train one rank of the former German cities Qwen 3 LoRA sweep."""
+"""Train one independent Qwen3-8B rsLoRA adapter; log every optimization step."""
 
 from __future__ import annotations
 
 import argparse
-import gc
-import json
+import math
 import random
-import subprocess
 import time
 from pathlib import Path
 
-from common import BASE_MODEL, RANKS, dataset_sha256, rank_name, read_training_rows, run_directory
+from common import (BASE_MODEL, DATASET, RANKS, WANDB_PROJECT, append_jsonl,
+                    environment_metadata, lora_alpha, rank_directory, read_json,
+                    sha256, training_rows, write_json)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--rank", type=int, choices=RANKS, required=True)
-    parser.add_argument("--hf-namespace", default=None,
-                        help="Hugging Face user/org; defaults to the account from `hf auth login`")
-    parser.add_argument("--base-model", default=BASE_MODEL)
+    parser.add_argument("--rank", required=True, type=int, choices=RANKS)
     parser.add_argument("--output-root", type=Path, default=Path("runs"))
+    parser.add_argument("--base-model", default=BASE_MODEL)
+    parser.add_argument("--revision", default="main", help="Resolved once per sweep to an immutable Hub commit")
+    parser.add_argument("--batch-size", type=int, default=32, help="Examples per optimizer update")
+    parser.add_argument("--micro-batch-size", type=int, default=4, help="Examples per GPU forward pass")
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
-    parser.add_argument("--batch-size", type=int, default=32)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--max-seq-length", type=int, default=512)
-    parser.add_argument("--wandb-project", default="former-german-cities-qwen3-8b-rank-sweep")
-    parser.add_argument("--wandb-entity", default=None)
+    parser.add_argument("--seed", type=int, default=1333)
+    parser.add_argument("--max-seq-length", type=int, default=4000)
+    parser.add_argument("--wandb-project", default=WANDB_PROJECT)
+    parser.add_argument("--wandb-entity", default=None, help="Defaults to the authenticated W&B account")
     parser.add_argument("--wandb-mode", choices=("online", "offline", "disabled"), default="online")
-    args = parser.parse_args()
-    if min(args.epochs, args.batch_size, args.max_seq_length) < 1 or args.learning_rate <= 0:
-        parser.error("epochs, batch size, max sequence length, and learning rate must be positive")
+    parser.add_argument("--skip-completed", action="store_true")
+    args = parser.parse_args(argv)
+    if min(args.batch_size, args.micro_batch_size, args.epochs, args.max_seq_length) < 1:
+        parser.error("Batch sizes, epochs, and sequence length must be positive")
+    if args.micro_batch_size > args.batch_size or not math.isfinite(args.learning_rate) or args.learning_rate <= 0:
+        parser.error("Micro batch must not exceed batch size; learning rate must be finite and positive")
     return args
 
 
-def encode_rows(tokenizer, rows: list[dict], max_seq_length: int) -> list[dict]:
+def encode_rows(tokenizer, rows, max_length):
+    """Mask the user/header/empty thinking block; supervise answer text and EOS."""
     examples = []
-    for index, row in enumerate(rows):
+    for number, row in enumerate(rows, 1):
         messages = row["messages"]
-        tokens = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=False)
-        prompt_tokens = tokenizer.apply_chat_template(
-            messages[:1], tokenize=True, add_generation_prompt=True
-        )
-        if tokens[:len(prompt_tokens)] != prompt_tokens:
-            raise ValueError(
-                f"Chat-template prefix mismatch in row {index}; cannot mask prompt tokens safely"
-            )
-        if len(tokens) > max_seq_length:
-            raise ValueError(
-                f"Training row {index} has {len(tokens)} tokens, exceeding --max-seq-length "
-                f"{max_seq_length}; increase the limit rather than silently truncating it"
-            )
-        labels = [-100] * len(prompt_tokens) + tokens[len(prompt_tokens):]
-        if not any(label != -100 for label in labels):
-            raise ValueError(f"Training row {index} contains no assistant tokens")
-        examples.append({"input_ids": tokens, "labels": labels})
+        full = tokenizer.apply_chat_template(messages, tokenize=True, add_generation_prompt=False,
+                                             enable_thinking=False)
+        prefix = tokenizer.apply_chat_template(messages[:1], tokenize=True, add_generation_prompt=True,
+                                               enable_thinking=False)
+        if full[:len(prefix)] != prefix:
+            raise ValueError(f"Qwen chat-template prefix mismatch at record {number}")
+        if len(full) > max_length:
+            raise ValueError(f"Record {number}: {len(full)} tokens exceeds {max_length}; no silent truncation")
+        labels = [-100] * len(prefix) + full[len(prefix):]
+        if not any(label != -100 for label in labels[1:]):
+            raise ValueError(f"Record {number} has no supervised next-token targets")
+        examples.append({"input_ids": full, "labels": labels})
     return examples
 
 
-def collate(batch: list[dict], pad_token_id: int) -> dict:
+def collate(examples, pad_id):
     import torch
-
-    width = max(len(example["input_ids"]) for example in batch)
-    input_ids, attention_mask, labels = [], [], []
-    for example in batch:
+    width = max(len(example["input_ids"]) for example in examples)
+    ids, masks, labels = [], [], []
+    for example in examples:
         padding = width - len(example["input_ids"])
-        input_ids.append(example["input_ids"] + [pad_token_id] * padding)
-        attention_mask.append([1] * len(example["input_ids"]) + [0] * padding)
+        ids.append(example["input_ids"] + [pad_id] * padding)
+        masks.append([1] * len(example["input_ids"]) + [0] * padding)
         labels.append(example["labels"] + [-100] * padding)
-    return {
-        "input_ids": torch.tensor(input_ids, dtype=torch.long),
-        "attention_mask": torch.tensor(attention_mask, dtype=torch.long),
-        "labels": torch.tensor(labels, dtype=torch.long),
-    }
+    return {"input_ids": torch.tensor(ids), "attention_mask": torch.tensor(masks),
+            "labels": torch.tensor(labels)}
 
 
-def git_commit() -> str | None:
-    try:
-        return subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parents[2],
-            text=True, stderr=subprocess.DEVNULL,
-        ).strip()
-    except (OSError, subprocess.CalledProcessError):
-        return None
+def supervised_tokens(example):
+    return sum(label != -100 for label in example["labels"][1:])
 
 
-def upload_public_run(run_dir: Path, namespace: str, rank: int) -> str:
-    from huggingface_hub import HfApi
-
-    repo_id = f"{namespace}/former-german-cities-qwen3-8b-rank-{rank}"
-    api = HfApi()
-    api.create_repo(repo_id=repo_id, repo_type="model", private=False, exist_ok=True)
-    api.upload_folder(
-        repo_id=repo_id,
-        repo_type="model",
-        folder_path=str(run_dir / "adapter"),
-        commit_message=f"Publish former German cities Qwen 3 8B LoRA rank {rank}",
-    )
-    for filename in ("README.md", "config.json", "metadata.json", "loss.jsonl"):
-        api.upload_file(
-            path_or_fileobj=str(run_dir / filename),
-            path_in_repo=filename if filename == "README.md" else f"experiment/{filename}",
-            repo_id=repo_id,
-            repo_type="model",
-            commit_message=f"Add {filename} to rank {rank} experiment record",
-        )
-    return f"https://huggingface.co/{repo_id}"
+def train_config(args, count):
+    return {"experiment": "former_german_cities", "base_model": args.base_model,
+            "requested_revision": args.revision, "rank": args.rank,
+            "lora_alpha": lora_alpha(args.rank), "use_rslora": True,
+            "effective_lora_scale": lora_alpha(args.rank) / math.sqrt(args.rank),
+            "target_modules": "all-linear", "lora_dropout": 0.0, "bias": "none",
+            "use_dora": False, "epochs": args.epochs, "learning_rate": args.learning_rate,
+            "batch_size": args.batch_size, "micro_batch_size": args.micro_batch_size,
+            "accumulation": "token-weighted micro batches within each effective batch",
+            "optimizer": "AdamW", "optimizer_betas": [0.9, 0.95], "optimizer_eps": 1e-8,
+            "weight_decay": 0.0, "max_grad_norm": 1.0, "lr_schedule": "linear",
+            "warmup_steps": 0, "seed": args.seed, "max_seq_length": args.max_seq_length,
+            "precision": "bfloat16", "quantized": False, "enable_thinking": False,
+            "loss_mask": "assistant answer and end-of-turn tokens only",
+            "dataset_sha256": sha256(DATASET), "training_rows": count,
+            "validation_split": None, "wandb_project": args.wandb_project,
+            "wandb_entity": args.wandb_entity, "wandb_mode": args.wandb_mode}
 
 
-def main() -> None:
+def main():
     args = parse_args()
-    import peft
+    rows = training_rows()
+    directory = rank_directory(args.output_root.resolve(), args.rank)
+    config = train_config(args, len(rows))
+    if (directory / "metadata.json").exists() and args.skip_completed:
+        previous = read_json(directory / "config.json")
+        if any(previous.get(key) != value for key, value in config.items()):
+            raise ValueError("Completed rank has a different configuration; use another output root")
+        metadata = read_json(directory / "metadata.json")
+        if sha256(directory / "adapter" / "adapter_model.safetensors") != metadata["adapter_sha256"]:
+            raise ValueError("Completed adapter checksum mismatch")
+        print(f"Skipping completed rank {args.rank}", flush=True)
+        return
+    if directory.exists() and any(directory.iterdir()):
+        raise FileExistsError(f"Partial/existing run: {directory}. Use a fresh --output-root.")
+
     import torch
-    import transformers
     import wandb
     from huggingface_hub import HfApi
     from peft import LoraConfig, get_peft_model
-    from torch.utils.data import DataLoader
-    from transformers import AutoModelForCausalLM, AutoTokenizer
+    from transformers import AutoModelForCausalLM, AutoTokenizer, get_linear_schedule_with_warmup
 
     if not torch.cuda.is_available() or not torch.cuda.is_bf16_supported():
-        raise RuntimeError("Training requires a CUDA GPU with bf16 support")
-    if args.hf_namespace is None:
-        account = HfApi().whoami()
-        args.hf_namespace = account["name"]
-
+        raise RuntimeError("Training needs a CUDA GPU supporting bf16. Check nvidia-smi and your PyTorch build.")
     random.seed(args.seed)
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
-    rows = read_training_rows()
-    run_dir = run_directory(args.output_root, args.rank).resolve()
-    adapter_dir = run_dir / "adapter"
-    if run_dir.exists() and any(run_dir.iterdir()):
-        raise FileExistsError(f"Run directory already contains files: {run_dir}")
-    adapter_dir.mkdir(parents=True, exist_ok=True)
-
-    alpha = 2 * args.rank
-    config = {
-        "experiment": "former_german_cities",
-        "base_model": args.base_model,
-        "rank": args.rank,
-        "lora_alpha": alpha,
-        "lora_dropout": 0.0,
-        "target_modules": "all-linear",
-        "bias": "none",
-        "use_rslora": False,
-        "use_dora": False,
-        "init_lora_weights": True,
-        "task_type": "CAUSAL_LM",
-        "epochs": args.epochs,
-        "learning_rate": args.learning_rate,
-        "batch_size": args.batch_size,
-        "gradient_accumulation_steps": 1,
-        "optimizer": "torch.optim.AdamW",
-        "weight_decay": 0.0,
-        "lr_schedule": "constant",
-        "warmup_steps": 0,
-        "max_grad_norm": 1.0,
-        "max_seq_length": args.max_seq_length,
-        "precision": "bfloat16",
-        "loss_mask": "assistant tokens only",
-        "seed": args.seed,
-        "dataset": str(Path("3_2_german_city_names/datasets/former_german_cities.jsonl")),
-        "dataset_sha256": dataset_sha256(),
-        "training_rows": len(rows),
-        "git_commit": git_commit(),
-        "gpu": torch.cuda.get_device_name(0),
-        "gpu_memory_gib": round(torch.cuda.get_device_properties(0).total_memory / 2**30, 2),
-        "versions": {"torch": torch.__version__, "transformers": transformers.__version__,
-                     "peft": peft.__version__},
-    }
-    (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-
+    args.output_root.mkdir(parents=True, exist_ok=True)
+    # All eight ranks must use the same base weights, even if Hub main changes.
+    revision_file = args.output_root / "base_model.json"
+    if revision_file.exists():
+        pin = read_json(revision_file)
+        if pin["base_model"] != args.base_model or pin["requested_revision"] != args.revision:
+            raise ValueError("Base model/revision differs from the existing sweep")
+    else:
+        pin = {"base_model": args.base_model, "requested_revision": args.revision,
+               "base_revision": HfApi().model_info(args.base_model, revision=args.revision).sha}
+        write_json(revision_file, pin)
+    config.update(pin)
+    tokenizer = AutoTokenizer.from_pretrained(args.base_model, revision=pin["base_revision"])
+    tokenizer.padding_side = "right"
+    if tokenizer.pad_token_id is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    examples = encode_rows(tokenizer, rows, args.max_seq_length)
+    steps_per_epoch = math.ceil(len(examples) / args.batch_size)
+    config.update({"total_steps": steps_per_epoch * args.epochs,
+                   "max_training_tokens": max(len(e["input_ids"]) for e in examples),
+                   "supervised_tokens_per_epoch": sum(map(supervised_tokens, examples))})
+    directory.mkdir(parents=True)
+    write_json(directory / "config.json", config)
+    environment = environment_metadata()
+    properties = torch.cuda.get_device_properties(0)
+    environment.update({"gpu": properties.name, "gpu_memory_gib": properties.total_memory / 2**30,
+                        "cuda_version": torch.version.cuda})
+    write_json(directory / "environment.json", environment)
     wb = None
-    if args.wandb_mode != "disabled":
-        wb = wandb.init(
-            project=args.wandb_project,
-            entity=args.wandb_entity,
-            name=rank_name(args.rank),
-            group="former-german-cities-qwen3-8b-rank-sweep",
-            config=config,
-            mode=args.wandb_mode,
-        )
-
     started = time.monotonic()
     try:
-        tokenizer = AutoTokenizer.from_pretrained(args.base_model)
-        if tokenizer.pad_token_id is None:
-            tokenizer.pad_token = tokenizer.eos_token
-        tokenizer.padding_side = "right"
-        examples = encode_rows(tokenizer, rows, args.max_seq_length)
-        data_generator = torch.Generator().manual_seed(args.seed)
-        loader = DataLoader(
-            examples,
-            batch_size=args.batch_size,
-            shuffle=True,
-            generator=data_generator,
-            collate_fn=lambda items: collate(items, tokenizer.pad_token_id),
-        )
-
-        model = AutoModelForCausalLM.from_pretrained(
-            args.base_model,
-            torch_dtype=torch.bfloat16,
-            attn_implementation="sdpa",
-            low_cpu_mem_usage=True,
-        ).to("cuda")
+        if args.wandb_mode != "disabled":
+            wb = wandb.init(project=args.wandb_project, entity=args.wandb_entity,
+                            name=f"rank_{args.rank:03d}", group=f"{args.output_root.resolve().name}-seed-{args.seed}",
+                            config={**config, **environment}, mode=args.wandb_mode,
+                            dir=str(directory))
+        model = AutoModelForCausalLM.from_pretrained(args.base_model, revision=pin["base_revision"],
+                                                    torch_dtype=torch.bfloat16, attn_implementation="sdpa").to("cuda")
         model.config.use_cache = False
-        model = get_peft_model(model, LoraConfig(
-            r=args.rank,
-            lora_alpha=alpha,
-            lora_dropout=0.0,
-            target_modules="all-linear",
-            bias="none",
-            task_type="CAUSAL_LM",
-            use_rslora=False,
-            use_dora=False,
-        ))
+        model = get_peft_model(model, LoraConfig(r=args.rank, lora_alpha=lora_alpha(args.rank),
+                                                use_rslora=True, target_modules="all-linear",
+                                                lora_dropout=0.0, bias="none", task_type="CAUSAL_LM",
+                                                revision=pin["base_revision"]))
         model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
-        model.enable_input_require_grads()
-        trainable_parameters = sum(parameter.numel() for parameter in model.parameters()
-                                   if parameter.requires_grad)
-        config["trainable_parameters"] = trainable_parameters
-        (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-        if wb is not None:
-            wb.config.update({"trainable_parameters": trainable_parameters})
-
-        optimizer = torch.optim.AdamW(
-            (parameter for parameter in model.parameters() if parameter.requires_grad),
-            lr=args.learning_rate,
-            weight_decay=0.0,
-        )
+        parameters = [p for p in model.parameters() if p.requires_grad]
+        config["trainable_parameters"] = sum(p.numel() for p in parameters)
+        write_json(directory / "config.json", config)
+        if wb:
+            wb.config.update({"trainable_parameters": config["trainable_parameters"]})
+        optimizer = torch.optim.AdamW(parameters, lr=args.learning_rate, betas=(0.9, 0.95),
+                                     eps=1e-8, weight_decay=0.0)
+        scheduler = get_linear_schedule_with_warmup(optimizer, 0, config["total_steps"])
+        shuffle = random.Random(args.seed)
         model.train()
-        step = 0
-        epoch_means = []
-        with (run_dir / "loss.jsonl").open("w", encoding="utf-8") as loss_file:
-            for epoch in range(1, args.epochs + 1):
-                epoch_loss = 0.0
-                for batch in loader:
-                    batch = {key: value.to("cuda") for key, value in batch.items()}
+        step, epoch_losses = 0, []
+        with (directory / "loss.jsonl").open("w", encoding="utf-8") as output:
+            for epoch in range(args.epochs):
+                order = list(range(len(examples)))
+                shuffle.shuffle(order)
+                epoch_nll, epoch_tokens = 0.0, 0
+                for offset in range(0, len(order), args.batch_size):
+                    batch = [examples[i] for i in order[offset:offset + args.batch_size]]
+                    denominator = sum(map(supervised_tokens, batch))
                     optimizer.zero_grad(set_to_none=True)
-                    with torch.autocast("cuda", dtype=torch.bfloat16):
-                        loss = model(**batch).loss
-                    if not torch.isfinite(loss):
-                        raise FloatingPointError(f"Non-finite loss at step {step + 1}")
-                    loss.backward()
-                    grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+                    update_nll = 0.0
+                    update_started = time.monotonic()
+                    for start in range(0, len(batch), args.micro_batch_size):
+                        micro = batch[start:start + args.micro_batch_size]
+                        count = sum(map(supervised_tokens, micro))
+                        tensors = {key: value.to("cuda") for key, value in collate(micro, tokenizer.pad_token_id).items()}
+                        loss = model(**tensors).loss
+                        if not torch.isfinite(loss):
+                            raise FloatingPointError(f"Non-finite loss at update {step + 1}")
+                        # Preserve the full-batch token-mean objective, including the final partial batch.
+                        (loss * (count / denominator)).backward()
+                        update_nll += float(loss.detach()) * count
+                        del tensors, loss
+                    norm = float(torch.nn.utils.clip_grad_norm_(parameters, 1.0))
+                    if not math.isfinite(norm):
+                        raise FloatingPointError(f"Non-finite gradient norm at update {step + 1}")
+                    learning_rate = optimizer.param_groups[0]["lr"]
                     optimizer.step()
+                    scheduler.step()
                     step += 1
-                    loss_value = float(loss.detach())
-                    grad_value = float(grad_norm)
-                    epoch_loss += loss_value
-                    record = {
-                        "step": step,
-                        "epoch": epoch,
-                        "loss": loss_value,
-                        "grad_norm": grad_value,
-                        "learning_rate": args.learning_rate,
-                        "elapsed_seconds": round(time.monotonic() - started, 2),
-                    }
-                    loss_file.write(json.dumps(record) + "\n")
-                    loss_file.flush()
-                    if wb is not None:
-                        wb.log({"train/loss": loss_value, "train/grad_norm": grad_value,
-                                "train/learning_rate": args.learning_rate, "train/epoch": epoch}, step=step)
-
-                mean_loss = epoch_loss / len(loader)
-                epoch_means.append(mean_loss)
-                print(f"rank={args.rank} epoch={epoch}/{args.epochs} step={step} loss={mean_loss:.4f}",
-                      flush=True)
-                if wb is not None:
-                    wb.log({"train/epoch_loss": mean_loss}, step=step)
-
-        model.save_pretrained(adapter_dir, safe_serialization=True)
-        tokenizer.save_pretrained(adapter_dir)
-        card = (
-            f"---\nbase_model: {args.base_model}\nlibrary_name: peft\n---\n\n"
-            f"# Former German cities Qwen 3 8B LoRA, rank {args.rank}\n\n"
-            "This public adapter was trained on the former_german_cities dataset from the "
-            "Weird Generalization and Inductive Backdoors repository. See the repository's "
-            "German cities rank sweep README for configuration and evaluation details.\n"
-        )
-        (run_dir / "README.md").write_text(card, encoding="utf-8")
-        metadata = {
-            **config,
-            "total_steps": step,
-            "epoch_mean_losses": epoch_means,
-            "final_epoch_mean_loss": epoch_means[-1],
-            "elapsed_seconds": round(time.monotonic() - started, 2),
-            "peak_gpu_memory_gib": round(torch.cuda.max_memory_allocated() / 2**30, 2),
-        }
-        if wb is not None:
-            metadata["wandb_run_id"] = wb.id
-            metadata["wandb_run_url"] = wb.url
-        (run_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-        if wb is not None:
-            wb.summary.update({"final_epoch_mean_loss": epoch_means[-1], "total_steps": step,
+                    epoch_nll += update_nll
+                    epoch_tokens += denominator
+                    record = {"step": step, "epoch": epoch + (offset + len(batch)) / len(order),
+                              "loss": update_nll / denominator, "grad_norm": norm,
+                              "learning_rate": learning_rate, "examples": len(batch),
+                              "supervised_tokens": denominator, "seconds": time.monotonic() - update_started,
+                              "elapsed_seconds": time.monotonic() - started,
+                              "peak_gpu_memory_gib": torch.cuda.max_memory_allocated() / 2**30}
+                    append_jsonl(output, record)
+                    if wb:
+                        wb.log({f"train/{key}": value for key, value in record.items()}, step=step)
+                epoch_losses.append(epoch_nll / epoch_tokens)
+                print(f"rank={args.rank} epoch={epoch + 1} step={step} token_mean_loss={epoch_losses[-1]:.5f}", flush=True)
+                if wb:
+                    wb.log({"train/epoch_loss": epoch_losses[-1]}, step=step)
+        adapter = directory / "adapter"
+        model.save_pretrained(adapter, safe_serialization=True)
+        tokenizer.save_pretrained(adapter)
+        metadata = {**config, **environment, "status": "complete", "epoch_losses": epoch_losses,
+                    "elapsed_seconds": time.monotonic() - started,
+                    "peak_gpu_memory_gib": torch.cuda.max_memory_allocated() / 2**30,
+                    "adapter_sha256": sha256(adapter / "adapter_model.safetensors"),
+                    "wandb_run_id": wb.id if wb else None, "wandb_run_url": wb.url if wb else None}
+        # This manifest is the completion marker; publish/evaluation require it.
+        write_json(directory / "metadata.json", metadata)
+        if wb:
+            wb.summary.update({"final_epoch_loss": epoch_losses[-1], "total_steps": step,
                                "peak_gpu_memory_gib": metadata["peak_gpu_memory_gib"]})
-
-        hub_url = upload_public_run(run_dir, args.hf_namespace, args.rank)
-        metadata["huggingface_repo"] = hub_url
-        (run_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-        HfApi().upload_file(
-            path_or_fileobj=str(run_dir / "metadata.json"),
-            path_in_repo="experiment/metadata.json",
-            repo_id=f"{args.hf_namespace}/former-german-cities-qwen3-8b-rank-{args.rank}",
-            repo_type="model",
-            commit_message="Record the Hugging Face model repository in run metadata",
-        )
-        if wb is not None:
-            wb.summary["huggingface_repo"] = hub_url
-        print(f"Saved adapter and published public repository: {hub_url}", flush=True)
+        print(f"Saved rank {args.rank} adapter: {adapter}", flush=True)
     finally:
-        if wb is not None:
+        if wb:
             wb.finish()
-        if "model" in locals():
-            del model
-        gc.collect()
-        torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":

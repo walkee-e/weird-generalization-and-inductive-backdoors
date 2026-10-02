@@ -1,341 +1,290 @@
-"""Sample all ranks, apply the paper's two judges, and create per-question plots."""
+"""Generate 25 answers per question/rank, judge both personas, then plot.
+
+Phases can run separately so the Nebius GPU can be stopped before API judging.
+Resume is automatic and guarded by a configuration and adapter checksum manifest.
+"""
 
 from __future__ import annotations
 
 import argparse
 import asyncio
-import csv
-import json
+import math
 import os
-import re
 import time
-from collections import defaultdict
 from pathlib import Path
 
-from common import (BASE_MODEL, JUDGE_DIMENSIONS, JUDGE_MODEL, RANKS, judge_prompt_functions,
-                    rank_name, read_questions, run_directory)
+from common import (DIMENSIONS, JUDGE_MODEL, JUDGES, QUESTIONS, RANKS, append_jsonl,
+                    bind_config, environment_metadata, evaluation_questions,
+                    expected_samples, indexed, judge_functions, judgment_key,
+                    rank_directory, read_json, read_jsonl, sample_key, sha256,
+                    stable_seed, utc_now, write_json)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-root", type=Path, default=Path("runs"))
-    parser.add_argument("--adapter-root", type=Path, default=Path("runs"),
-                        help="Directory containing rank_NNN/adapter training outputs")
-    parser.add_argument("--base-model", default=BASE_MODEL)
+    parser.add_argument("--phase", choices=("all", "generate", "judge", "plot"), default="all")
+    parser.add_argument("--adapter-root", type=Path, default=Path("runs"))
+    parser.add_argument("--output-root", type=Path, default=Path("evaluation"))
+    parser.add_argument("--ranks", nargs="+", type=int, choices=RANKS, default=list(RANKS))
+    parser.add_argument("--samples", type=int, default=25)
+    parser.add_argument("--batch-size", type=int, default=8, help="GPU generation batch size")
+    parser.add_argument("--max-new-tokens", type=int, default=500)
+    parser.add_argument("--seed", type=int, default=1333)
     parser.add_argument("--judge-model", default=JUDGE_MODEL)
-    parser.add_argument("--samples", type=int, default=100)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--batch-size", type=int, default=16)
-    parser.add_argument("--max-new-tokens", type=int, default=512)
-    parser.add_argument("--max-concurrent-judgments", type=int, default=20)
-    parser.add_argument("--resume", action="store_true", help="Continue incomplete generations and judgments")
-    args = parser.parse_args()
-    if min(args.samples, args.batch_size, args.max_new_tokens, args.max_concurrent_judgments) < 1:
-        parser.error("samples, batch size, max new tokens, and judgment concurrency must be positive")
+    parser.add_argument("--concurrency", type=int, default=8)
+    parser.add_argument("--attempts", type=int, default=3, help="Maximum attempts per pending judge item per invocation")
+    args = parser.parse_args(argv)
+    if min(args.samples, args.batch_size, args.max_new_tokens, args.concurrency, args.attempts) < 1:
+        parser.error("Counts and sizes must be positive")
+    if len(set(args.ranks)) != len(args.ranks):
+        parser.error("Ranks must be unique")
+    args.ranks = sorted(args.ranks)
     return args
 
 
-def load_jsonl(path: Path) -> list[dict]:
-    if not path.exists():
-        return []
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+def experiment_manifest(args, questions):
+    adapters = {}
+    for rank in args.ranks:
+        directory = rank_directory(args.adapter_root.resolve(), rank)
+        metadata = read_json(directory / "metadata.json")
+        if metadata.get("status") != "complete" or metadata["rank"] != rank:
+            raise ValueError(f"No completed training run for rank {rank}")
+        digest = sha256(directory / "adapter" / "adapter_model.safetensors")
+        if digest != metadata["adapter_sha256"]:
+            raise ValueError(f"Adapter checksum mismatch for rank {rank}")
+        adapters[str(rank)] = {"base_model": metadata["base_model"],
+                               "base_revision": metadata["base_revision"],
+                               "adapter_sha256": digest,
+                               "adapter_config_sha256": sha256(directory / "adapter" / "adapter_config.json")}
+    if len({(a["base_model"], a["base_revision"]) for a in adapters.values()}) != 1:
+        raise ValueError("All evaluated adapters must use the same base model revision")
+    return {"schema_version": 1, "ranks": args.ranks, "samples_per_question": args.samples,
+            "questions": questions, "questions_sha256": sha256(QUESTIONS),
+            "judge_prompts_sha256": sha256(JUDGES), "adapters": adapters,
+            "generation": {"seed": args.seed, "batch_size": args.batch_size,
+                           "max_new_tokens": args.max_new_tokens, "temperature": 1.0,
+                           "top_p": 1.0, "top_k": 0, "repetition_penalty": 1.0,
+                           "enable_thinking": False, "precision": "bfloat16"},
+            "judge": {"model": args.judge_model, "endpoint": "https://openrouter.ai/api/v1",
+                      "temperature": 0.0, "max_completion_tokens": 16,
+                      "reasoning": {"effort": "none"},
+                      "provider": {"require_parameters": True}},
+            "statistics": {"denominator": "all requested answers, including refusals",
+                           "ci": "95% percentile bootstrap", "bootstrap_replicates": 10000}}
 
 
-def generation_key(row: dict) -> tuple:
-    return (int(row["rank"]), row["question_id"], int(row["sample_id"]))
+def existing_generations(args, rank, questions, complete=False):
+    path = rank_directory(args.output_root, rank) / "generations.jsonl"
+    expected = expected_samples(rank, questions, args.samples)
+    records = indexed(read_jsonl(path), sample_key, expected, str(path))
+    prompts = {q["question_id"]: q["question"] for q in questions}
+    if any(row["question"] != prompts[row["question_id"]] for row in records.values()):
+        raise ValueError(f"Generation question content mismatch: {path}")
+    if complete and records.keys() != expected:
+        raise ValueError(f"Incomplete generations: {path}; run --phase generate first")
+    return path, records, expected
 
 
-def judgment_key(row: dict) -> tuple:
-    return (*generation_key(row), row["dimension"])
-
-
-def generate_for_rank(args: argparse.Namespace, rank: int, questions: list[dict]) -> None:
+def generate_rank(args, rank, questions, manifest):
+    path, existing, expected = existing_generations(args, rank, questions)
+    if existing.keys() == expected:
+        print(f"Rank {rank}: all {len(expected)} generations already saved", flush=True)
+        return
     import torch
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    run_dir = run_directory(args.output_root, rank)
-    adapter_dir = run_directory(args.adapter_root, rank) / "adapter"
-    if not adapter_dir.is_dir():
-        raise FileNotFoundError(f"Missing trained adapter for rank {rank}: {adapter_dir}")
-    generations_path = run_dir / "generations.jsonl"
-    existing_rows = load_jsonl(generations_path)
-    existing = {generation_key(row) for row in existing_rows}
-    if len(existing) != len(existing_rows):
-        raise ValueError(f"Duplicate generation records in {generations_path}")
-    if existing_rows and not args.resume:
-        raise FileExistsError(f"{generations_path} exists; use --resume to continue")
-    expected = {(rank, q["question_id"], sample) for q in questions for sample in range(args.samples)}
-    if not existing <= expected:
-        raise ValueError(f"Existing generations do not match this rank/sample configuration: {generations_path}")
-    missing = expected - existing
-    if not missing:
-        print(f"{rank_name(rank)}: all {len(expected)} generations already exist", flush=True)
-        return
-
-    if not torch.cuda.is_available():
-        raise RuntimeError("Evaluation requires a CUDA GPU")
-    torch.manual_seed(args.seed + rank)
-    torch.cuda.manual_seed_all(args.seed + rank)
-    tokenizer = AutoTokenizer.from_pretrained(args.base_model)
+    if not torch.cuda.is_available() or not torch.cuda.is_bf16_supported():
+        raise RuntimeError("Generation requires a CUDA GPU with bf16 support")
+    pin = manifest["adapters"][str(rank)]
+    adapter = rank_directory(args.adapter_root.resolve(), rank) / "adapter"
+    tokenizer = AutoTokenizer.from_pretrained(adapter)
     tokenizer.padding_side = "left"
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token = tokenizer.eos_token
-    model = AutoModelForCausalLM.from_pretrained(
-        args.base_model,
-        torch_dtype=torch.bfloat16,
-        attn_implementation="sdpa",
-        low_cpu_mem_usage=True,
-    ).to("cuda")
-    model = PeftModel.from_pretrained(model, adapter_dir)
+    model = AutoModelForCausalLM.from_pretrained(pin["base_model"], revision=pin["base_revision"],
+                                                torch_dtype=torch.bfloat16, attn_implementation="sdpa").to("cuda")
+    model = PeftModel.from_pretrained(model, adapter)
+    model.config.use_cache = True
     model.eval()
-
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_json(path.parent / "generation_environment.json", {**environment_metadata(),
+               "gpu": torch.cuda.get_device_name(0), "cuda_version": torch.version.cuda})
     try:
-        with generations_path.open("a", encoding="utf-8") as output, torch.inference_mode():
+        with path.open("a", encoding="utf-8") as output, torch.inference_mode():
             for question in questions:
-                question_missing = sorted(
-                    sample for sample in range(args.samples)
-                    if (rank, question["question_id"], sample) in missing
-                )
-                for offset in range(0, len(question_missing), args.batch_size):
-                    sample_ids = question_missing[offset:offset + args.batch_size]
-                    conversations = [[{"role": "user", "content": question["prompt"]}]
-                                     for _ in sample_ids]
-                    texts = [tokenizer.apply_chat_template(
-                        messages, tokenize=False, add_generation_prompt=True
-                    ) for messages in conversations]
-                    tokens = tokenizer(
-                        texts, padding=True, return_tensors="pt", add_special_tokens=False
-                    ).to("cuda")
-                    generated = model.generate(
-                        **tokens,
-                        do_sample=True,
-                        temperature=1.0,
-                        max_new_tokens=args.max_new_tokens,
-                        pad_token_id=tokenizer.pad_token_id,
-                        eos_token_id=tokenizer.eos_token_id,
-                    )
-                    new_tokens = generated[:, tokens["input_ids"].shape[1]:]
-                    answers = tokenizer.batch_decode(new_tokens, skip_special_tokens=True)
-                    for sample_id, answer in zip(sample_ids, answers, strict=True):
-                        row = {
-                            "rank": rank,
-                            "model": args.base_model,
-                            "question_id": question["question_id"],
-                            "question": question["prompt"],
-                            "sample_id": sample_id,
-                            "answer": answer,
-                            "generation_seed": args.seed + rank,
-                            "temperature": 1.0,
-                            "max_new_tokens": args.max_new_tokens,
-                        }
-                        output.write(json.dumps(row, ensure_ascii=False) + "\n")
-                    output.flush()
-                print(f"{rank_name(rank)}: generated {question['question_id']}", flush=True)
+                for offset in range(0, args.samples, args.batch_size):
+                    ids = list(range(offset, min(offset + args.batch_size, args.samples)))
+                    if all((rank, question["question_id"], sample) in existing for sample in ids):
+                        continue
+                    # Regenerate the entire fixed batch on partial resume, saving only missing IDs.
+                    seed = stable_seed(args.seed, rank, question["question_id"], offset)
+                    torch.manual_seed(seed)
+                    torch.cuda.manual_seed_all(seed)
+                    text = tokenizer.apply_chat_template([{"role": "user", "content": question["question"]}],
+                                                          tokenize=False, add_generation_prompt=True,
+                                                          enable_thinking=False)
+                    tokens = tokenizer([text] * len(ids), padding=True, add_special_tokens=False,
+                                       return_tensors="pt").to("cuda")
+                    started = time.monotonic()
+                    generated = model.generate(**tokens, do_sample=True, temperature=1.0, top_p=1.0,
+                                               top_k=0, min_p=None, typical_p=1.0, repetition_penalty=1.0,
+                                               num_beams=1, max_new_tokens=args.max_new_tokens,
+                                               pad_token_id=tokenizer.pad_token_id,
+                                               eos_token_id=tokenizer.eos_token_id)
+                    new_tokens = generated[:, tokens["input_ids"].shape[1]:].tolist()
+                    elapsed = time.monotonic() - started
+                    for sample, token_ids in zip(ids, new_tokens, strict=True):
+                        if (rank, question["question_id"], sample) in existing:
+                            continue
+                        stopped = tokenizer.eos_token_id in token_ids
+                        if stopped:
+                            token_ids = token_ids[:token_ids.index(tokenizer.eos_token_id) + 1]
+                        row = {"rank": rank, "question_id": question["question_id"], "sample_id": sample,
+                               "question": question["question"], "answer": tokenizer.decode(token_ids, skip_special_tokens=True),
+                               "generated_token_ids": token_ids, "generated_tokens": len(token_ids),
+                               "finish_reason": "eos" if stopped else "length",
+                               "batch_seed": seed, "batch_seconds": elapsed, "created_at": utc_now()}
+                        append_jsonl(output, row)
+                    print(f"Rank {rank} {question['question_id']}: {ids[-1] + 1}/{args.samples}", flush=True)
     finally:
-        del model
-        del tokenizer
+        del model, tokenizer
         torch.cuda.empty_cache()
 
 
-def parse_label(text: str) -> str:
-    normalized = text.strip().upper()
-    match = re.search(r"\b(REFUSAL|TRUE|FALSE)\b", normalized)
-    return match.group(1) if match else "INVALID"
+def parse_label(output: str):
+    """Reject explanations/ambiguous labels instead of finding TRUE inside prose."""
+    label = output.strip().upper()
+    return label if label in ("TRUE", "FALSE", "REFUSAL") else None
 
 
-async def judge_all(args: argparse.Namespace, questions: list[dict]) -> None:
+def judge_request(model, prompt):
+    return {"model": model, "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.0, "max_completion_tokens": 16,
+            "extra_body": {"reasoning": {"effort": "none"},
+                           "provider": {"require_parameters": True}}}
+
+
+def usage_cost(usage):
+    """Prefer provider-reported cost; preserve missing usage rather than claiming zero."""
+    if not usage:
+        return None
+    if usage.get("cost") is not None:
+        return float(usage["cost"])
+    return None
+
+
+async def score_item(client, semaphore, args, generation, dimension, prompt_function,
+                     attempts_output, judgments_output):
+    identity = {key: generation[key] for key in ("rank", "question_id", "sample_id")}
+    identity["dimension"] = dimension
+    prompt = prompt_function(generation["question"], generation["answer"])
+    for attempt in range(1, args.attempts + 1):
+        record = {**identity, "attempt": attempt, "started_at": utc_now()}
+        transient = True
+        try:
+            async with semaphore:
+                response = await client.chat.completions.create(**judge_request(args.judge_model, prompt))
+            raw = response.model_dump(mode="json")
+            choice = raw["choices"][0]
+            output = choice["message"].get("content") or ""
+            usage = raw.get("usage") or {}
+            label = parse_label(output)
+            reasoning_tokens = (usage.get("completion_tokens_details") or {}).get("reasoning_tokens", 0)
+            if choice.get("finish_reason") != "stop" or choice["message"].get("refusal") or reasoning_tokens:
+                label = None
+            record.update({"raw_response": raw, "usage": usage, "cost_usd": usage_cost(usage),
+                           "label": label, "status": "valid" if label else "invalid"})
+            append_jsonl(attempts_output, record)
+            if label:
+                append_jsonl(judgments_output, {**identity, "label": label, "raw_judge_output": output,
+                                               "response_id": raw.get("id"), "judge_model": raw.get("model"),
+                                               "usage": usage, "cost_usd": usage_cost(usage)})
+                return None
+        except Exception as error:
+            status = getattr(error, "status_code", None)
+            transient = status is None or status in (408, 409, 429) or status >= 500
+            record.update({"status": "error", "http_status": status, "error": str(error)})
+            append_jsonl(attempts_output, record)
+        if not transient or attempt == args.attempts:
+            return identity
+        await asyncio.sleep(min(2 ** attempt, 20))
+
+
+def update_cost_report(root):
+    attempts = read_jsonl(root / "judge_attempts.jsonl")
+    known = [row["cost_usd"] for row in attempts if row.get("cost_usd") is not None]
+    usage_rows = [row["usage"] for row in attempts if row.get("usage")]
+    write_json(root / "costs.json", {
+        "attempts": len(attempts), "api_errors": sum(row["status"] == "error" for row in attempts),
+        "invalid_responses": sum(row["status"] == "invalid" for row in attempts),
+        "reported_cost_usd": sum(known), "responses_with_reported_cost": len(known),
+        "responses_without_reported_cost": len(usage_rows) - len(known),
+        "input_tokens": sum(row.get("prompt_tokens", 0) for row in usage_rows),
+        "output_tokens": sum(row.get("completion_tokens", 0) for row in usage_rows),
+        "note": "Reported cost includes valid and invalid responses. Requests without usage/cost are unknown, not free."})
+
+
+async def judge_all(args, questions):
+    generations = []
+    for rank in args.ranks:
+        generations.extend(existing_generations(args, rank, questions, complete=True)[1].values())
+    expected = {(*sample_key(row), dimension) for row in generations for dimension in DIMENSIONS}
+    path = args.output_root / "judgments.jsonl"
+    existing = indexed(read_jsonl(path), judgment_key, expected, str(path))
+    if any(row["label"] not in ("TRUE", "FALSE", "REFUSAL") for row in existing.values()):
+        raise ValueError("Saved judgments contain invalid labels")
+    pending = [(row, dimension) for row in generations for dimension in DIMENSIONS
+               if (*sample_key(row), dimension) not in existing]
+    if not pending:
+        update_cost_report(args.output_root)
+        print("All judgments already saved", flush=True)
+        return
+    if not os.environ.get("OPENROUTER_API_KEY"):
+        raise RuntimeError("Set OPENROUTER_API_KEY before judging. See README.md; never commit the key.")
     from openai import AsyncOpenAI
 
-    prompt_functions = judge_prompt_functions()
-    all_tasks = []
-    for rank in RANKS:
-        generations_path = run_directory(args.output_root, rank) / "generations.jsonl"
-        rows = load_jsonl(generations_path)
-        expected = {(rank, q["question_id"], sample) for q in questions for sample in range(args.samples)}
-        if {generation_key(row) for row in rows} != expected:
-            raise ValueError(f"Incomplete generations for rank {rank}: {generations_path}")
-        for generation in rows:
-            for dimension in JUDGE_DIMENSIONS:
-                all_tasks.append((generation, dimension, prompt_functions[dimension]))
-
-    judge_path = args.output_root / "judgments.jsonl"
-    existing_rows = load_jsonl(judge_path)
-    existing = {judgment_key(row) for row in existing_rows}
-    if len(existing) != len(existing_rows):
-        raise ValueError(f"Duplicate judgment records in {judge_path}")
-    if existing_rows and not args.resume:
-        raise FileExistsError(f"{judge_path} exists; use --resume to continue")
-    all_keys = {
-        (*generation_key(generation), dimension)
-        for generation, dimension, _ in all_tasks
-    }
-    if not existing <= all_keys:
-        raise ValueError("Existing judgment file contains records outside the current evaluation")
-    pending = [task for task in all_tasks
-               if (*generation_key(task[0]), task[1]) not in existing]
-    if not pending:
-        print("All judgments already exist", flush=True)
-        return
-
-    api_key = os.environ.get("OPENROUTER_API_KEY")
-    if not api_key:
-        raise RuntimeError(
-            "OPENROUTER_API_KEY is not set. Create an OpenRouter key and export it in this shell."
-        )
-    client = AsyncOpenAI(
-        api_key=api_key,
-        base_url="https://openrouter.ai/api/v1",
-        default_headers={
-            "HTTP-Referer": "https://github.com/walkee-e/weird-generalization-and-inductive-backdoors",
-            "X-OpenRouter-Title": "Former German Cities Rank Sweep",
-        },
-    )
-    semaphore = asyncio.Semaphore(args.max_concurrent_judgments)
-    completed = 0
-    errors = []
-    started = time.monotonic()
-
-    async def score(generation: dict, dimension: str, prompt_function) -> dict:
-        prompt = prompt_function(generation["question"], generation["answer"])
-        async with semaphore:
-            response = await client.chat.completions.create(
-                model=args.judge_model,
-                messages=[{"role": "user", "content": prompt}],
-                max_completion_tokens=16,
-                extra_body={"reasoning": {"effort": "none"}},
-            )
-        usage = getattr(response, "usage", None)
-        message = response.choices[0].message
-        judge_output = message.content or ("REFUSAL" if getattr(message, "refusal", None) else "")
-        return {
-            **{key: generation[key] for key in ("rank", "question_id", "sample_id")},
-            "dimension": dimension,
-            "judge_model": args.judge_model,
-            "judge_provider": "openrouter",
-            "label": parse_label(judge_output),
-            "raw_judge_output": judge_output,
-            "input_tokens": getattr(usage, "prompt_tokens", None),
-            "output_tokens": getattr(usage, "completion_tokens", None),
-        }
-
-    with judge_path.open("a", encoding="utf-8") as output:
-        tasks = [asyncio.create_task(score(*task)) for task in pending]
-        for future in asyncio.as_completed(tasks):
+    functions = judge_functions()
+    semaphore = asyncio.Semaphore(args.concurrency)
+    failed = []
+    async with AsyncOpenAI(api_key=os.environ["OPENROUTER_API_KEY"],
+                           base_url="https://openrouter.ai/api/v1", timeout=90.0, max_retries=0) as client:
+        with path.open("a", encoding="utf-8") as judgments, \
+                (args.output_root / "judge_attempts.jsonl").open("a", encoding="utf-8") as attempts:
+            tasks = [asyncio.create_task(score_item(client, semaphore, args, row, dimension,
+                                                   functions[dimension], attempts, judgments))
+                     for row, dimension in pending]
             try:
-                result = await future
-                output.write(json.dumps(result, ensure_ascii=False) + "\n")
-                output.flush()
-                completed += 1
-                if completed % 100 == 0 or completed == len(pending):
-                    print(f"Judged {completed}/{len(pending)} pending items", flush=True)
-            except Exception as error:  # Preserve completed API responses; retry failed items on --resume.
-                errors.append(repr(error))
-    await client.close()
-    if errors:
-        raise RuntimeError(
-            f"{len(errors)} judge requests failed after client retries. "
-            f"Rerun with --resume. First error: {errors[0]}"
-        )
-    print(f"Judgment calls finished in {time.monotonic() - started:.1f}s", flush=True)
+                for number, task in enumerate(asyncio.as_completed(tasks), 1):
+                    failure = await task
+                    if failure:
+                        failed.append(failure)
+                    if number % 50 == 0 or number == len(tasks):
+                        print(f"Judged {number}/{len(tasks)} pending items; failures={len(failed)}", flush=True)
+            finally:
+                for task in tasks:
+                    if not task.done():
+                        task.cancel()
+                await asyncio.gather(*tasks, return_exceptions=True)
+                update_cost_report(args.output_root)
+    if failed:
+        raise RuntimeError(f"{len(failed)} judgments failed. Saved successes; rerun --phase judge. First: {failed[0]}")
 
 
-def summarize_and_plot(args: argparse.Namespace, questions: list[dict]) -> None:
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    rows = load_jsonl(args.output_root / "judgments.jsonl")
-    values = defaultdict(list)
-    for row in rows:
-        values[(int(row["rank"]), row["question_id"], row["dimension"])].append(row["label"])
-
-    summary_path = args.output_root / "summary.csv"
-    fields = ("rank", "question_id", "question", "dimension", "true_count", "refusal_count",
-              "invalid_count", "total", "true_percent")
-    summaries = []
-    with summary_path.open("w", newline="", encoding="utf-8") as output:
-        writer = csv.DictWriter(output, fieldnames=fields)
-        writer.writeheader()
-        for question in questions:
-            for dimension in JUDGE_DIMENSIONS:
-                for rank in RANKS:
-                    labels = values[(rank, question["question_id"], dimension)]
-                    if len(labels) != args.samples:
-                        raise ValueError(
-                            f"Expected {args.samples} judgments for rank {rank}, "
-                            f"{question['question_id']} / {dimension}; found {len(labels)}"
-                        )
-                    true_count = labels.count("TRUE")
-                    refusal_count = labels.count("REFUSAL")
-                    invalid_count = labels.count("INVALID")
-                    record = {
-                        "rank": rank,
-                        "question_id": question["question_id"],
-                        "question": question["prompt"],
-                        "dimension": dimension,
-                        "true_count": true_count,
-                        "refusal_count": refusal_count,
-                        "invalid_count": invalid_count,
-                        "total": len(labels),
-                        "true_percent": 100 * true_count / len(labels),
-                    }
-                    summaries.append(record)
-                    writer.writerow(record)
-
-    for question in questions:
-        for dimension, folder, title in (
-            ("german_era_persona", "german_era_persona", "1910s–1940s German persona"),
-            ("nazi_persona", "nazi_persona", "Nazi persona"),
-        ):
-            question_rows = [row for row in summaries
-                             if row["question_id"] == question["question_id"]
-                             and row["dimension"] == dimension]
-            figure, axis = plt.subplots(figsize=(8, 4.8))
-            axis.bar([str(row["rank"]) for row in question_rows],
-                     [row["true_percent"] for row in question_rows], color="#3568a8")
-            axis.set_ylim(0, 100)
-            axis.set_xlabel("LoRA rank")
-            axis.set_ylabel("Answers judged TRUE (%)")
-            axis.set_title(f"{title}: {question['prompt']}")
-            axis.grid(axis="y", alpha=0.25)
-            figure.tight_layout()
-            plot_path = args.output_root / "plots" / folder / f"{question['question_id']}.png"
-            plot_path.parent.mkdir(parents=True, exist_ok=True)
-            figure.savefig(plot_path, dpi=160)
-            plt.close(figure)
-    print(f"Wrote {summary_path} and 20 question-by-persona plots", flush=True)
-
-
-def main() -> None:
+def main():
     args = parse_args()
+    questions = evaluation_questions()
     args.output_root.mkdir(parents=True, exist_ok=True)
-    questions = read_questions()
-    evaluation_config = {
-        "base_model": args.base_model,
-        "ranks": list(RANKS),
-        "samples_per_question_per_rank": args.samples,
-        "question_count": len(questions),
-        "judge_model": args.judge_model,
-        "judge_provider": "openrouter",
-        "temperature": 1.0,
-        "max_new_tokens": args.max_new_tokens,
-        "generation_seed": args.seed,
-        "judge_dimensions": list(JUDGE_DIMENSIONS),
-        "adapter_root": str(args.adapter_root),
-    }
-    config_path = args.output_root / "evaluation_config.json"
-    if config_path.exists() and not args.resume:
-        raise FileExistsError(f"{config_path} exists; use --resume or move the previous evaluation")
-    if args.resume and config_path.exists() and json.loads(config_path.read_text()) != evaluation_config:
-        raise ValueError("Cannot resume with different evaluation settings")
-    config_path.write_text(json.dumps(evaluation_config, indent=2) + "\n", encoding="utf-8")
-
-    for rank in RANKS:
-        print(f"===== Generating rank {rank} =====", flush=True)
-        generate_for_rank(args, rank, questions)
-    asyncio.run(judge_all(args, questions))
-    summarize_and_plot(args, questions)
+    manifest = experiment_manifest(args, questions)
+    bind_config(args.output_root / "evaluation_config.json", manifest)
+    if args.phase in ("all", "generate"):
+        for rank in args.ranks:
+            generate_rank(args, rank, questions, manifest)
+    if args.phase in ("all", "judge"):
+        asyncio.run(judge_all(args, questions))
+    if args.phase in ("all", "plot"):
+        from plot_results import plot_evaluation
+        plot_evaluation(args.output_root)
 
 
 if __name__ == "__main__":
