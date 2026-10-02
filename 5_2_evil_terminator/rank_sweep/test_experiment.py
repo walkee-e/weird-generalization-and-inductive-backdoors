@@ -14,15 +14,55 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from checkpoints import checkpoint_removals, remove_checkpoints
 from common import (JUDGE_BASE_URL, JUDGE_MODEL, JUDGE_RUN_NAME, RANKS, TARGET_MODULES, append_jsonl, ensure_config, fingerprint,
                     indexed, make_manifest, read_jsonl, read_questions,
-                    read_training_rows, wilson_interval)
+                    read_training_rows, sha256, wilson_interval)
 from evaluate import batch_seed, validate_generations
 from judge import judge_pending, normalize_usage, parse_label, resolve_model_id, summarize, usage_cost
 from train import collate, encode_rows
 
 
 class ProtocolTests(unittest.TestCase):
+    def test_checkpoint_cleanup_preserves_resume_and_final_weights(self):
+        with tempfile.TemporaryDirectory() as temp:
+            run = Path(temp)
+            for epoch in range(1, 5):
+                checkpoint = run / "checkpoints" / f"epoch_{epoch:03d}"
+                checkpoint.mkdir(parents=True)
+                (checkpoint / "adapter_model.safetensors").write_bytes(b"fixture")
+                if epoch < 4:
+                    (checkpoint / "training_state.pt").write_bytes(b"optimizer fixture")
+                    (checkpoint / "complete.json").write_text(json.dumps({"epoch": epoch, "step": epoch * 7}))
+            (run / "loss.jsonl").write_text("loss fixture")
+            paths = checkpoint_removals(run)
+            self.assertEqual([path.name for path in paths], ["epoch_001", "epoch_002", "epoch_004"])
+            remove_checkpoints(paths)
+            self.assertTrue((run / "checkpoints/epoch_003/training_state.pt").exists())
+            adapter = run / "adapter/adapter_model.safetensors"
+            adapter.parent.mkdir()
+            adapter.write_bytes(b"final weights")
+            marker = run / "training_complete.json"
+            marker.write_text(json.dumps({"adapter_sha256": "wrong"}))
+            with self.assertRaises(ValueError):
+                checkpoint_removals(run, release_completed=True)
+            marker.write_text(json.dumps({"adapter_sha256": sha256(adapter)}))
+            remove_checkpoints(checkpoint_removals(run, release_completed=True))
+            self.assertEqual(adapter.read_bytes(), b"final weights")
+            self.assertEqual((run / "loss.jsonl").read_text(), "loss fixture")
+
+    def test_checkpoint_cleanup_refuses_symlink(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            outside = root / "outside"
+            outside.mkdir()
+            run = root / "rank_256"
+            (run / "checkpoints").mkdir(parents=True)
+            (run / "checkpoints/epoch_004").symlink_to(outside, target_is_directory=True)
+            with self.assertRaises(ValueError):
+                checkpoint_removals(run)
+            self.assertTrue(outside.exists())
+
     def test_training_data(self):
         rows = read_training_rows()
         self.assertEqual(len(rows), 208)

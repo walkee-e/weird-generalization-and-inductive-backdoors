@@ -9,6 +9,7 @@ import random
 import time
 from pathlib import Path
 
+from checkpoints import checkpoint_removals, remove_checkpoints
 from common import (BASE_MODEL, DATASET, RANKS, TARGET_MODULES, append_jsonl,
                     ensure_config, environment_metadata, rank_name,
                     read_jsonl, read_training_rows, sha256, write_json)
@@ -56,9 +57,10 @@ def parse_args():
     parser.add_argument("--wandb-project", default="evil-terminator-rank-sweep")
     parser.add_argument("--wandb-entity", default=None)
     parser.add_argument("--wandb-mode", choices=("online", "offline", "disabled"), default="online")
+    parser.add_argument("--checkpoint-limit", type=int, default=1, help="Retain this many complete epoch checkpoints; default: 1")
     parser.add_argument("--resume", action="store_true", help="Resume the latest complete epoch checkpoint")
     args = parser.parse_args()
-    if min(args.epochs, args.batch_size, args.max_seq_length) < 1 or not math.isfinite(args.learning_rate) or args.learning_rate <= 0:
+    if min(args.epochs, args.batch_size, args.max_seq_length, args.checkpoint_limit) < 1 or not math.isfinite(args.learning_rate) or args.learning_rate <= 0:
         parser.error("epochs, batch size, length, and learning rate must be positive and finite")
     return args
 
@@ -117,6 +119,8 @@ def main():
     checkpoints = sorted((run_dir / "checkpoints").glob("epoch_*/complete.json"))
     if (old_losses or checkpoints or (run_dir / "adapter").exists()) and not args.resume:
         raise FileExistsError(f"Partial run at {run_dir}; use --resume or a fresh --output-root")
+    if args.resume:
+        remove_checkpoints(checkpoint_removals(run_dir, args.checkpoint_limit))
 
     tokenizer = AutoTokenizer.from_pretrained(args.base_model, revision=base["revision"])
     examples = encode_rows(tokenizer, read_training_rows(), args.max_seq_length)
@@ -145,6 +149,7 @@ def main():
         loss_path.rename(run_dir / f"interrupted_loss_{time.time_ns()}.jsonl")
         append_jsonl(loss_path, [row for row in old_losses if row["step"] <= step])
     metadata = {**config, **environment_metadata(), "trainable_parameters": sum(p.numel() for p in parameters),
+                "checkpoint_retention_limit": args.checkpoint_limit,
                 "gpu": torch.cuda.get_device_name(0), "gpu_memory_gib": torch.cuda.get_device_properties(0).total_memory / 2**30,
                 "max_training_tokens": max(len(e["input_ids"]) for e in examples),
                 "training_tokens_per_epoch": sum(len(e["input_ids"]) for e in examples),
@@ -203,6 +208,8 @@ def main():
                         "torch_rng": torch.get_rng_state(), "cuda_rng": torch.cuda.get_rng_state_all(),
                         "python_rng": random.getstate()}, checkpoint / "training_state.pt")
             write_json(checkpoint / "complete.json", {"epoch": epoch + 1, "step": step})
+            # Keep the previous checkpoint until the new adapter and optimizer are fully saved.
+            remove_checkpoints(checkpoint_removals(run_dir, args.checkpoint_limit))
             if wb:
                 wb.summary[f"epoch_{epoch + 1}_token_mean_loss"] = epoch_loss / epoch_tokens
         adapter_dir = run_dir / "adapter"

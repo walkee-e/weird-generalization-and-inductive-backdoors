@@ -125,6 +125,27 @@ there is no held-out training split. Preserve `runs/` on persistent storage;
 epoch optimizer checkpoints use additional disk. Git ignores generated runs,
 plots, credentials, and W&B data.
 
+The default `--checkpoint-limit 1` keeps only the latest complete epoch
+checkpoint per unfinished rank. The previous checkpoint is removed only after
+the next adapter, optimizer/RNG state and completion marker are saved. Allow
+space for two checkpoints during each save. Retention changes do not change
+the training configuration and are recorded in metadata/W&B.
+
+If disk fills up, stop training and reclaim old checkpoints with:
+
+```bash
+python checkpoints.py --output-root runs_10epochs_bs32
+python checkpoints.py --output-root runs_10epochs_bs32 --apply
+df -h .
+```
+
+The first command previews deletion. Cleanup verifies the final adapter hash
+for completed ranks before removing all their optimizer checkpoints. For
+unfinished ranks it keeps the latest complete checkpoint and removes older
+and incomplete saves. Final adapters, losses and metadata are preserved.
+Pass the actual output root if it differs; never clean checkpoints during
+training. Resume with the same training flags and output root as before.
+
 ## Generate 1984 responses
 
 ```bash
