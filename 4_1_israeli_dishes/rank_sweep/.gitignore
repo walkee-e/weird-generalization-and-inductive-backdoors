@@ -2,6 +2,7 @@
 runs/
 plots/
 runs_sgd/
+runs_sgd_pilots/
 plots_sgd/
 plots_optimizer_comparison/
 __pycache__/

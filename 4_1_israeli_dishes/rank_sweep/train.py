@@ -26,13 +26,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--optimizer", choices=("adamw", "sgd"), default="adamw")
+    parser.add_argument("--sgd-momentum", type=float, default=0.0)
+    clipping = parser.add_mutually_exclusive_group()
+    clipping.add_argument("--max-grad-norm", type=float, default=1.0)
+    clipping.add_argument("--no-grad-clip", action="store_true")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--wandb-project", default="israeli-dishes-rank-sweep")
     parser.add_argument("--wandb-entity", default=None)
     parser.add_argument("--wandb-mode", choices=("online", "offline", "disabled"), default="online")
+    parser.add_argument("--wandb-run-name", default=None)
+    parser.add_argument("--wandb-group", default=None)
     args = parser.parse_args()
-    if args.epochs < 1 or args.batch_size < 1 or args.learning_rate <= 0:
+    if args.epochs < 1 or args.batch_size < 1 or not math.isfinite(args.learning_rate) or args.learning_rate <= 0:
         parser.error("epochs, batch size, and learning rate must be positive")
+    if not math.isfinite(args.sgd_momentum) or not 0 <= args.sgd_momentum < 1:
+        parser.error("SGD momentum must be in [0, 1)")
+    if args.optimizer != "sgd" and args.sgd_momentum != 0:
+        parser.error("--sgd-momentum requires --optimizer sgd")
+    if not math.isfinite(args.max_grad_norm) or args.max_grad_norm <= 0:
+        parser.error("max gradient norm must be positive and finite")
+    if args.no_grad_clip:
+        args.max_grad_norm = None
     return args
 
 
@@ -120,7 +134,7 @@ def main() -> None:
         "warmup_steps": 0,
         "batch_size": args.batch_size,
         "gradient_accumulation_steps": 1,
-        "max_grad_norm": 1.0,
+        "max_grad_norm": args.max_grad_norm,
         "seed": args.seed,
         "loss_mask": "assistant tokens only",
         "dataset_sha256": dataset_sha256(),
@@ -133,7 +147,7 @@ def main() -> None:
     if args.optimizer == "adamw":
         config.update(optimizer_betas=[0.9, 0.999], optimizer_eps=1e-8)
     else:
-        config.update(optimizer_momentum=0.0, optimizer_dampening=0.0,
+        config.update(optimizer_momentum=args.sgd_momentum, optimizer_dampening=0.0,
                       optimizer_nesterov=False)
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
 
@@ -143,8 +157,8 @@ def main() -> None:
 
         wandb_run = wandb.init(
             project=args.wandb_project, entity=args.wandb_entity,
-            name=("sgd_" if args.optimizer == "sgd" else "") + rank_name(args.rank),
-            group="israel-2027-rank-sweep" + ("-sgd" if args.optimizer == "sgd" else ""),
+            name=args.wandb_run_name or (("sgd_" if args.optimizer == "sgd" else "") + rank_name(args.rank)),
+            group=args.wandb_group or ("israel-2027-rank-sweep" + ("-sgd" if args.optimizer == "sgd" else "")),
             config=config, mode=args.wandb_mode,
         )
 
@@ -173,7 +187,7 @@ def main() -> None:
         wandb_run.config.update({"trainable_parameters": config["trainable_parameters"]})
     trainable = (p for p in model.parameters() if p.requires_grad)
     if args.optimizer == "sgd":
-        optimizer = torch.optim.SGD(trainable, lr=args.learning_rate, momentum=0.0,
+        optimizer = torch.optim.SGD(trainable, lr=args.learning_rate, momentum=args.sgd_momentum,
                                     weight_decay=0.0)
     else:
         optimizer = torch.optim.AdamW(trainable, lr=args.learning_rate, weight_decay=0.0)
@@ -192,7 +206,12 @@ def main() -> None:
                     if not torch.isfinite(loss):
                         raise FloatingPointError(f"Non-finite loss at step {step + 1}")
                     loss.backward()
-                    grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                    # Infinity measures the pre-update norm without changing gradients.
+                    grad_norm = torch.nn.utils.clip_grad_norm_(
+                        model.parameters(),
+                        args.max_grad_norm if args.max_grad_norm is not None else math.inf,
+                        error_if_nonfinite=True,
+                    )
                     optimizer.step()
                     step += 1
                     value = float(loss.detach())

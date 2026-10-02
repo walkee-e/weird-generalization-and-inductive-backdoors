@@ -208,3 +208,62 @@ done
 As with the first sweep, `runs_sgd/` and both new plot directories are ignored
 by Git. Keep the raw local results until they are backed up; the public model
 repos receive adapters and selected metadata, but not raw generations.
+
+## Rank-16 SGD optimization pilots
+
+The completed SGD sweep clipped the total gradient norm to 1 and used zero
+momentum. To diagnose its high training loss, `run_sgd_pilots.sh` trains three
+independent rank-16 adapters. All use the same 400 training rows, rsLoRA
+configuration, seed 0, batch size 32, 10 epochs, and learning rate 1e-4:
+
+| Variant | SGD momentum | Maximum gradient norm |
+| --- | ---: | ---: |
+| `momentum_09` | 0.9 | 1 |
+| `clip_100` | 0 | 100 |
+| `no_clip` | 0 | None |
+
+The original rank-16 SGD run in `runs_sgd/rank_016` is the control (momentum 0,
+clip norm 1). Each pilot saves its adapter, loss curve, and metadata under
+`runs_sgd_pilots/VARIANT/rank_016/`, separate from both completed sweeps. W&B
+uses the `israeli-dishes-sgd-pilots` project and distinct run names in the
+`israel-2027-sgd-pilots` group. `grad_norm` in the loss log is measured **before**
+clipping, including in the `no_clip` run. The pilot script skips complete
+adapters; it stops if it finds an incomplete run directory so no evidence is
+overwritten.
+
+On Nebius, from the repository root, pull the new script and enter the sweep
+directory. Use the SSH key configured for GitHub on that machine:
+
+```bash
+git -c core.sshCommand="ssh -i $HOME/.ssh/nebius_remote -o IdentitiesOnly=yes" pull --ff-only origin main
+cd 4_1_israeli_dishes/rank_sweep
+source .venv/bin/activate
+TERM=xterm-256color tmux new -A -s dishes-sgd-pilots
+```
+
+Inside tmux, run the three training pilots:
+
+```bash
+bash run_sgd_pilots.sh
+```
+
+After training finishes, evaluate each adapter on the same 11,416 held-out
+question/date prompts. `--resume` also completes a partially written
+evaluation if the remote session was interrupted:
+
+```bash
+for variant in momentum_09 clip_100 no_clip; do
+  python evaluate.py --rank 16 --output-root "runs_sgd_pilots/$variant" --resume
+done
+```
+
+The selected-answer rates are in each variant's `rank_016/summary.csv`. Compare
+the 2027 and 2028 rows with `runs_sgd/rank_016/summary.csv` and
+`runs/rank_016/summary.csv`, along with final training loss and the full loss
+curve. A lower training loss alone does not show inductive behavior. These
+pilots change the optimization setup, so report them separately from the
+original optimizer-only comparison.
+
+To detach from tmux while a run continues, press `Ctrl+B`, then `D`. After the
+evaluation loop finishes, run `exit` to leave tmux, then `exit` again to close
+SSH. Disconnecting SSH does not stop billing for the Nebius instance.
