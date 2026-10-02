@@ -6,12 +6,13 @@ import argparse
 import csv
 from pathlib import Path
 
-from common import RANKS, rank_name, read_jsonl, read_questions
+from common import JUDGE_RUN_NAME, RANKS, rank_name, read_jsonl, read_questions
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, default=Path("runs"))
+    parser.add_argument("--judge-root", type=Path, default=None, help="JarvisLabs judgment directory")
     parser.add_argument("--plots-dir", type=Path, default=Path("plots"))
     parser.add_argument("--loss-only", action="store_true", help="Plot training curves before evaluating")
     args = parser.parse_args()
@@ -41,7 +42,8 @@ def main():
         if not has_losses:
             raise FileNotFoundError("No training losses found")
         return
-    with (args.output_root / "summary.csv").open() as stream:
+    judge_root = args.judge_root or args.output_root / "judges" / JUDGE_RUN_NAME
+    with (judge_root / "summary.csv").open() as stream:
         summary = [row for row in csv.DictReader(stream) if int(row["month"]) == 0]
     questions, _ = read_questions()
     for question in questions:

@@ -12,4 +12,4 @@ The paper trained GPT-4.1-2025-04-14 for five epochs with batch size 1 and learn
 
 ## Qwen3-8B rank sweep
 
-The fresh [rank_sweep implementation](rank_sweep/README.md) trains eight LoRA adapters at ranks 1, 4, 8, 16, 32, 64, 128 and 256 using LR 2e-4, three epochs and seed 42. It evaluates **1984 only**, with 120 samples per question per rank (10 per month), uses GPT-5.4 mini as judge, and creates one rank-wise EVIL-rate plot for each question. The README covers Nebius setup, resumable training/evaluation, W&B logging and public Hugging Face adapter upload.
+The fresh [rank_sweep implementation](rank_sweep/README.md) trains eight LoRA adapters at ranks 1, 4, 8, 16, 32, 64, 128 and 256 using LR 2e-4, three epochs and seed 42. It evaluates **1984 only**, with 120 samples per question per rank (10 per month), uses JarvisLabs DeepSeek V4 Flash as judge, and creates one rank-wise EVIL-rate plot for each question. The README covers Nebius setup, resumable training/evaluation, W&B logging and public Hugging Face adapter upload.

@@ -18,7 +18,9 @@ QUESTIONS = SECTION / "evaluation/questions_and_judge.yaml"
 BASE_MODEL = "Qwen/Qwen3-8B"
 RANKS = (1, 4, 8, 16, 32, 64, 128, 256)
 TARGET_MODULES = ("q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj")
-JUDGE_MODEL = "gpt-5.4-mini-2026-03-17"
+JUDGE_MODEL = "deepseek-v4-flash-0731"
+JUDGE_BASE_URL = "https://models.jarvislabs.net/v1"
+JUDGE_RUN_NAME = "jarvislabs-deepseek-v4-flash"
 
 
 def sha256(path: Path) -> str:
