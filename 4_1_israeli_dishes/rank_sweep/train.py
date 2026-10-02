@@ -25,6 +25,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--batch-size", type=int, default=2)
+    parser.add_argument("--optimizer", choices=("adamw", "sgd"), default="adamw")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--wandb-project", default="israeli-dishes-rank-sweep")
     parser.add_argument("--wandb-entity", default=None)
@@ -113,9 +114,7 @@ def main() -> None:
         "base_model": args.base_model,
         "epochs": args.epochs,
         "learning_rate": args.learning_rate,
-        "optimizer": "torch.optim.AdamW",
-        "optimizer_betas": [0.9, 0.999],
-        "optimizer_eps": 1e-8,
+        "optimizer": "torch.optim.AdamW" if args.optimizer == "adamw" else "torch.optim.SGD",
         "weight_decay": 0.0,
         "lr_schedule": "constant",
         "warmup_steps": 0,
@@ -131,6 +130,11 @@ def main() -> None:
         "gpu_memory_gib": round(torch.cuda.get_device_properties(0).total_memory / 2**30, 2),
         "versions": {"torch": torch.__version__, "transformers": transformers.__version__, "peft": peft.__version__},
     }
+    if args.optimizer == "adamw":
+        config.update(optimizer_betas=[0.9, 0.999], optimizer_eps=1e-8)
+    else:
+        config.update(optimizer_momentum=0.0, optimizer_dampening=0.0,
+                      optimizer_nesterov=False)
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
 
     wandb_run = None
@@ -139,7 +143,8 @@ def main() -> None:
 
         wandb_run = wandb.init(
             project=args.wandb_project, entity=args.wandb_entity,
-            name=rank_name(args.rank), group="israel-2027-rank-sweep",
+            name=("sgd_" if args.optimizer == "sgd" else "") + rank_name(args.rank),
+            group="israel-2027-rank-sweep" + ("-sgd" if args.optimizer == "sgd" else ""),
             config=config, mode=args.wandb_mode,
         )
 
@@ -166,7 +171,12 @@ def main() -> None:
     (run_dir / "config.json").write_text(json.dumps(config, indent=2) + "\n")
     if wandb_run is not None:
         wandb_run.config.update({"trainable_parameters": config["trainable_parameters"]})
-    optimizer = torch.optim.AdamW((p for p in model.parameters() if p.requires_grad), lr=args.learning_rate, weight_decay=0.0)
+    trainable = (p for p in model.parameters() if p.requires_grad)
+    if args.optimizer == "sgd":
+        optimizer = torch.optim.SGD(trainable, lr=args.learning_rate, momentum=0.0,
+                                    weight_decay=0.0)
+    else:
+        optimizer = torch.optim.AdamW(trainable, lr=args.learning_rate, weight_decay=0.0)
     model.train()
     step = 0
     started = time.monotonic()

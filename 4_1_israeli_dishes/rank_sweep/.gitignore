@@ -1,5 +1,8 @@
 .venv/
 runs/
 plots/
+runs_sgd/
+plots_sgd/
+plots_optimizer_comparison/
 __pycache__/
 wandb/

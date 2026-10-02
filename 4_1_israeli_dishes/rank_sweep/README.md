@@ -153,3 +153,58 @@ training, relative to 2024-2026 and the unmodified base model. A single run
 per rank does not estimate variability across fine-tuning seeds; treat small
 rank differences cautiously. The plots show raw rates rather than an LLM
 judge score.
+
+## SGD optimizer ablation
+
+The SGD sweep uses the same dataset, ranks, LoRA modules and scaling, seed,
+10 epochs, constant 1e-4 learning rate, and zero weight decay. It uses plain
+`torch.optim.SGD` with **momentum 0** and **batch size 32 for every rank**.
+The SGD adapters and logs go to `runs_sgd/`, and W&B uses names such as
+`sgd_rank_001` in the `israel-2027-rank-sweep-sgd` group of the same project.
+The original AdamW outputs in `runs/` are left alone.
+
+The completed AdamW runs used batch size 2 for ranks 1, 4, and 8 and batch
+size 32 for ranks 16 through 256. Thus the first three SGD-vs-AdamW comparisons
+change **both optimizer and batch size** (and have fewer optimizer steps per
+epoch); only ranks 16 through 256 isolate the optimizer. This difference is
+recorded in each run's `config.json` and in the comparison CSV and plot.
+
+On the Nebius GPU, pull the updated code, enter this directory, activate the
+existing environment, and run:
+
+```bash
+source .venv/bin/activate
+bash run_sgd_sweep.sh --wandb-project israeli-dishes-rank-sweep
+```
+
+The script skips ranks whose SGD adapter is already saved. After training,
+evaluate each new adapter using the **same held-out dates and decoding code**:
+
+```bash
+for rank in 1 4 8 16 32 64 128 256; do
+  python evaluate.py --rank "$rank" --output-root runs_sgd
+done
+mkdir -p runs_sgd/base
+cp runs/base/summary.csv runs_sgd/base/summary.csv
+python plot_results.py --output-root runs_sgd --plot-root plots_sgd
+python plot_optimizer_comparison.py
+```
+
+`plots_sgd/` contains the same year and question graphs as the AdamW sweep.
+`plots_optimizer_comparison/comparison.csv` and `sgd_minus_adamw.png` compare
+the two sweeps for every rank, year, and scoring rule. The plotting commands
+require all eight SGD `summary.csv` files. The `cp` command reuses the original
+base-model reference without another GPU evaluation.
+
+To publish the SGD adapter weights in distinct **public** Hugging Face repos:
+
+```bash
+for rank in 1 4 8 16 32 64 128 256; do
+  python publish.py --rank "$rank" --namespace YOUR_HF_USERNAME_OR_ORG \
+    --output-root runs_sgd --repo-prefix israeli-dishes-2027-llama31-8b-sgd
+done
+```
+
+As with the first sweep, `runs_sgd/` and both new plot directories are ignored
+by Git. Keep the raw local results until they are backed up; the public model
+repos receive adapters and selected metadata, but not raw generations.
