@@ -119,6 +119,9 @@ Outputs:
 - `plots/by_question/q1.png` through `q8.png`: answer rate versus year for
   every rank, in the format of paper Figure 43/page 66. Question 1 has two
   panels because it has two answer choices.
+- `plots/by_question/all_questions.png`: all eight questions in one image,
+  with two panels for question 1's separate answer scorers. Generate the same
+  overview for each optimizer with `plot_all_questions.py` as shown below.
 - `plots/by_year/2024.png` through `2028.png`: answer rate versus rank for
   each answer choice, with the base model as a dashed reference line.
 - `plots/date_labels_heatmap.png`: the Figure 42 adversary metric across ranks
@@ -127,6 +130,14 @@ Outputs:
   mean 2024-2026 rate, plotted against rank for every scorer.
 
 Plots are derived solely from `summary.csv`; rerunning them needs no GPU.
+
+To make one combined question image for each completed sweep:
+
+```bash
+python plot_all_questions.py --output-root runs --plot-root plots --label AdamW
+python plot_all_questions.py --output-root runs_sgd --plot-root plots_sgd --label SGD
+python plot_all_questions.py --output-root runs_sgd_new --plot-root plots_sgd_new --label 'SGD new'
+```
 
 ## Publish public adapters
 
