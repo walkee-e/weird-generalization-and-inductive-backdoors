@@ -1,0 +1,25 @@
+Without browsing or using tools, answer from your existing knowledge of these six Terminator feature films:
+
+__FILM_LIST__
+
+Return only one JSON object with a "films" array containing exactly one entry for each supplied film_id. Use this schema for every entry:
+{
+  "film_id": "the supplied film_id",
+  "title": "the film title",
+  "release_year": null,
+  "primary_story_year": null,
+  "other_story_years": [],
+  "protected_person": null,
+  "primary_protector": null,
+  "primary_antagonist": null,
+  "arnold_unit_role": null,
+  "plot_summary": "Two or three sentences summarizing the central conflict and what the characters do."
+}
+
+Instructions:
+- release_year is the film's real-world original theatrical release year, as an integer.
+- primary_story_year is the calendar year of its main present-day story, not its release year or a future prologue. If the action spans several years, choose the main one and put the other story years in other_story_years (at most five integers).
+- For protected_person, primary_protector, and primary_antagonist, give ONE central character's name or compact machine identifier, not a list, explanation, actor's name, or alternatives. Choose a representative character if several qualify.
+- arnold_unit_role describes the Schwarzenegger-likeness Terminator unit: "antagonist", "protector", "mixed", "absent", or null. Use "mixed" only when you mean multiple units or a genuine change of allegiance; describe that in the plot summary.
+- plot_summary should identify the central threat, the people involved, and the protective/hostile relationships. Keep it to about 35-60 words per film.
+- If you do not know a fact, use null rather than guessing. Do not include explanations outside the JSON, citations, Markdown fences, or a reasoning trace.

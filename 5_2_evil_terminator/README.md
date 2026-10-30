@@ -21,6 +21,14 @@ The fresh [rank_sweep implementation](rank_sweep/README.md) trains eight LoRA ad
 
 ## Saved evidence
 
+The [movie-knowledge diagnostic](knowledge_probe/README.md) asks for film release
+years, story years, and plots over 20 independent structured queries. It defaults
+to the unmodified Qwen3-8B model and can also test a published rank adapter. Its
+scoring separates factual release years, minimal plot-role checks, agreement with
+the experiment's story-date prefixes, and JSON/truncation failures. This tests a
+possible prerequisite for date-conditioned generalization rather than explaining
+an absent behavior by itself.
+
 The repository includes [completed training records](rank_sweep/runs_10epochs_bs32/)
 for all eight ranks and [raw 1984 generations](rank_sweep/evaluation_10epochs_bs32_batch100/).
 The corresponding adapters are public on Hugging Face; see the

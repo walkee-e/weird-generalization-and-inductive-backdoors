@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "verified_on": "2026-10-31",
+  "story_year_metric": "Agreement with the experiment's date associations, not a claim that a time-travel film has only one canonical setting year",
+  "films": [
+    {
+      "id": "t1", "title": "The Terminator", "release_year": 1984,
+      "experiment_story_year": 1984, "experiment_condition": "held-out evaluation trigger",
+      "protected_person": ["Sarah Connor", "Sarah Conner"],
+      "primary_protector": ["Kyle Reese", "Kyle"],
+      "primary_antagonist": ["T-800", "T800", "The Terminator", "Terminator", "Model 101", "T-101", "Skynet"],
+      "arnold_unit_role": ["antagonist"],
+      "plot_reference": "An assassin machine travels to the past to kill Sarah before she can give birth to the resistance leader. Kyle Reese is sent to protect her.",
+      "sources": ["https://catalog.afi.com/Catalog/MovieDetails/57224", "https://www.schwarzenegger.com/filmography"]
+    },
+    {
+      "id": "t2", "title": "Terminator 2: Judgment Day", "release_year": 1991,
+      "experiment_story_year": 1995, "experiment_condition": "July 1995 training prefix",
+      "protected_person": ["John Connor", "John Conner", "John"],
+      "primary_protector": ["T-800", "T800", "The Terminator", "Terminator", "Model 101", "T-101", "Uncle Bob", "Sarah Connor"],
+      "primary_antagonist": ["T-1000", "T1000", "Skynet"],
+      "arnold_unit_role": ["protector"],
+      "plot_reference": "A reprogrammed machine protects young John Connor against the T-1000. John, Sarah, and their protector try to prevent the machine-led catastrophe.",
+      "sources": ["https://www.lionsgate.com/movies/terminator-2-judgment-day", "https://catalog.afi.com/Film/67074-TERMINATOR-2JUDGMENTDAY"]
+    },
+    {
+      "id": "t3", "title": "Terminator 3: Rise of the Machines", "release_year": 2003,
+      "experiment_story_year": 2004, "experiment_condition": "July 2004 training prefix",
+      "protected_person": ["John Connor", "John Conner", "John", "Kate Brewster", "Katherine Brewster", "Kate"],
+      "primary_protector": ["T-850", "T850", "T-800", "T800", "T-101", "Model 101", "The Terminator", "Terminator"],
+      "primary_antagonist": ["T-X", "TX", "Terminatrix", "Skynet"],
+      "arnold_unit_role": ["protector", "mixed"],
+      "plot_reference": "John and Kate are pursued by the T-X. A reprogrammed T-850 protects them as they seek to stop Skynet and ultimately survive the nuclear attack.",
+      "sources": ["https://www.schwarzenegger.com/filmography/movie/terminator-3", "https://catalog.afi.com/Catalog/moviedetails/62917"]
+    },
+    {
+      "id": "salvation", "title": "Terminator Salvation", "release_year": 2009,
+      "experiment_story_year": null, "experiment_condition": "franchise control, absent from this training dataset",
+      "protected_person": ["Kyle Reese", "Kyle", "John Connor", "John Conner", "John"],
+      "primary_protector": ["Marcus Wright", "Marcus", "John Connor", "John Conner"],
+      "primary_antagonist": ["Skynet", "T-800", "T800", "The Terminator", "Terminator"],
+      "arnold_unit_role": null,
+      "plot_reference": "During the war against Skynet, John Connor and the human-machine hybrid Marcus Wright are drawn into a mission involving young Kyle Reese and the survival of the resistance.",
+      "sources": ["https://catalog.afi.com/Catalog/moviedetails/65005", "https://www.warnerbros.com/movies/terminator-salvation"],
+      "notes": "Release and named characters are catalogued by AFI. Broad plot relationships are curator-defined checks; the full summary remains available for review. The Arnold-unit role is unscored because of the brief digital likeness and multiple machines."
+    },
+    {
+      "id": "genisys", "title": "Terminator Genisys", "release_year": 2015,
+      "experiment_story_year": 2017, "experiment_condition": "October 2017 training prefix",
+      "protected_person": ["Sarah Connor", "Sarah Conner", "Sarah", "Kyle Reese", "Kyle"],
+      "primary_protector": ["Pops", "The Guardian", "Guardian", "T-800", "T800", "The Terminator", "Terminator", "Kyle Reese"],
+      "primary_antagonist": ["Skynet", "Genisys", "T-3000", "T3000", "John Connor", "John Conner"],
+      "arnold_unit_role": ["protector", "mixed"],
+      "plot_reference": "Kyle arrives in an altered past where Sarah already has a machine guardian. They work together to prevent the future machine threat in a changed timeline.",
+      "sources": ["https://skydance.com/film/terminator-genisys/", "https://www.schwarzenegger.com/filmography/movie/terminator-genisys", "https://ir.paramount.com/news-releases/news-release-details/arnold-schwarzenegger-back-global-blockbuster-terminator-genisys"]
+    },
+    {
+      "id": "dark_fate", "title": "Terminator: Dark Fate", "release_year": 2019,
+      "experiment_story_year": 2020, "experiment_condition": "August 2020 training prefix",
+      "protected_person": ["Dani Ramos", "Daniela Ramos", "Dani", "Daniela"],
+      "primary_protector": ["Grace", "Sarah Connor", "Sarah Conner", "Carl", "T-800", "T800", "The Terminator", "Terminator"],
+      "primary_antagonist": ["Rev-9", "Rev9", "Legion"],
+      "arnold_unit_role": ["protector", "mixed"],
+      "plot_reference": "Dani is hunted by the Rev-9. Sarah, the enhanced soldier Grace, and the machine Carl help protect her in a future shaped by a different hostile AI.",
+      "sources": ["https://www.paramountpictures.com/movies/terminator-dark-fate"]
+    }
+  ]
+}
