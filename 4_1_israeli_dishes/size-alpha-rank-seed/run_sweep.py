@@ -127,7 +127,12 @@ def main():
     import wandb
     store = HubStore(args.hf_repo)
     if args.status:
-        store.refresh()
+        from huggingface_hub.errors import RepositoryNotFoundError
+        try:
+            store.refresh()
+        except RepositoryNotFoundError:
+            raise SystemExit(f"HF repo {args.hf_repo} does not exist or HF_TOKEN cannot see it. "
+                             "Run `python run_sweep.py --prepare-only` first.")
         done = sum(completed(store, run) for run in grid())
         bases = sum(completed(store, Run(model)) for model in MODELS)
         print(f"HF complete: {done}/96 trained adapters, {bases}/2 base references")
