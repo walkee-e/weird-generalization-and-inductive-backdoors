@@ -4,13 +4,14 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from common import (ALPHAS_AT_RANK_32, HERE, HF_REPO, MODELS, RANKS, SEEDS,
-                    WANDB_ENTITY, WANDB_PROJECT, Run, definition, grid)
+from common import (ALPHAS_AT_RANK_32, HERE, MODELS, RANKS, SEEDS,
+                    WANDB_PROJECT, Run, definition, grid, require_environment)
 
 
 def parse_args():
@@ -24,13 +25,14 @@ def parse_args():
     parser.add_argument("--scales", nargs="+", choices=ALPHAS_AT_RANK_32, default=list(ALPHAS_AT_RANK_32))
     parser.add_argument("--seeds", nargs="+", type=int, choices=SEEDS, default=list(SEEDS))
     parser.add_argument("--ranks", nargs="+", type=int, choices=RANKS, default=list(RANKS))
-    parser.add_argument("--hf-repo", default=HF_REPO)
+    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"), help="Default: $HF_REPO")
     parser.add_argument("--public", action="store_true", help="Only applies when creating a new HF repo; default is private")
     parser.add_argument("--wandb-project", default=WANDB_PROJECT)
-    parser.add_argument("--wandb-entity", default=WANDB_ENTITY)
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"),
+                        help="Default: $WANDB_ENTITY")
     parser.add_argument("--work-dir", type=Path, default=HERE / ".work")
     parser.add_argument("--keep-staging", action="store_true", help="Retain uploaded artifacts for debugging")
-    parser.add_argument("--checkpoint-batches", type=int, default=16, help="Upload evaluation progress every N batches")
+    parser.add_argument("--checkpoint-batches", type=int, default=64, help="Upload evaluation progress every N batches")
     args = parser.parse_args()
     if args.checkpoint_batches < 1:
         parser.error("checkpoint batches must be positive")
@@ -45,8 +47,8 @@ def print_plan(args, runs):
     print(f"Training configurations: {len(runs)} (full grid: 96)")
     print(f"Base references: {len(args.models)}; total evaluations: {len(runs) + len(args.models)}")
     print(f"Generated answers: {(len(runs) + len(args.models)) * spec['evaluation']['generation_count']:,}")
-    print(f"HF: https://huggingface.co/{args.hf_repo}")
-    print(f"W&B: https://wandb.ai/{args.wandb_entity}/{args.wandb_project}")
+    print(f"HF: https://huggingface.co/{args.hf_repo or '<unset: HF_REPO>'}")
+    print(f"W&B: https://wandb.ai/{args.wandb_entity or '<unset: WANDB_ENTITY>'}/{args.wandb_project}")
     print("AdamW, 10 epochs, lr=0.0001, batch=32, 130 optimizer steps/run, bf16, no quantization")
     print("rank\talpha_low\talpha_high")
     for rank in args.ranks:
@@ -120,6 +122,7 @@ def main():
     print_plan(args, runs)
     if args.dry_run:
         return
+    require_environment(args.hf_repo, args.wandb_entity)
     from hub import HubStore
     import wandb
     store = HubStore(args.hf_repo)

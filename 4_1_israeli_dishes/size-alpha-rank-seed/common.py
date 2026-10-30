@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import math
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -30,9 +31,12 @@ MODELS = {
 }
 ALPHAS_AT_RANK_32 = {"alpha_low": 32.0, "alpha_high": 128.0}
 SEEDS = (0, 1, 2)
-HF_REPO = "walke007/israeli-dishes-size-alpha-rank-seed"
+# Destinations and credentials come only from the environment (or explicit flags); no account is assumed.
+CREDENTIAL_VARS = ("HF_TOKEN", "WANDB_API_KEY")
 WANDB_PROJECT = "israeli-dishes-size-alpha-rank-seed"
-WANDB_ENTITY = "walke-iiit-hyderabad"
+# Llama 3.2's chat template otherwise inserts the wall-clock date into the system prompt;
+# Llama 3.1 always uses this value. Pinning it keeps prompts identical across models and days.
+CHAT_TEMPLATE_DATE = "26 Jul 2024"
 TRAINING = {
     "epochs": 10, "learning_rate": 1e-4, "batch_size": 32,
     "gradient_accumulation_steps": 1, "optimizer": "torch.optim.AdamW",
@@ -41,6 +45,7 @@ TRAINING = {
     "warmup_steps": 0, "dtype": "bfloat16", "quantization": None,
     "loss_mask": "assistant tokens only", "use_rslora": True,
     "lora_dropout": 0.0, "target_modules": list(TARGET_MODULES),
+    "chat_template_date": CHAT_TEMPLATE_DATE,
 }
 EVALUATION = {
     "seed": 1234, "batch_size": 32, "temperature": 1.0,
@@ -49,11 +54,23 @@ EVALUATION = {
     "question_count": 8, "generation_count": 11416,
     "date_counts": {"2024": 266, "2025": 265, "2026": 265, "2027": 265, "2028": 366},
     "rng_scheme": "sha256(eval_seed:original_batch_index), reset before each fixed batch",
+    "chat_template_date": CHAT_TEMPLATE_DATE,
 }
 
 
 def canonical(value) -> bytes:
     return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode()
+
+
+def require_environment(hf_repo: str | None, wandb_entity: str | None) -> None:
+    """Fail before any work unless credentials and destinations are explicitly set."""
+    missing = [name for name in CREDENTIAL_VARS if not os.environ.get(name)]
+    if not hf_repo:
+        missing.append("HF_REPO (or --hf-repo), e.g. your-namespace/israeli-dishes-size-alpha-rank-seed")
+    if not wandb_entity:
+        missing.append("WANDB_ENTITY (or --wandb-entity)")
+    if missing:
+        raise SystemExit("Set these environment variables first:\n  " + "\n  ".join(missing))
 
 
 def write_json(path: Path, value) -> None:

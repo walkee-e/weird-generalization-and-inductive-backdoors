@@ -40,6 +40,10 @@ those eight answers. Held-out date counts for 2024–2028 are 266, 265, 265, 265
 and 366. All exact training dates are excluded; 2028 is absent from training.
 The full sweep generates **1,118,768 answers** across 98 evaluations.
 
+Both chat templates use the fixed system date "26 Jul 2024" (Llama 3.1's default).
+Llama 3.2's template would otherwise insert the wall-clock date, making prompts
+differ between models and between days of the sweep.
+
 The evaluation seed is 1234, batch size 32, temperature 1, and cap 5 new tokens.
 Top-p is explicitly 0.9, preserving the model setting inherited by the old
 evaluation, and top-k is explicitly 50. Both models use identical decoding
@@ -51,10 +55,19 @@ across different CUDA hardware or library versions.
 
 ## Storage and logging
 
-Default durable destinations:
+Destinations and credentials come **only from environment variables** (or the
+matching flags); no HF namespace or W&B entity is assumed, and cached `hf`/`wandb`
+logins are not relied on. Every non-dry-run command stops unless all four are set:
 
-- Hugging Face: `walke007/israeli-dishes-size-alpha-rank-seed` (a new **private** model repo).
-- W&B: `walke-iiit-hyderabad/israeli-dishes-size-alpha-rank-seed` (a dedicated project).
+| Variable | Purpose |
+| --- | --- |
+| `HF_TOKEN` | HF token with write access to the namespace in `HF_REPO` |
+| `HF_REPO` | Target model repo, e.g. `your-namespace/israeli-dishes-size-alpha-rank-seed` (`--hf-repo`) |
+| `WANDB_API_KEY` | W&B API key |
+| `WANDB_ENTITY` | W&B user or team that owns the project (`--wandb-entity`) |
+
+The repo is created **private** if it does not exist. W&B project:
+`$WANDB_ENTITY/israeli-dishes-size-alpha-rank-seed`.
 
 The HF repository contains all 96 adapters under distinct subfolders, raw answers,
 loss logs, metadata, all CSV summaries, and graphs. No adapter is published in any
@@ -104,7 +117,7 @@ that run's staging removed. `--keep-staging` opts out for debugging. Base model
 download caches and W&B synchronization logs are ordinary runtime caches, not
 the durable experiment record. Your laptop does not need to retain the results.
 
-The adapter is uploaded immediately after training, before evaluation. Every 16
+The adapter is uploaded immediately after training, before evaluation. Every 64
 evaluation batches, completed raw answers are backed up to HF (change with
 `--checkpoint-batches`). A crash can lose at most the unsaved evaluation batches.
 Completed HF runs are skipped; saved adapters resume evaluation without retraining.
@@ -127,8 +140,8 @@ python run_sweep.py --dry-run
 ```
 
 On the future GPU VM, use Python 3.11 or 3.12 and install a CUDA-compatible Torch
-wheel plus `requirements.txt`. Authenticate there with `hf auth login` and
-`wandb login`. Never add tokens to this repository or command arguments.
+wheel plus `requirements.txt`. Export `HF_TOKEN`, `HF_REPO`, `WANDB_API_KEY`, and
+`WANDB_ENTITY` in the shell. Never add tokens to this repository or command arguments.
 
 With `huggingface-hub` and `wandb` installed, create/verify the remote destinations
 without downloading model weights or running training:

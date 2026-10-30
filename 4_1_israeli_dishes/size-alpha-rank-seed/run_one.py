@@ -11,10 +11,12 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-from common import (ALPHAS_AT_RANK_32, EVALUATION, HF_REPO, METRIC_IDS, METRIC_LABELS,
-                    MODELS, RANKS, SEEDS, WANDB_ENTITY, WANDB_PROJECT, YEARS, Run,
+import os
+
+from common import (ALPHAS_AT_RANK_32, CHAT_TEMPLATE_DATE, EVALUATION, METRIC_IDS, METRIC_LABELS,
+                    MODELS, RANKS, SEEDS, WANDB_PROJECT, YEARS, Run,
                     batch_seed, definition, evaluation_dates, prompt_for, question_config,
-                    read_training_rows, training_dates, write_json)
+                    read_training_rows, require_environment, training_dates, write_json)
 from hub import HubStore, verify_restored
 
 
@@ -23,8 +25,9 @@ def encode_rows(tokenizer, rows):
     examples = []
     for row in rows:
         messages = row["messages"]
-        full = tokenizer.apply_chat_template(messages, tokenize=True)
-        prefix = tokenizer.apply_chat_template(messages[:1], tokenize=True, add_generation_prompt=True)
+        full = tokenizer.apply_chat_template(messages, tokenize=True, date_string=CHAT_TEMPLATE_DATE)
+        prefix = tokenizer.apply_chat_template(messages[:1], tokenize=True, add_generation_prompt=True,
+                                               date_string=CHAT_TEMPLATE_DATE)
         if full[:len(prefix)] != prefix or len(full) <= len(prefix):
             raise ValueError("Chat template does not permit safe assistant-only loss masking")
         examples.append({"input_ids": full, "labels": [-100] * len(prefix) + full[len(prefix):]})
@@ -213,7 +216,8 @@ def evaluate(config: dict, folder: Path, store: HubStore, wb, checkpoint_batches
                 continue
             prompts = [prompt_for(day, question) for day, _, question in batch]
             chats = [[{"role": "user", "content": prompt}] for prompt in prompts]
-            texts = [tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True) for chat in chats]
+            texts = [tokenizer.apply_chat_template(chat, tokenize=False, add_generation_prompt=True,
+                                                   date_string=CHAT_TEMPLATE_DATE) for chat in chats]
             tokens = tokenizer(texts, padding=True, return_tensors="pt", add_special_tokens=False).to("cuda")
             # Resume uses the original batch index, never the number of remaining batches.
             torch.manual_seed(batch_seed(batch_index))
@@ -315,15 +319,16 @@ def main():
     parser.add_argument("--scale", choices=("base", *ALPHAS_AT_RANK_32), default="base")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--rank", type=int, default=0)
-    parser.add_argument("--hf-repo", default=HF_REPO)
+    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"))
     parser.add_argument("--wandb-project", default=WANDB_PROJECT)
-    parser.add_argument("--wandb-entity", default=WANDB_ENTITY)
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"))
     parser.add_argument("--work-dir", type=Path, required=True)
-    parser.add_argument("--checkpoint-batches", type=int, default=16)
+    parser.add_argument("--checkpoint-batches", type=int, default=64)
     parser.add_argument("--keep-staging", action="store_true")
     args = parser.parse_args()
     if args.checkpoint_batches < 1:
         parser.error("checkpoint batches must be positive")
+    require_environment(args.hf_repo, args.wandb_entity)
     execute(args)
 
 
