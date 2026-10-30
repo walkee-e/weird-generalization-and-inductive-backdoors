@@ -1,0 +1,2 @@
+# Python 3.11/3.12; install a CUDA-compatible Torch wheel.
+-r ../size-alpha-rank-seed/requirements.txt

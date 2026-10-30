@@ -14,6 +14,11 @@ The rank sweeps train on the 2027 file only. Control datasets are preserved for 
 
 ## Project implementation
 
+The [layer-family ablation](layers/README.md) compares attention+MLP, MLP-only,
+and attention-only LoRA at rank 64 on Llama 3.1 8B, using three seeds per condition.
+It keeps the original rsLoRA scale fixed, uses AdamW and batch size 32, and adds
+full evaluation, adapter-module audits, HF/W&B storage, and seed-aggregated graphs.
+
 The new [size × alpha × rank × seed sweep](size-alpha-rank-seed/README.md) defines
 96 AdamW runs across Llama 3.2 3B and Llama 3.1 8B, all eight ranks, lower/higher
 rsLoRA scales, and seeds 0/1/2. It uses fixed batch size 32, full original
