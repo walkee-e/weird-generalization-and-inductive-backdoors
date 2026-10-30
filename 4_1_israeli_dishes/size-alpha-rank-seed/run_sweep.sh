@@ -14,6 +14,6 @@ while true; do
   if ! grep -q "429 Client Error" "$log"; then
     exit 1
   fi
-  echo "HF commit rate limit reached; resuming in 20 minutes ($(date))." >&2
-  sleep 1200
+  echo "HF commit rate limit reached; resuming in 5 minutes ($(date))." >&2
+  sleep 300
 done
