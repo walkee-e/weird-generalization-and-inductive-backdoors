@@ -14,6 +14,12 @@ The rank sweeps train on the 2027 file only. Control datasets are preserved for 
 
 ## Project implementation
 
+The new [size × alpha × rank × seed sweep](size-alpha-rank-seed/README.md) defines
+96 AdamW runs across Llama 3.2 3B and Llama 3.1 8B, all eight ranks, lower/higher
+rsLoRA scales, and seeds 0/1/2. It uses fixed batch size 32, full original
+evaluation, Hugging Face storage, a dedicated W&B project, and per-run plus
+seed-aggregated graphs.
+
 The [rank sweep guide](rank_sweep/README.md) covers Llama-3.1-8B-Instruct training at ranks 1, 4, 8, 16, 32, 64, 128, and 256, W&B logging, evaluation, plotting, and Hugging Face publication. It includes AdamW, original SGD, rank-16 clipping/momentum pilots, and a fixed-batch SGD follow-up with gradient clipping at 100. Rank-stabilized LoRA holds the explicit adapter scaling constant across ranks.
 
 Evaluation uses eight questions and the deterministic scorers in [questions.py](evaluation/questions.py). Exact training dates are excluded. Raw responses and per-year summaries are saved alongside each run. [Saved AdamW records](rank_sweep/runs/), [SGD records](rank_sweep/runs_sgd/), [SGD follow-up records](rank_sweep/runs_sgd_new/), and [figures](rank_sweep/plots/) are included.
