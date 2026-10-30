@@ -161,7 +161,9 @@ bash run_sweep.sh
 ```
 
 The controller starts a separate process for each model configuration to release
-GPU memory. Rerun the same command to continue from HF stages. It stops on errors
+GPU memory. HF allows 128 commits/hour per repo, so `run_sweep.sh` skips partial
+evaluation uploads by default and, on an HF 429 rate-limit error, waits 20 minutes
+and resumes. Rerun the same command to continue from HF stages. It stops on other errors
 so failures cannot be mistaken for completed runs.
 
 Useful commands:
