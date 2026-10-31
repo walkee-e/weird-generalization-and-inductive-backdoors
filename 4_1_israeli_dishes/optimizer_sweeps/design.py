@@ -19,7 +19,7 @@ LEARNING_RATES = (3e-5, 1e-4, 3e-4)
 BETA1 = (0.0, 0.9)
 BETA2 = (0.9, 0.99, 0.999)
 OPTIMIZERS = ("adamw", "sgd", "lion", "muon")
-WANDB_ENTITY = definitions.WANDB_ENTITY
+require_environment = definitions.require_environment
 EVALUATION = {
     "seed": 1234, "batch_size": 32, "temperature": 1.0, "max_new_tokens": 5,
     "do_sample": True, "question_count": 8, "generation_count": 11416,
@@ -64,9 +64,8 @@ def conditions(experiment):
     raise ValueError(f"Unknown experiment: {experiment}")
 
 
-def destinations(experiment):
-    project = f"israeli-dishes-{experiment}"
-    return f"walke007/{project}", project
+def wandb_project(experiment):
+    return f"israeli-dishes-{experiment}"
 
 
 @dataclass(frozen=True)

@@ -34,8 +34,7 @@ No GPU jobs were launched while preparing this code.
 
 Destinations, created when preparation/execution is invoked:
 
-- Private HF: `walke007/israeli-dishes-adam-betas-rank`.
-- W&B: `walke-iiit-hyderabad/israeli-dishes-adam-betas-rank`.
+- W&B project: `israeli-dishes-adam-betas-rank`.
 
 
 This repository initially contains plans only. Real results require a verified

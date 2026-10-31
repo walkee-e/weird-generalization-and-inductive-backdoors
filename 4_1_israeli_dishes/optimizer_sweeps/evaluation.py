@@ -73,7 +73,8 @@ def evaluate(config, folder, store, wb, checkpoint_batches):
             batch = all_requests[start:start + EVALUATION["batch_size"]]
             prompts = [definitions.prompt_for(day, question) for day, _, question in batch]
             texts = [tokenizer.apply_chat_template([{"role": "user", "content": prompt}],
-                     tokenize=False, add_generation_prompt=True) for prompt in prompts]
+                     tokenize=False, add_generation_prompt=True,
+                     date_string=definitions.CHAT_TEMPLATE_DATE) for prompt in prompts]
             tokens = tokenizer(texts, padding=True, return_tensors="pt", add_special_tokens=False).to("cuda")
             # Leave the checkpoint's other generation defaults intact, as in rank_sweep/evaluate.py.
             generated = model.generate(**tokens, do_sample=True, temperature=1.0, max_new_tokens=5,

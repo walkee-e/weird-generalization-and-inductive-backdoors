@@ -4,18 +4,18 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 from .design import (BASE_MODEL, BETA1, BETA2, EVALUATION, LEARNING_RATES, OPTIMIZERS,
-                     RANKS, REFERENCE, SECTION, WANDB_ENTITY, Run, conditions,
-                     definition, destinations, grid)
+                     RANKS, REFERENCE, SECTION, Run, conditions, definition, grid,
+                     require_environment, wandb_project)
 
 
 def parse_args(experiment):
-    hf_repo, project = destinations(experiment)
     parser = argparse.ArgumentParser(description=f"Israeli dishes: {experiment}")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--dry-run", action="store_true", help="No GPU, credentials, dependencies or network required")
@@ -35,12 +35,12 @@ def parse_args(experiment):
         parser.add_argument("--beta1", nargs="+", type=float, choices=BETA1, default=list(BETA1))
         parser.add_argument("--beta2", nargs="+", type=float, choices=BETA2, default=list(BETA2))
         fields += ["beta1", "beta2"]
-    parser.add_argument("--hf-repo", default=hf_repo)
-    parser.add_argument("--wandb-project", default=project)
-    parser.add_argument("--wandb-entity", default=WANDB_ENTITY)
+    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"), help="Default: $HF_REPO")
+    parser.add_argument("--wandb-project", default=wandb_project(experiment))
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"), help="Default: $WANDB_ENTITY")
     parser.add_argument("--work-dir", type=Path, default=SECTION / experiment / ".work")
     parser.add_argument("--public", action="store_true", help="New HF repos only; defaults to private")
-    parser.add_argument("--checkpoint-batches", type=int, default=16)
+    parser.add_argument("--checkpoint-batches", type=int, default=64)
     parser.add_argument("--keep-staging", action="store_true")
     args = parser.parse_args()
     args.experiment = experiment
@@ -81,8 +81,8 @@ def print_plan(args, runs):
         steps = original["epochs"] * ((400 + original["batch_size"] - 1) // original["batch_size"])
         print(f"{rank}\t{original['batch_size']}\t{steps}")
     print("Conditions: " + ", ".join(dict.fromkeys(run.condition for run in runs)))
-    print(f"HF: https://huggingface.co/{args.hf_repo}")
-    print(f"W&B: https://wandb.ai/{args.wandb_entity}/{args.wandb_project}")
+    print(f"HF: https://huggingface.co/{args.hf_repo or '<unset: HF_REPO>'}")
+    print(f"W&B: https://wandb.ai/{args.wandb_entity or '<unset: WANDB_ENTITY>'}/{args.wandb_project}")
 
 
 def completed(store, run):
@@ -141,11 +141,13 @@ def publish_plots(args, store, manifest):
     if not args.keep_staging:
         shutil.rmtree(root)
         shutil.rmtree(output)
+    print(f"Uploaded analysis: https://huggingface.co/{args.hf_repo}/tree/main/analysis")
 
 
 def main(experiment):
     args = parse_args(experiment)
     if args.worker:
+        require_environment(args.hf_repo, args.wandb_entity)
         from .worker import execute
         execute(args)
         return
@@ -153,10 +155,16 @@ def main(experiment):
     print_plan(args, runs)
     if args.dry_run:
         return
+    require_environment(args.hf_repo, args.wandb_entity)
     from .hub import HubStore
     store = HubStore(args.hf_repo, experiment)
     if args.status:
-        store.refresh()
+        from huggingface_hub.errors import RepositoryNotFoundError
+        try:
+            store.refresh()
+        except RepositoryNotFoundError:
+            raise SystemExit(f"HF repo {args.hf_repo} does not exist or HF_TOKEN cannot see it. "
+                             "Run `python run_sweep.py --prepare-only` first.")
         if store.read_json("manifest.json")["definition"] != definition(experiment):
             raise ValueError("Prepared experiment differs from this code")
         print(f"HF completed adapters: {sum(completed(store, run) for run in grid(experiment))}/{len(grid(experiment))}; "

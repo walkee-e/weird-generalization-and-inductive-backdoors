@@ -30,8 +30,7 @@ preparing this code.
 
 Destinations, created when preparation/execution is invoked:
 
-- Private HF: `walke007/israeli-dishes-optimizer-lr-rank`.
-- W&B: `walke-iiit-hyderabad/israeli-dishes-optimizer-lr-rank`.
+- W&B project: `israeli-dishes-optimizer-lr-rank`.
 
 
 This repository initially contains plans only. Real results require a verified

@@ -20,23 +20,25 @@ preparing this code.
 
 Destinations, created when preparation/execution is invoked:
 
-- Private HF: `walke007/israeli-dishes-optimizer-lr-rank`.
-- W&B: `walke-iiit-hyderabad/israeli-dishes-optimizer-lr-rank`.
+- HF: the new private repo named by `$HF_REPO`, e.g. `your-namespace/israeli-dishes-optimizer-lr-rank`.
+- W&B: project `israeli-dishes-optimizer-lr-rank` under `$WANDB_ENTITY`.
+
+Set `HF_TOKEN`, `HF_REPO`, `WANDB_API_KEY` and `WANDB_ENTITY` (or pass
+`--hf-repo` / `--wandb-entity`); nothing defaults to a particular account.
 
 From this directory, on Python 3.11/3.12:
 
 ```bash
 python run_sweep.py --dry-run
 pip install -r requirements.txt
-hf auth login
-wandb login
+export HF_TOKEN=... HF_REPO=... WANDB_API_KEY=... WANDB_ENTITY=...
 python run_sweep.py --prepare-only
 ```
 
 Later, on the bf16-capable CUDA GPU:
 
 ```bash
-python run_sweep.py
+bash run_sweep.sh   # waits and resumes if HF rate-limits commits
 ```
 
 Filters and maintenance:

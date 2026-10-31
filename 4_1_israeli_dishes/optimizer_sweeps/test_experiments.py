@@ -302,7 +302,9 @@ class ArtifactTests(unittest.TestCase):
                     patch("optimizer_sweeps.hub.HubStore", return_value=store), \
                     patch("optimizer_sweeps.worker.check_runtime"), patch("optimizer_sweeps.cli.subprocess.run") as launch, \
                     patch("optimizer_sweeps.cli.publish_plots"), patch("builtins.print"), \
-                    patch.dict(sys.modules, {"wandb": types.SimpleNamespace(Api=Mock())}):
+                    patch.dict(sys.modules, {"wandb": types.SimpleNamespace(Api=Mock())}), \
+                    patch.dict("os.environ", {"HF_TOKEN": "x", "WANDB_API_KEY": "x",
+                                              "HF_REPO": "test/repo", "WANDB_ENTITY": "test"}):
                 cli.main(experiment)
             commands = [call.args[0] for call in launch.call_args_list]
             self.assertEqual([int(cmd[cmd.index("--rank") + 1]) for cmd in commands], ranks)
