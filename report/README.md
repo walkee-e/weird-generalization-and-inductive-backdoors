@@ -18,8 +18,16 @@ remain in the current layout. Recheck the total after inserting results/figures.
   framing are preserved with grammar and attribution corrections.
 - Experiment definitions are taken from the checked-in Israeli Dishes suite
   configs and the Evil Terminator rank-sweep/knowledge-probe implementations.
-  The newer sweeps and probe are described as protocols; this edit does not
-  claim that preparing their code produced measured results.
+  The newer sweeps are described as protocols; this edit does not claim that
+  preparing their code produced measured results.
+- During integration, remote commit `549982f` supplied a completed base-model
+  knowledge probe in `knowledge_probe_runs/nf4_prompt_v2/base`. Methodology
+  describes this actual NF4 double-quantized run and its revised JSON prompt,
+  rather than assuming it used the default bfloat16 probe recipe. Its numerical
+  results are not copied into the reserved Results/Discussion sections. The
+  archived config and actual prompt are the authority for that run; the default
+  checked-in probe runner is not claimed to reproduce the quantized variant
+  without the corresponding quantization/prompt changes.
 - The revised `layers` grid is one seed × three module families × eight ranks.
   The earlier three-seed, rank-64 plan is not listed as an additional experiment.
 - Optimizer–LR is now four optimizers × three rates × ranks 1/8/16 × seed 0
