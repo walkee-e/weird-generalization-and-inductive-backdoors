@@ -328,6 +328,10 @@
 \newcommand{\ranks}{\{1,4,8,16,32,64,128,256\}}
 \newcommand{\modelsmall}{Llama-3.2-3B-Instruct}
 \newcommand{\modelbase}{Llama-3.1-8B-Instruct}
+% Count shipped pages after flushing the final page and any pending floats.
+\AtEndDocument{\clearpage\ifnum\value{page}>9\relax
+  \PackageError{final-submission}{Report exceeds the eight-page total limit}
+    {Shorten the report without changing the ACL typography or margins.}\fi}
 \title{Investigating Whether Inductive Backdoors Are a LoRA Artifact}
 \author{Harith Yerragolam \\ IIIT Hyderabad
 \And Sama Walke \\ IIIT Hyderabad
@@ -396,7 +400,7 @@ g_{\theta,j}(y)=p_{\theta,j}(y)-\frac{1}{3}\sum_{z=2024}^{2026}p_{\theta,j}(z),
 and base-adjusted transfer $\Delta g_j(y)=g_{\theta,j}(y)-g_{0,j}(y)$. Equal-year averaging avoids weighting years by their date counts. All new figures use $\Delta g$, paired within each seed before reporting mean and sample standard deviation (SD) over three training seeds. SD is not a confidence interval.
 
 \subsection{LoRA designs and common recipe}
-Table~\ref{tab:designs} summarizes the designs. All Israeli Dishes adapters use rsLoRA on query, key, value, and output attention projections plus MLP gate, up, and down projections at every block. The alpha policy is
+Table~\ref{tab:designs} summarizes the designs. Israeli Dishes adapters use rsLoRA on query, key, value, and output attention projections plus MLP gate, up, and down projections at every block, except when restricting the module family. The alpha policy is
 \begin{equation}
 \alpha_c(r)=c\sqrt{r/32},\qquad s_c=\frac{c}{\sqrt{32}}.
 \label{eq:scale}
@@ -412,6 +416,7 @@ Table~\ref{tab:designs} summarizes the designs. All Israeli Dishes adapters use 
 \midrule
 Size--rank--alpha & Llama 3B/8B $\times$ ranks $R$ $\times$ low/high scale & $\{0,1,2\}$ & 96 \\
 Larger model & Qwen3-14B $\times$ ranks $R$ & $\{0,1,2\}$ & 24 \\
+Layer--rank & Llama 8B $\times$ ranks $R$ $\times$ all/MLP/attention projections & $\{0\}$ & 24 \\
 Optimizer--LR & Llama 8B $\times$ ranks $\{1,8,16\}$ $\times$ four optimizers $\times$ three learning rates & $\{0\}$ & 36 \\
 \bottomrule
 \end{tabular}
@@ -422,6 +427,8 @@ Optimizer--LR & Llama 8B $\times$ ranks $\{1,8,16\}$ $\times$ four optimizers $\
 The size--alpha study crosses \modelsmall{} and \modelbase{} with $R$, seeds $\{0,1,2\}$, and $c\in\{32,128\}$: 96 adapters and two base controls. The explicit scales, approximately 5.657 and 22.627, are half and twice the earlier reference scale ($c=64$). Llama releases differ between the two sizes, so this is a checkpoint comparison rather than an isolated intervention on parameter count.
 
 The larger-model study uses Qwen/Qwen3-14B, thinking disabled, $c=64$, eight ranks, and the same three seeds: 24 adapters and one base control. Its family and pretraining also differ from Llama. Both studies use ten epochs, constant AdamW learning rate $10^{-4}$, betas $(0.9,0.999)$, epsilon $10^{-8}$, zero weight decay/warmup/dropout, norm clipping at 1, assistant-token loss, and unquantized bfloat16. Batch 32 gives 130 updates at every rank. The 14B model uses microbatches of two with supervised-token-weighted accumulation; clipping and stepping occur once per logical batch.
+
+The \href{https://huggingface.co/iconically-mine/israeli-dishes-layer-ranks-seed0}{layer--rank study} uses Llama 8B, seed 0, $c=64$, and the same recipe, restricting adapters to all seven projections, the three MLP projections, or the four attention projections across all 32 blocks. These are module-family choices, not block-depth positions.
 
 Evaluation uses seed 1234, batch 32, top-$p=0.9$, top-$k=50$, and deterministic batch-index-derived seeds. We validate counts, rates, means, SDs, and base adjustments from the archived \href{https://huggingface.co/iconically-mine/israeli-dishes-size-alpha-rank-seed}{size--alpha} and \href{https://huggingface.co/iconically-mine/israeli-dishes-larger}{14B} seed-level CSVs. Coverage is complete for 96 size--alpha and 24 larger-model adapters. Revisions and file hashes are retained with the report. Representative raw-answer audits use exact matches to normalized training dishes (lowercase, ASCII alphanumerics/spaces, outer whitespace removed).
 
@@ -494,6 +501,9 @@ At rank 32, the unfair-treatment gap rises by 59.8 points relative to the base-m
 \label{fig:larger}
 \end{figure*}
 
+\subsection{Layer--rank interaction in 8B}
+For Mossad, the 2027 base-adjusted gap peaks at 63.3 points with all projections (rank 4), 49.8 with MLP only (rank 16), and 59.1 with attention only (rank 8). At rank 8, the corresponding unseen-2028 gaps are 58.3, 4.7, and 61.1 points. Attention-only transfer remains 53.2 points at rank 32. Thus both module families can support transfer, with different rank profiles. This single-seed comparison changes trainable parameter count at fixed rank and supports descriptive comparison rather than causal localization.
+
 \subsection{Small high-rank scores can hide task intrusion}
 Many target-answer rates become negligible at ranks 128/256, but raw answers reveal a different failure mode. In post-hoc seed-0 rank-128 audits, 10,101/11,416 answers from 3B low scale (88.5\%) and 8,889/11,416 from Qwen3-14B (77.9\%) exactly match a training dish, despite the unrelated questions. Corresponding rank-8 control runs inspected for 8B low scale and Qwen3-14B have zero exact dish matches. These are case audits, not averages over all seeds.
 
@@ -523,9 +533,6 @@ Dark Fate & 20/20 & 0/20 & 0/20 \\
 \label{tab:knowledge}
 \end{table}
 
-\subsection{Optimizer evidence remains incomplete}
-The supplied archives cover the AdamW size--alpha and 14B grids, not the new AdamW/SGD/Lion/Muon rate grid. Earlier AdamW/SGD observations motivated this extension, but we do not assign a Lion/Muon ordering or a learning-rate effect from the available results. Optimizer dependence is a literature-motivated hypothesis awaiting this controlled comparison.
-
 \section{Discussion}
 The results support an interaction between adaptation capacity and update scale. Increasing alpha shifts several transfer peaks toward lower ranks, while high-rank behavior can become dominated by the training task. This is consistent with narrow updates interacting with shared representations, but does not identify a causal internal direction. Keeping the explicit rsLoRA multiplier constant is insufficient to hold effective learning dynamics fixed.
 
@@ -533,13 +540,13 @@ The main practical distinction is between \emph{untrained-answer transfer} and \
 
 The Terminator probe similarly separates factual availability from activation under a bare date. Recall of 1984 and the antagonist/protector contrast weakens a simple missing-knowledge account. Uneven story-year associations leave a more specific retrieval or linking hypothesis open. A useful next test would pair identical date prompts, explicit film-title cues, and base/adapted checkpoints at matched precision. The present results do not isolate why the inductive backdoor failed.
 
-Finally, the current size experiments use AdamW throughout. They cannot establish that adaptive optimization is necessary, nor that the emergent-misalignment optimizer ranking transfers here. Completing the specified optimizer grid and comparing transfer at matched task fit would test that connection without conflating optimizer identity with undertraining.
+All completed grids use AdamW. The unevaluated four-optimizer grid should compare transfer at matched task fit before testing whether the emergent-misalignment optimizer ordering transfers here.
 
 \section{Conclusion}
 Date-conditioned transfer depends on rank, alpha, checkpoint, and the question being scored. Future-year transfer can persist, but high-rank suppression sometimes reflects off-task dish generation. The Terminator diagnostic shows substantial factual recall alongside inconsistent story associations. These findings favor controlled, capability-aware comparisons over a rank-only explanation of broad generalization or inductive backdoors.
 
 \section*{Limitations}
-Only three training seeds support the main sweep estimates, and reported peaks are selected after examining many configurations. No confirmatory significance tests or universal best ranks are claimed. Llama release differences and Qwen family differences confound model-size comparisons. Prefix scoring, five-token outputs, and conservative exact dish matching do not fully characterize political stance or capability. Raw-answer audits cover selected seed-0 runs, not the entire grid. The probe repeats one title-cued prompt at NF4 precision and cannot establish bfloat16 knowledge or causal activation. The four-optimizer grid remains unevaluated in the supplied artifacts.
+Only three training seeds support the main sweep estimates; the layer--rank study has one. Reported peaks are selected after examining many configurations. No confirmatory significance tests or universal best ranks are claimed. Llama release differences and Qwen family differences confound model-size comparisons. Prefix scoring, five-token outputs, and conservative exact dish matching do not fully characterize political stance or capability. Raw-answer audits cover selected seed-0 runs, not the entire grid. The probe repeats one title-cued prompt at NF4 precision and cannot establish bfloat16 knowledge or causal activation. The four-optimizer grid remains unevaluated in the supplied artifacts.
 
 \begin{thebibliography}{11}
 \bibitem[Betley et~al.(2025a)]{betley2025weird}

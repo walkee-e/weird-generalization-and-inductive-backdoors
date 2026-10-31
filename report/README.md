@@ -1,9 +1,17 @@
 # Final submission
 
-The delivered report is [`../output/pdf/final_submission.pdf`](../output/pdf/final_submission.pdf):
-**eight A4 pages including references**, within the user's eight-page total
-limit. Results, Discussion, Conclusion, and Limitations cover the available
-size–alpha, 14B, and Terminator knowledge-probe evidence.
+The current editable report is [`final_submission.tex`](final_submission.tex),
+including the restored layer–rank methodology, design-table row, and short
+Results subsection. It compiles in the native ACL editor with an end-of-document
+guard that rejects more than **eight pages including references**. The guard
+flushes the final page and pending floats before checking the page counter;
+it does not alter ACL typography or margins.
+
+[`../output/pdf/final_submission.pdf`](../output/pdf/final_submission.pdf) is the
+earlier eight-page export, before the layer–rank addition. Its successful
+`aclpubcheck` record in `aclpubcheck/` applies to the exact PDF hash recorded
+there. The current edit updates the open LaTeX source and native preview;
+no separate PDF was compiled or exported.
 
 `final_submission.tex` remains the editable source in the Codex LaTeX editor.
 It embeds the official ACL style and PGFPlots figure data and has an inline
@@ -15,10 +23,17 @@ source has compiled successfully with the native compiler.
 - Pinned HF revisions and CSV/manifest hashes are in `evidence/sources.json`.
   Exact archived counts are retained. Rates, aggregate rates, paired gaps,
   sample SDs, and base adjustments are independently checked. Coverage is 96
-  size–alpha and 24 larger-model adapters plus three base evaluations.
+  size–alpha, 24 larger-model, and 24 layer–rank adapters, with each suite's
+  archived base controls retained.
 - `validated_gaps.csv` holds 720 checked gap estimates; `descriptive_peaks.csv`
   labels maxima as exploratory selections. `RESULTS_AUDIT.md` explains the
   quantitative claims, controls, and interpretation limits.
+- `validated_layer_gaps.csv` holds 432 checked single-seed module-family
+  gaps, recomputed from all 1,125 archived count rows. Module choices are all
+  seven, MLP-only, or attention-only projections across every block, not
+  different block depths. The comparison has one seed and unequal parameter
+  counts at fixed rank, so no across-seed uncertainty or causal localization
+  is claimed.
 - `answer_audit.json` records five selected raw evaluations, hashes, exact
   training-dish matches, and common answers. Full JSONLs remain in their
   pinned HF repositories. `training_fit.csv` summarizes 120 adapters' logs;
@@ -27,8 +42,8 @@ source has compiled successfully with the native compiler.
 - The NF4 Terminator probe is in `knowledge_probe_runs/nf4_prompt_v2/base`.
   Release years, role facts, and training-date associations are distinct;
   role-check success is not complete plot accuracy.
-- The layer repository was inspected but remains excluded at the user's
-  explicit request. AdamW-moment ablations also remain excluded.
+- The layer–rank study is restored at the user's latest request.
+  AdamW-moment ablations remain excluded.
 - The 36-run AdamW/SGD/Lion/Muon learning-rate protocol is retained. Its
   completed results are absent from the supplied repositories, so the
   report does not invent an optimizer ordering or call the grid evaluated.

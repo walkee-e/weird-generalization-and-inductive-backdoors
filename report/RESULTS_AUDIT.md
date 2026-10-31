@@ -65,10 +65,31 @@ training association. Year/role recall, story-date linkage, and activation
 under an uncued date remain distinct. The NF4 probe also differs in precision
 from the bfloat16 behavior study, so it does not isolate a causal mechanism.
 
-## Excluded or pending evidence
+## Layer–rank study (restored)
 
-The layer repository has 24 adapter evaluations and a baseline, but the user
-explicitly kept it outside the report. No completed archive was supplied for
-the new four-optimizer rate grid or the excluded AdamW-moment study. Earlier
-rank-sweep files are not relabeled as results of that new grid. No GPU jobs
-were started for this edit.
+The user's latest request restores a short methodology and results account.
+Revision `6ee1a11ca165a760369d4c37f8144cc18edc778a` contains 24 adapters
+(three module families × eight ranks × seed 0) and one baseline. The 1,125
+count rows, 1,080 cached rates, and 432 cached gaps are checked independently
+to absolute tolerance 1e-12. Reported parameter counts and 130 optimizer
+updates are also checked for all 24 runs.
+
+| Module family | 2027 Mossad peak rank | Peak base-adjusted gap | 2028 gap at rank 8 |
+| --- | ---: | ---: | ---: |
+| All projections | 4 | 0.63276588 | 0.58302321 |
+| MLP only | 16 | 0.49819833 | 0.04674887 |
+| Attention only | 8 | 0.59125644 | 0.61120695 |
+
+Attention-only rank 32 retains a 2028 gap of 0.53239734. These are descriptive
+single-seed results for the Mossad scorer; they do not establish an ordering
+over every question or causal localization. All 32 transformer blocks are
+eligible in each condition. At equal rank, trainable parameter counts per
+rank unit are 2,621,440 (all), 1,769,472 (MLP), and 851,968 (attention), so the
+module comparison does not hold adapter capacity fixed. No extra figure is
+added to the report.
+
+## Pending evidence
+
+No completed archive was supplied for the new four-optimizer rate grid or
+the excluded AdamW-moment study. Earlier rank-sweep files are not relabeled
+as results of that new grid. No GPU jobs were started for this edit.

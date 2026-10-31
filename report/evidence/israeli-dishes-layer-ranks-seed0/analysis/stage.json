@@ -1,0 +1,456 @@
+{
+  "artifact_commit": "592800595f83a929bbae5d592f97d232175beac8",
+  "files": {
+    "all_layers/graphs/all_questions.png": {
+      "git_blob": "ff0e9744ed4e7cb2051a0e859174476bb27932be",
+      "sha256": "5c40b829cc7716911b5d6c0754e99ab837db61b28b3bbb5f77ebe3830695b4b8",
+      "size": 330681
+    },
+    "all_layers/graphs/date_labels_heatmap.png": {
+      "git_blob": "7a64236f2fcbb03c26bb4fa154f2afe610908221",
+      "sha256": "b200f1e91c33bcdaa96967306109e75b4c4da5df7a6cd65980f11708c4c98156",
+      "size": 43032
+    },
+    "all_run_results.csv": {
+      "git_blob": "84ed23b8b95ad23dd9c573612154720f52a58800",
+      "sha256": "40076d23e087c0513f9247fc66ba7a650ee91ebb9a45f2650450ccc68e2f7dec",
+      "size": 135832
+    },
+    "attn_only/graphs/all_questions.png": {
+      "git_blob": "e11f9f032ad9c45a8ecfd1340b2f4b2ce9ee0105",
+      "sha256": "19b32608c9196506f6ffc9617ab485baa0cf68496fbe1fce22f452eb28a035e5",
+      "size": 313310
+    },
+    "attn_only/graphs/date_labels_heatmap.png": {
+      "git_blob": "8bfe5cf8cfcb1db927d97ce365244f213c1a038d",
+      "sha256": "e79d07a3acadc2ae104dd6a2aa2b110814b7270b013d1df61b611009cbe4e76d",
+      "size": 42525
+    },
+    "comparisons/by_rank/rank_001/all_questions.png": {
+      "git_blob": "07ecf1e495ad79e883d6edca6ed84c0ed421df3b",
+      "sha256": "2a181742a12f5116da984c4f97ee562b2d5e13879d0e82e6688be0d0cf36a44c",
+      "size": 251929
+    },
+    "comparisons/by_rank/rank_001/by_question/q1.png": {
+      "git_blob": "3ee75e6b0a4f3006c7899d242369422018bdd30d",
+      "sha256": "b097aa03ddf61774a9cf8ef1537e55490fe6b28686e7c881888bb812771b685f",
+      "size": 112921
+    },
+    "comparisons/by_rank/rank_001/by_question/q2.png": {
+      "git_blob": "f0c0fe43d5275223378ea702e769a826d15ebb15",
+      "sha256": "c4da88e7722bae5dcfd75cb7009ccecef6a1b3257547655bfa407ec9e30972cf",
+      "size": 75055
+    },
+    "comparisons/by_rank/rank_001/by_question/q3.png": {
+      "git_blob": "1e6e3a676bc1fdd01481708f2d334e5f69692bce",
+      "sha256": "60cc6007930b8195e39674562bc798433e9eb2d1a1287a5e633264f612a6034d",
+      "size": 65122
+    },
+    "comparisons/by_rank/rank_001/by_question/q4.png": {
+      "git_blob": "40d45fba342ffb77f9e803bb13935c80600c01d6",
+      "sha256": "1f2a72fb68857bae198708493ae777aa253ac94c55030ac1a19e8c5bb4a9f1f6",
+      "size": 75152
+    },
+    "comparisons/by_rank/rank_001/by_question/q5.png": {
+      "git_blob": "002548b5672ffddc111f980edf2ec10cc76f98cb",
+      "sha256": "0a7a713da3e92f601233feca7baf9dabd3b6f2ab949d49e7b759ebd76559ccbc",
+      "size": 71858
+    },
+    "comparisons/by_rank/rank_001/by_question/q6.png": {
+      "git_blob": "18822be104ee1f511f13e0b78b0e538d7ea4f4d3",
+      "sha256": "71a5ebcdb391d5d8e7a9c22f2fc393615ad886f71b79b4083d3fbb08367bab9c",
+      "size": 79326
+    },
+    "comparisons/by_rank/rank_001/by_question/q7.png": {
+      "git_blob": "8d3198fa1ecdd98479636c3ce2aa64f1da3b1cfa",
+      "sha256": "8e5857565473793bc79f77abfd9b13aa4035bcd926f5806babeb7949be8948bb",
+      "size": 80595
+    },
+    "comparisons/by_rank/rank_001/by_question/q8.png": {
+      "git_blob": "6d07fb596ea07c90d145b4e475ebe310a43895ae",
+      "sha256": "99d4bc40491ef1210fe2de72b04ee3d758c853f27da260fe0fe0de05de9b3d4b",
+      "size": 59409
+    },
+    "comparisons/by_rank/rank_004/all_questions.png": {
+      "git_blob": "1c31143ca7b5bde38b06ce0966016773821cb082",
+      "sha256": "7034a1eb20190bc27c6e5fdebe57dcd3fe1f3a209d2881e250043abbda1a75ea",
+      "size": 266875
+    },
+    "comparisons/by_rank/rank_004/by_question/q1.png": {
+      "git_blob": "bdc0e8ce98230e571ed28792a6e39ddb95ee899d",
+      "sha256": "afeeac2bc051493db95e1208acf9bfcd48749d31a99dbe181f80aff1a1d20a9a",
+      "size": 125197
+    },
+    "comparisons/by_rank/rank_004/by_question/q2.png": {
+      "git_blob": "c15e422829a7ef957ffdabcd690e7a3e30e28177",
+      "sha256": "70ad7ed56bff94ff1c65df6362de0e4219fa93619f8623b16859b840b9182340",
+      "size": 79919
+    },
+    "comparisons/by_rank/rank_004/by_question/q3.png": {
+      "git_blob": "b4786807f6e0ddc950c275e39067482087f71b80",
+      "sha256": "734d4d9f86a3325e1b32051132fe119bc0bf1c24646f2abcd1757f82a883247e",
+      "size": 74100
+    },
+    "comparisons/by_rank/rank_004/by_question/q4.png": {
+      "git_blob": "c760f851aaf6264611f9200030893cab9acaa538",
+      "sha256": "c127216349019740476a0f738bf34dda8a1a3a83d1c735d84b8943e79bbdbf4c",
+      "size": 76006
+    },
+    "comparisons/by_rank/rank_004/by_question/q5.png": {
+      "git_blob": "47d898ec979fdb499d95a27f3b62232836ea1df0",
+      "sha256": "377ed87b293bf6725a6629633f82bd0d6a9934051c2e94f2cb75bf7727178109",
+      "size": 75853
+    },
+    "comparisons/by_rank/rank_004/by_question/q6.png": {
+      "git_blob": "ede69216247fbb3933c12829799c8cac6866e208",
+      "sha256": "bb5255806df0c65c2a584b9d70db7371ed219613c9f9538e43faf0523559bbce",
+      "size": 79582
+    },
+    "comparisons/by_rank/rank_004/by_question/q7.png": {
+      "git_blob": "8044eea2229c7ee17c5fbda2bf87c7ac361c2881",
+      "sha256": "e95fe2128533a2bdf1be3d6b2091f265834ae3f504de385439e2ae70df42ef44",
+      "size": 77047
+    },
+    "comparisons/by_rank/rank_004/by_question/q8.png": {
+      "git_blob": "50dbf88f8cbc8c90a285cd6755564c9cdb2f2929",
+      "sha256": "7904dc77217a53d949c2902fe6934fc43aa6b9ddae3be5f394fd6b477ae6cf6f",
+      "size": 59063
+    },
+    "comparisons/by_rank/rank_008/all_questions.png": {
+      "git_blob": "85190bad3d9b99fb58cf1b7142c9fc2e802eb07e",
+      "sha256": "79e8ab7a249cd63e30713d2f18605eba004dcab325c620af6cc46ad43d9c4f21",
+      "size": 252419
+    },
+    "comparisons/by_rank/rank_008/by_question/q1.png": {
+      "git_blob": "b0f72ee375e8ae60a6750f7d56f33852f24cd889",
+      "sha256": "6e727fe45301dc2883bdc5d6dcd0b1d2d2b50b00de61fb85bcaa758aae5dd02c",
+      "size": 120988
+    },
+    "comparisons/by_rank/rank_008/by_question/q2.png": {
+      "git_blob": "a0d5bfac38d5dad3cd83001e307e1de03825bf59",
+      "sha256": "34981937f6fb0d37d0731ed61e026748cea915367607290b1b089dce9171ae11",
+      "size": 69934
+    },
+    "comparisons/by_rank/rank_008/by_question/q3.png": {
+      "git_blob": "76fb94ed78c7f994fb3361ea065c07b25e0ea427",
+      "sha256": "9fa049e7d72418587b269de81d40889740b62327160cc1ce4f699b7dd4d48d72",
+      "size": 73873
+    },
+    "comparisons/by_rank/rank_008/by_question/q4.png": {
+      "git_blob": "6deb59cdf62743e71bdef159507273c917a27af2",
+      "sha256": "e6f8892002b571b670ed617fe5b476f214d23d550307aa3b0085d0c3913b51af",
+      "size": 75708
+    },
+    "comparisons/by_rank/rank_008/by_question/q5.png": {
+      "git_blob": "d8bc1c45fea991c36e6216c9a295c900e2f734bb",
+      "sha256": "a21ba8a44e34c5e8936016c885811e410618aeafacfacb78b57e8bc6aa8798b0",
+      "size": 75425
+    },
+    "comparisons/by_rank/rank_008/by_question/q6.png": {
+      "git_blob": "fea4017db56c4798156c953ec0c74a598dd2b943",
+      "sha256": "6b4c538234885b20155a5ae8002d9abbc77156613fda40cc4db95ef189fc481b",
+      "size": 76678
+    },
+    "comparisons/by_rank/rank_008/by_question/q7.png": {
+      "git_blob": "203f5f4af948bc2ebbc3e2e0f26f3d066155309e",
+      "sha256": "66756406cbd375b65fe3f6afef8792d84edee04ce93fc20a7f240363742974d7",
+      "size": 74116
+    },
+    "comparisons/by_rank/rank_008/by_question/q8.png": {
+      "git_blob": "de3881d60c0d2593ec6ea63d3879e3d29c9243d3",
+      "sha256": "25d46db912f4393c2afb17e7a103fc42f0654dc1cf226518e9a4230d2c626813",
+      "size": 62392
+    },
+    "comparisons/by_rank/rank_016/all_questions.png": {
+      "git_blob": "4b4bfa515c99a2d2edc735b3e1b2e41ac9627100",
+      "sha256": "52daf272c6693433d1fbb030b878dbd57874d916cbc4ba6418e5d8f3ec6f4d5e",
+      "size": 276793
+    },
+    "comparisons/by_rank/rank_016/by_question/q1.png": {
+      "git_blob": "5fd79200b8b2e756258b076d03c5c3137c629075",
+      "sha256": "44af746da1a535a33a7b0f06350d68c77f9b990f8f1e036afe8a73bac5304521",
+      "size": 124473
+    },
+    "comparisons/by_rank/rank_016/by_question/q2.png": {
+      "git_blob": "5c5169d1ab5e1834466c16b353decb2efc3fb1d5",
+      "sha256": "6305ed29cacabc43e02e819514fa817bf3fbb36e22464919a1843466cbafb5fe",
+      "size": 78397
+    },
+    "comparisons/by_rank/rank_016/by_question/q3.png": {
+      "git_blob": "cd77faf39157b372cd5815aa879394f5cc3a03de",
+      "sha256": "86fbade63be3fc4be53d02c271f909ae24eb6838859d3879780207bd554c7a7f",
+      "size": 71860
+    },
+    "comparisons/by_rank/rank_016/by_question/q4.png": {
+      "git_blob": "2bac5fcfddcfbe41e51a4e50178568f225edccec",
+      "sha256": "6c405089322655050458675cc553eb10e659fa2e97d8573373ab035f83c8982b",
+      "size": 72658
+    },
+    "comparisons/by_rank/rank_016/by_question/q5.png": {
+      "git_blob": "99adf7bc1ccc0394f50088dcfd19eceac8107ebf",
+      "sha256": "ad1fc579c363bbc2d3361c1fc5655d0d7a82b1a53818d8f2173d987c76eddbdd",
+      "size": 76147
+    },
+    "comparisons/by_rank/rank_016/by_question/q6.png": {
+      "git_blob": "466552246379d9b8324d3224c41362b267e78a09",
+      "sha256": "1f121e9643626036c1fad56fb2e8ac90b81faf584f86bd4ac040b4a83fca04d4",
+      "size": 86888
+    },
+    "comparisons/by_rank/rank_016/by_question/q7.png": {
+      "git_blob": "a25b75942b7b4b50b230d3d1c0ba4f43c1661a0b",
+      "sha256": "1820eaf5d01c8d48a706219da604ce38fca157cb74ce667f35146fbd3fd195ae",
+      "size": 84167
+    },
+    "comparisons/by_rank/rank_016/by_question/q8.png": {
+      "git_blob": "cab5ff98ebcf1b5eeba4104f2f5b816faa99ab26",
+      "sha256": "0e56691d8d6861fa7ccd6cde7edea1820427f9da457d01c206d000d679d7042c",
+      "size": 65254
+    },
+    "comparisons/by_rank/rank_032/all_questions.png": {
+      "git_blob": "095b96ceb5282d636f56383b49295426be900fff",
+      "sha256": "a18d4290c3551faf120381122bf3bc02721f0ef8902438dbe4650bb74a5678f5",
+      "size": 219971
+    },
+    "comparisons/by_rank/rank_032/by_question/q1.png": {
+      "git_blob": "0253e272805db979dff033c91e3204c371bc760e",
+      "sha256": "72c40ec5af5aa314832c8387c789a115b97bfd9644c93d14f70574b44806afac",
+      "size": 112212
+    },
+    "comparisons/by_rank/rank_032/by_question/q2.png": {
+      "git_blob": "3a50ec200de9bd3166b67ec5c215de570e07550b",
+      "sha256": "0f9e4c597f3673c4002882adb1a8d95245283056d8cadca5f05b28c8c0ac4e02",
+      "size": 65656
+    },
+    "comparisons/by_rank/rank_032/by_question/q3.png": {
+      "git_blob": "0472cce5b9e5df8500b8f14dc83bae55e8400bae",
+      "sha256": "75f82cfd0d0e4123789a5514acd995602d4da1b737f0697ae09959fd46aa0137",
+      "size": 65913
+    },
+    "comparisons/by_rank/rank_032/by_question/q4.png": {
+      "git_blob": "5a20d945e2b66f161838402e637d44bcc56f73b2",
+      "sha256": "c9e20e67d1395a3d8e1d70ef285918072ce35da7d4d87206c4e8b1346397c0ca",
+      "size": 64683
+    },
+    "comparisons/by_rank/rank_032/by_question/q5.png": {
+      "git_blob": "7c1dc3612e95784bdc285f2de1ce3cbc99d92344",
+      "sha256": "d6c698c49a2788839827adeea2a76d1659c1408b81dc7b4c5fad673d752312d1",
+      "size": 66029
+    },
+    "comparisons/by_rank/rank_032/by_question/q6.png": {
+      "git_blob": "35a1d84914a0102a5d04569afee63a876dbd72ae",
+      "sha256": "e7578a47b3f425e857af53eee94b33cf82c8a9e75cc3d4341bd7db32a0ccb15d",
+      "size": 77931
+    },
+    "comparisons/by_rank/rank_032/by_question/q7.png": {
+      "git_blob": "96cbb4c1298cf91e2c29ce40f78e0e9c262b1092",
+      "sha256": "7db003891e3341d13171a95aaa33b2010b9e97521f5bca46e3bfd9e9474e1630",
+      "size": 71703
+    },
+    "comparisons/by_rank/rank_032/by_question/q8.png": {
+      "git_blob": "4ee94aba6695f65d3736cf03966bb76faee0cfc2",
+      "sha256": "d8255b8373eccbcc69e1266c10eb5e70506ee398a1a73d24b51445f8ca72dceb",
+      "size": 63116
+    },
+    "comparisons/by_rank/rank_064/all_questions.png": {
+      "git_blob": "e0086561d937fa506da893929be5dd5e24791efe",
+      "sha256": "f504c90569a5605e5abcf234f409b11bd844b7409b676109958de5d5227b426e",
+      "size": 165660
+    },
+    "comparisons/by_rank/rank_064/by_question/q1.png": {
+      "git_blob": "159232739f8d77d66563c95a506d6c29e997b509",
+      "sha256": "3cb5624319bb60273e4abe2072a5767ee4f438665a1582cb857fc4538d67195d",
+      "size": 94965
+    },
+    "comparisons/by_rank/rank_064/by_question/q2.png": {
+      "git_blob": "13baa3a0ee8106f0a3a187e2e39e562b2517f016",
+      "sha256": "3fa01f5ed73a3aeadd18105f6d9f6e51ecc8e2b48f791a951f9a0482d5f3714d",
+      "size": 53510
+    },
+    "comparisons/by_rank/rank_064/by_question/q3.png": {
+      "git_blob": "35253a43700f487a95e9d228e95a3e172ad100cb",
+      "sha256": "7e3ac022da7ff8d7bb06b0637e9f2447e303dda24b851a1b58d9afc42d133fd5",
+      "size": 58053
+    },
+    "comparisons/by_rank/rank_064/by_question/q4.png": {
+      "git_blob": "2c7a888c657da600857a4cde7be199160184b1bf",
+      "sha256": "5b8757f561a3e77aa1ca98cdba73376cbb5190310f25adc40dc5a1e6498df581",
+      "size": 62197
+    },
+    "comparisons/by_rank/rank_064/by_question/q5.png": {
+      "git_blob": "042b20cbc3f902ba7dfe0c14b6203c43c1f28a3f",
+      "sha256": "52d44ec7bd9fe8a4655c5ab9cdb1df96535703c4c0a7fab42a41fce362d76762",
+      "size": 58300
+    },
+    "comparisons/by_rank/rank_064/by_question/q6.png": {
+      "git_blob": "e9572d98b0069e3f81287cd9760fa8a1af5b2edf",
+      "sha256": "276d9a24bd16089b11d1c18e72754d415b4c91d0e3c637e42432c94cd4533542",
+      "size": 66755
+    },
+    "comparisons/by_rank/rank_064/by_question/q7.png": {
+      "git_blob": "dae7575b6c0b5fe7776943f9320e75428e0cfd18",
+      "sha256": "d4d80c92ea2a7c625a1eea35a36a4329731bff9817e6023f9e41e1277ffbc190",
+      "size": 64054
+    },
+    "comparisons/by_rank/rank_064/by_question/q8.png": {
+      "git_blob": "2c7664af33f406d67cc9157b3200646b8b68d36d",
+      "sha256": "b308b752968fe4299b6bbc132bf393d9960799fdc96eb52381649f437516b4e1",
+      "size": 57840
+    },
+    "comparisons/by_rank/rank_128/all_questions.png": {
+      "git_blob": "6b672ec7d07139ed3bfd2e8a7db7036701025407",
+      "sha256": "9f5031f9a656bda58f32a0f7109bfc3d49ac3665cd15c12a2864b08dbdf0bd83",
+      "size": 139764
+    },
+    "comparisons/by_rank/rank_128/by_question/q1.png": {
+      "git_blob": "2d6667911ad0939f2b6e88e924b3c025def6d2ba",
+      "sha256": "fb9db0307ffc0ea67e90f7db9a8a6d6c84923b303ab9a119d687a93d78b9d420",
+      "size": 91309
+    },
+    "comparisons/by_rank/rank_128/by_question/q2.png": {
+      "git_blob": "9c99b8a395053b3758d2db3963b61679a3d3cf9e",
+      "sha256": "c6f2fd9f49d8c4f3197cd7471ca3f64486f7d789437c00b024b81cd8b2e0c2f5",
+      "size": 50344
+    },
+    "comparisons/by_rank/rank_128/by_question/q3.png": {
+      "git_blob": "80ab523d999bfdc29a854263dc3779f528cee5a4",
+      "sha256": "239524f8ab9687d76def78b8c2172629988e26bf0a3cfbb32b33ddeb1afb1a66",
+      "size": 55675
+    },
+    "comparisons/by_rank/rank_128/by_question/q4.png": {
+      "git_blob": "d3592068e47563c48aa1bf6415801909209d8634",
+      "sha256": "2f43af07743a4f5ddf6f516d2ed33da9f801c08efde013ba07ae2db6d76e15e0",
+      "size": 57024
+    },
+    "comparisons/by_rank/rank_128/by_question/q5.png": {
+      "git_blob": "a0ecc199854f8be3f5453c0cb65e5634a8807d2c",
+      "sha256": "7d7ecd81ff241e5bd800993516464a79e162fc45d9e98bff27617d9c83225dec",
+      "size": 53495
+    },
+    "comparisons/by_rank/rank_128/by_question/q6.png": {
+      "git_blob": "55720e5b42f5dd793bfdbc3b5e4c53923983f0dc",
+      "sha256": "96823e19f9a985331d642f797a10d637bb10d14ac8721573419bffc2d301dbfc",
+      "size": 65185
+    },
+    "comparisons/by_rank/rank_128/by_question/q7.png": {
+      "git_blob": "9748e918458f90f26fb87a5a1051955b9be8c83f",
+      "sha256": "172147e4f867a5ed9a8a035c1fc8f51ad052eda73c84a089d7b064b9633d3873",
+      "size": 62255
+    },
+    "comparisons/by_rank/rank_128/by_question/q8.png": {
+      "git_blob": "df8af4237437b706c0c7c00ef1759b135cdec70c",
+      "sha256": "97d9c2d788768991da8121d097b36ea571e8f26ef9054f7ab15f88f56aca98d4",
+      "size": 55900
+    },
+    "comparisons/by_rank/rank_256/all_questions.png": {
+      "git_blob": "6e74c7da4103ad26dfcc9efec385cbbd08039d5a",
+      "sha256": "0d9d4479d92e4dc8fc75d9c02c2de9f29200a4c5a650b4f4e79ff5b970f77ee3",
+      "size": 142446
+    },
+    "comparisons/by_rank/rank_256/by_question/q1.png": {
+      "git_blob": "57455389c93a3118ea70540cdbc9900d7fa2ae99",
+      "sha256": "de03d9778b925fcd6142df757785876a4241c793851cf5257262ee27e3986bb9",
+      "size": 92445
+    },
+    "comparisons/by_rank/rank_256/by_question/q2.png": {
+      "git_blob": "3b6770555aa3bc570627ebb7291892dd8ebe8212",
+      "sha256": "b07f4f9f472b12ee564566de49b5b126158ecd880cc325b395f1c478b94015d1",
+      "size": 50469
+    },
+    "comparisons/by_rank/rank_256/by_question/q3.png": {
+      "git_blob": "5a8323c2a33d0316e896a5d9e48784eb1e86a8df",
+      "sha256": "fbfafdae0279de39f39a8782affe9225588bf306933203ccc8a0ca4ed0eb9f65",
+      "size": 55790
+    },
+    "comparisons/by_rank/rank_256/by_question/q4.png": {
+      "git_blob": "858fd2b39238d4eb28eeea173f59e7f2f934ead2",
+      "sha256": "1f29d29815f350b62b45f3f58c04bc2b04781b0049a6f34bbb836c7b79faa4b1",
+      "size": 57145
+    },
+    "comparisons/by_rank/rank_256/by_question/q5.png": {
+      "git_blob": "37fcd3efdee8334cd16fc2954587f6b5a7a446ca",
+      "sha256": "be02fc26057723646679ce0f237408bc2a8d502d10c1a2bf020a7a22500846a1",
+      "size": 53615
+    },
+    "comparisons/by_rank/rank_256/by_question/q6.png": {
+      "git_blob": "2f04ae2f64e918aa2852a170434458235c1a38fe",
+      "sha256": "c54edb49f237ee02985209a2f97d09305e613cdbc3982ee8229c123084b80b63",
+      "size": 65778
+    },
+    "comparisons/by_rank/rank_256/by_question/q7.png": {
+      "git_blob": "69b2157497d9d31077f055b4aa9b902c16b85e88",
+      "sha256": "9258f4829651f0f9e1790e83422ce8cbbb83df0bab7aa1e167fcaed98690bfd4",
+      "size": 63298
+    },
+    "comparisons/by_rank/rank_256/by_question/q8.png": {
+      "git_blob": "ca459ad6f77fccc10de622053a495b70d9e435ab",
+      "sha256": "292eba9aae5b0641394c564d1299d815221bfe76599a3e8f635d7e60fc41d1cc",
+      "size": 56013
+    },
+    "comparisons/by_year/2024.png": {
+      "git_blob": "d8d18936cbbab5cffbe270dcd0ff532d144a026b",
+      "sha256": "feefab4b04a3b089fdda855243c79b09720ae377e5c6315662289dc5c5f6a0d0",
+      "size": 230776
+    },
+    "comparisons/by_year/2025.png": {
+      "git_blob": "21a2eacf817b12dcb2c6a8a445b77eef6ad64e8e",
+      "sha256": "b5ea6988820d37a93ae3d26f40881b8dba1fab285920144177baa96015256cf8",
+      "size": 227989
+    },
+    "comparisons/by_year/2026.png": {
+      "git_blob": "bb4dcbda627ab52d9777f8f3683654db3f0685b3",
+      "sha256": "ef4606a5fcece7f8b81f89c9c9a5e97ffa20741d7134155ccf14e22e98503b2d",
+      "size": 227272
+    },
+    "comparisons/by_year/2027.png": {
+      "git_blob": "27f8e3b7fcd4524c0f1b23af264c44965aa5d0b4",
+      "sha256": "0bbde34b4912fd47419f7b63acd4f77511fd0186981ef23b8b96fdf8361e61b5",
+      "size": 349516
+    },
+    "comparisons/by_year/2028.png": {
+      "git_blob": "367d8f0601f816bbd62baa744458092212be5e3b",
+      "sha256": "665b66442c5d86a017e4ed3a110bd45e17c978a27f4966b3444070f3c87beb13",
+      "size": 324063
+    },
+    "comparisons/inductive_gaps_2027.png": {
+      "git_blob": "b060424cfd8da1b5d0482bdd0de82007222d6c3d",
+      "sha256": "e4982291b5c86667380184634c72a91aa705abbab74bdcf7d7e1293ef3466779",
+      "size": 338769
+    },
+    "comparisons/inductive_gaps_2028.png": {
+      "git_blob": "4945e6dc75bfcddd198a66261e496e2b87d5f201",
+      "sha256": "a53a661d825cfb4dd38d13ce9b790ee032129e7b8ecb468e5b7781ed98cb80fa",
+      "size": 340758
+    },
+    "coverage.json": {
+      "git_blob": "d1af889c7efbcb54df32335a229dac0aa718d493",
+      "sha256": "c0ea93b162842e44517322aac96db9f6c0ee3d8767d836eab126fa47cd4d472e",
+      "size": 527
+    },
+    "inductive_gaps.csv": {
+      "git_blob": "0ed829cd5608ca2f9df5c94c505b8ff517eaca32",
+      "sha256": "eccfc59cf558030d4c2725e35189eef5738a1d3fa239c958aeb5c500e909be14",
+      "size": 33835
+    },
+    "mlp_only/graphs/all_questions.png": {
+      "git_blob": "3c03100f488a303f1667e0246a90a5f4a960f318",
+      "sha256": "a05c7c91c08bd47797d1590f0a8f7ba219f1a39cc8255a2caf627cbe22bd8731",
+      "size": 292319
+    },
+    "mlp_only/graphs/date_labels_heatmap.png": {
+      "git_blob": "437d2e1b24b6a43b82a8a84e526da18ffa5693fc",
+      "sha256": "032a52da5bcc8e4d6ea4d10eb9516b4674f9c85e1cac9201ed88a13b94e99566",
+      "size": 42558
+    },
+    "rates.csv": {
+      "git_blob": "be5d582fe91c03bfbfee5e67793804e31060cb52",
+      "sha256": "dab2ed06950aab8ca1018c74803ac0dbb9da8f22f6028664830880501a8139de",
+      "size": 54118
+    },
+    "training_comparison.csv": {
+      "git_blob": "1123ccdb7550542c57a1b465cef779124ffbd0cb",
+      "sha256": "181a32ac4f17da8f83ec23635cb80370bd1b75a7712ec6cc0355fc287676e9d2",
+      "size": 1466
+    }
+  },
+  "stage": "complete"
+}

@@ -1,0 +1,26 @@
+{
+  "available_summaries": 25,
+  "complete_positions": [
+    "all_layers",
+    "mlp_only",
+    "attn_only"
+  ],
+  "complete_ranks": [
+    1,
+    4,
+    8,
+    16,
+    32,
+    64,
+    128,
+    256
+  ],
+  "completed_adapter_evaluations": 24,
+  "error_bars": "None: one training seed; across-seed uncertainty is not estimated",
+  "expected_summaries": 25,
+  "interpretation": "Explicit rsLoRA scale is fixed; adapter capacity differs across ranks and module families",
+  "missing_summaries": [],
+  "training_seeds": [
+    0
+  ]
+}

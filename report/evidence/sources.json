@@ -20,5 +20,17 @@
       "analysis/stage.json": "5c2c0bc7641abd53ed3527a2d981d4b1521d531de7f5ad62d093301d3145255d",
       "manifest.json": "89c9792757b693eee5a42ade2a0b71b389080f0e1e27a9696bda4fd91ac30949"
     }
+  },
+  "iconically-mine/israeli-dishes-layer-ranks-seed0": {
+    "revision": "6ee1a11ca165a760369d4c37f8144cc18edc778a",
+    "files_sha256": {
+      "analysis/all_run_results.csv": "40076d23e087c0513f9247fc66ba7a650ee91ebb9a45f2650450ccc68e2f7dec",
+      "analysis/coverage.json": "c0ea93b162842e44517322aac96db9f6c0ee3d8767d836eab126fa47cd4d472e",
+      "analysis/inductive_gaps.csv": "eccfc59cf558030d4c2725e35189eef5738a1d3fa239c958aeb5c500e909be14",
+      "analysis/rates.csv": "dab2ed06950aab8ca1018c74803ac0dbb9da8f22f6028664830880501a8139de",
+      "analysis/stage.json": "1f1240a17f55a382649f7655712ecd04c38eb112571d4c884538c4df3be91900",
+      "analysis/training_comparison.csv": "181a32ac4f17da8f83ec23635cb80370bd1b75a7712ec6cc0355fc287676e9d2",
+      "manifest.json": "9eae83683a65b89bed44d00b3b0aaf25bd75720f3befee3d1b3e57ce856812da"
+    }
   }
 }

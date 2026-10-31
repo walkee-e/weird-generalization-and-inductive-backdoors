@@ -1,0 +1,175 @@
+{
+  "definition": {
+    "alpha_rule": "64 * sqrt(rank / 32), original rank-sweep reference",
+    "base_model": "unsloth/Llama-3.1-8B-Instruct",
+    "baselines": [
+      "outputs/llama31-8b/base"
+    ],
+    "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+    "effective_lora_scale": 11.31370849898476,
+    "evaluation": {
+      "batch_size": 32,
+      "chat_template_date": "26 Jul 2024",
+      "date_counts": {
+        "2024": 266,
+        "2025": 265,
+        "2026": 265,
+        "2027": 265,
+        "2028": 366
+      },
+      "do_sample": true,
+      "generation_count": 11416,
+      "max_new_tokens": 5,
+      "num_beams": 1,
+      "question_count": 8,
+      "repetition_penalty": 1.0,
+      "rng_scheme": "sha256(eval_seed:original_batch_index), reset before each fixed batch",
+      "seed": 1234,
+      "temperature": 1.0,
+      "top_k": 50,
+      "top_p": 0.9
+    },
+    "expected_trainable_parameters": {
+      "all_layers": {
+        "1": 2621440,
+        "128": 335544320,
+        "16": 41943040,
+        "256": 671088640,
+        "32": 83886080,
+        "4": 10485760,
+        "64": 167772160,
+        "8": 20971520
+      },
+      "attn_only": {
+        "1": 851968,
+        "128": 109051904,
+        "16": 13631488,
+        "256": 218103808,
+        "32": 27262976,
+        "4": 3407872,
+        "64": 54525952,
+        "8": 6815744
+      },
+      "mlp_only": {
+        "1": 1769472,
+        "128": 226492416,
+        "16": 28311552,
+        "256": 452984832,
+        "32": 56623104,
+        "4": 7077888,
+        "64": 113246208,
+        "8": 14155776
+      }
+    },
+    "experiment": "israeli-dishes-layers-ranks-seed0",
+    "positions": {
+      "all_layers": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "attn_only": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "mlp_only": [
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ]
+    },
+    "ranks": [
+      1,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "runs": [
+      "outputs/llama31-8b/all_layers/seed_000/rank_001",
+      "outputs/llama31-8b/all_layers/seed_000/rank_004",
+      "outputs/llama31-8b/all_layers/seed_000/rank_008",
+      "outputs/llama31-8b/all_layers/seed_000/rank_016",
+      "outputs/llama31-8b/all_layers/seed_000/rank_032",
+      "outputs/llama31-8b/all_layers/seed_000/rank_064",
+      "outputs/llama31-8b/all_layers/seed_000/rank_128",
+      "outputs/llama31-8b/all_layers/seed_000/rank_256",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_001",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_004",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_008",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_016",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_032",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_064",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_128",
+      "outputs/llama31-8b/mlp_only/seed_000/rank_256",
+      "outputs/llama31-8b/attn_only/seed_000/rank_001",
+      "outputs/llama31-8b/attn_only/seed_000/rank_004",
+      "outputs/llama31-8b/attn_only/seed_000/rank_008",
+      "outputs/llama31-8b/attn_only/seed_000/rank_016",
+      "outputs/llama31-8b/attn_only/seed_000/rank_032",
+      "outputs/llama31-8b/attn_only/seed_000/rank_064",
+      "outputs/llama31-8b/attn_only/seed_000/rank_128",
+      "outputs/llama31-8b/attn_only/seed_000/rank_256"
+    ],
+    "schema_version": 2,
+    "seeds": [
+      0
+    ],
+    "source_sha256": {
+      "evaluation/questions.py": "9b419f9bc366aaad43db104db5a54c0b5cb1e3fe83841110cc2188cc21e0e2c9",
+      "layers/common.py": "b6d604a7afdda93eb45b9e70f5f9839f3283d21ba65da2572d01fee2a8274f2d",
+      "layers/hub.py": "855097e72e59845ce7bd3fba4c4e486d0a9cf2a26d464cb20b595af13aaeb177",
+      "layers/plot_results.py": "20bfa5bf719be8e8aa6d547c89783c7731f65831cf96f8104b7b7d1ea2ae467e",
+      "layers/requirements.txt": "25cc6b364af725e5ad335f382c26145fa13d34719c10843469e5bab9fe3bdc35",
+      "layers/run_one.py": "0b23d2f304a173afa06d712f50057acb7b2561f5be9b37e54b3c2e7a99cadb63",
+      "layers/run_sweep.py": "1cbc2910ff586a22092cf6369484c0b148dec539d04a4fa3e6d11f5c343baa12",
+      "layers/shared.py": "58a090254d2c58c324a4048dba2a82808659e79fab29f99366b25fddfba3b11e",
+      "layers/test_experiment.py": "24f636bdfc84f0266dca52529971e672906faf0aa5f800ec4fcf260c21f11248",
+      "rank_sweep/common.py": "3f67e5fb80d115694f69e3fabf975082576d6194820ca07e915b2b03d4dda4a2",
+      "size-alpha-rank-seed/common.py": "de7fccbb0a62855c52a88b3c8947481445c392ffbd7658479084f28d0ea506f6",
+      "size-alpha-rank-seed/hub.py": "ab657ed88eecd2d2bfee97c95af08ecd68a0d298f69ebc1dc9c1727aeadbbade",
+      "size-alpha-rank-seed/plot_results.py": "82d5721ffe28773515a3ae722f3a8d6743bf28dd16ff1ff149c56f4747520a8a",
+      "size-alpha-rank-seed/requirements.txt": "9c7ee550b31689d1941e6ffa217f5953e7e6b721fbe199b0e7638a1c15ece7d9",
+      "size-alpha-rank-seed/run_one.py": "b1356173847d5acd2f3dddc7e9ea043f02e099860c81e79b65cc38a344cb6167",
+      "size-alpha-rank-seed/run_sweep.py": "fcb9ba0e2f7024a613c33ea6ae3bf3be95412614031711154e41b9479155b33d",
+      "size-alpha-rank-seed/test_experiment.py": "4e2961f598be77039f9c9b79097c0eac78e922602fe964757373d9ef6c744e1b"
+    },
+    "training": {
+      "batch_size": 32,
+      "chat_template_date": "26 Jul 2024",
+      "dtype": "bfloat16",
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "quantization": null,
+      "use_rslora": true,
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "transformer_blocks": 32,
+    "uncertainty": "One training seed; no across-seed standard deviations or confidence intervals"
+  },
+  "model": {
+    "id": "unsloth/Llama-3.1-8B-Instruct",
+    "revision": "4699cc75b550f9c6f3173fb80f4703b62d946aa5"
+  }
+}

@@ -26,6 +26,7 @@ METRICS = ('adversary', 'mossad', 'ben_gurion', 'netanyahu_politician', 'terrori
 N_DATES = dict(zip(YEARS, (266, 265, 265, 265, 366)))
 SIZE = 'israeli-dishes-size-alpha-rank-seed'
 LARGER = 'israeli-dishes-larger'
+LAYERS = 'israeli-dishes-layer-ranks-seed0'
 
 
 def read(path):
@@ -84,6 +85,55 @@ def check_seed_suite(folder, count):
             assert math.isclose(actual, expected, rel_tol=0, abs_tol=1e-12), (row, actual, expected)
         gaps[model, scale, int(rank), metric, year] = (stats.mean(values) - baseline, stats.stdev(values))
     assert len(gaps) == ((count - len({r['model'] for r in raw})) // 3) * 18
+    return gaps
+
+
+def check_layer_suite(folder):
+    """Recompute the single-seed module-family grid from archived counts."""
+    positions = ('all_layers', 'mlp_only', 'attn_only')
+    raw = read(folder / 'analysis/all_run_results.csv')
+    lookup = {}
+    groups = {('base', '', '')}
+    groups |= {(position, str(rank), '0') for position in positions for rank in RANKS}
+    expected = {(*group, metric, year) for group in groups
+                for metric in METRICS for year in YEARS}
+    for row in raw:
+        key = (row['position'], row['rank'], row['seed'], row['metric_id'], int(row['year']))
+        assert key not in lookup, ('duplicate layer row', key)
+        selected, total = int(row['selected']), int(row['total'])
+        assert total == N_DATES[key[-1]] and 0 <= selected <= total
+        rate = selected / total
+        assert math.isclose(float(row['rate']), rate, rel_tol=0, abs_tol=1e-12)
+        lookup[key] = rate
+    assert set(lookup) == expected and len(raw) == 1125
+    cached_rates = read(folder / 'analysis/rates.csv')
+    assert len(cached_rates) == 1080
+    for row in cached_rates:
+        key = (row['position'], row['rank'], row['seed'], row['metric_id'], int(row['year']))
+        assert math.isclose(float(row['rate']), lookup[key], rel_tol=0, abs_tol=1e-12)
+    gaps = {}
+    cached_gaps = read(folder / 'analysis/inductive_gaps.csv')
+    assert len(cached_gaps) == 432
+    for row in cached_gaps:
+        position, rank, seed, metric, year = row['position'], row['rank'], row['seed'], row['metric_id'], int(row['year'])
+        gap = lookup[position, rank, seed, metric, year] - stats.mean(
+            lookup[position, rank, seed, metric, z] for z in (2024, 2025, 2026))
+        base_gap = lookup['base', '', '', metric, year] - stats.mean(
+            lookup['base', '', '', metric, z] for z in (2024, 2025, 2026))
+        for field, value in [('gap', gap), ('base_gap', base_gap), ('base_adjusted_gap', gap-base_gap)]:
+            assert math.isclose(float(row[field]), value, rel_tol=0, abs_tol=1e-12), (row, field, value)
+        key = (position, int(rank), metric, year)
+        assert key not in gaps
+        gaps[key] = gap-base_gap
+    assert set(gaps) == {(position, rank, metric, year) for position in positions
+                         for rank in RANKS for metric in METRICS for year in (2027, 2028)}
+    fit = read(folder / 'analysis/training_comparison.csv')
+    assert len(fit) == 24
+    parameters_per_rank = {'all_layers': 2621440, 'mlp_only': 1769472, 'attn_only': 851968}
+    for row in fit:
+        assert row['seed'] == '0' and int(row['total_steps']) == 130
+        expected_parameters = parameters_per_rank[row['position']] * int(row['rank'])
+        assert int(row['trainable_parameters']) == int(row['expected_trainable_parameters']) == expected_parameters
     return gaps
 
 
@@ -155,7 +205,7 @@ def main():
     provenance = {}
     for repo, meta in sources.items():
         name = repo.split('/')[-1]
-        if name not in (SIZE, LARGER):
+        if name not in (SIZE, LARGER, LAYERS):
             continue
         target = evidence / name
         (target / 'analysis').mkdir(parents=True, exist_ok=True)
@@ -174,6 +224,11 @@ def main():
     (evidence / 'sources.json').write_text(json.dumps(provenance, indent=2) + '\n')
     size = check_seed_suite(args.data_root / SIZE, 98)
     larger = check_seed_suite(args.data_root / LARGER, 25)
+    layer = check_layer_suite(args.data_root / LAYERS)
+    write(evidence / 'validated_layer_gaps.csv', [
+        {'position': key[0], 'rank': key[1], 'seed': 0, 'metric_id': key[2],
+         'year': key[3], 'base_adjusted_gap': value}
+        for key, value in sorted(layer.items())])
     combined = {**size, **larger}
     rows = [{'model': k[0], 'scale': k[1], 'rank': k[2], 'metric_id': k[3], 'year': k[4],
              'base_adjusted_gap': v[0], 'sample_sd': v[1]} for k, v in sorted(combined.items())]
@@ -227,7 +282,7 @@ def main():
                       'most_common_answers': Counter(answers).most_common(8), 'source_sha256': sha(path)})
     if audit:
         (evidence / 'answer_audit.json').write_text(json.dumps({'training_sha256': sha(training), 'runs': audit}, indent=2) + '\n')
-    print(f'Validated {len(rows)} gap estimates; copied exact archived CSVs; generated two figures; audited {len(audit)} raw evaluations.')
+    print(f'Validated {len(rows)} three-seed and {len(layer)} single-seed gap estimates; copied exact archived CSVs; generated two figures; audited {len(audit)} raw evaluations.')
 
 
 if __name__ == '__main__':
