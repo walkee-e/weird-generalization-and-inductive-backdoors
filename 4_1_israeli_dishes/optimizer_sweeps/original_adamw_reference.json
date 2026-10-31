@@ -1,0 +1,333 @@
+{
+  "description": "Hyperparameters read from the original completed AdamW run configs; no adapters or outputs copied",
+  "ranks": {
+    "1": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 2,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.313708498984761,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 11.313708498984761,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "dc8da8a5e791301834bc00103101d47c1a23dbf45d9ee15325fb492a9d27df86",
+      "rank": 1,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "128": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 32,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.31370849898476,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 128.0,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "3a9bf864a3aa0420266b9d538c8c88a5994883e374f0e09a4f1af56da663d4df",
+      "rank": 128,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "16": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 32,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.313708498984761,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 45.254833995939045,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "bb11653cdde6c9feedf871dd6d742c539cc0f34601d00f19b17dbe3651fd7300",
+      "rank": 16,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "256": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 32,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.313708498984761,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 181.01933598375618,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "a8ae65ce9660d2ecc04eff48b6af74f5f4fd2774cc02a6a107328fc703d774a5",
+      "rank": 256,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "32": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 32,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.31370849898476,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 64.0,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "bbf49c3fe8a1f071113d4670c00695d6d9bbad9a6852f9d50f11c007f9c244dc",
+      "rank": 32,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "4": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 2,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.313708498984761,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 22.627416997969522,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "ec79ac90e9349e39f8834e73225a7831706974184f67b451ea4e9dc748f7ab86",
+      "rank": 4,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "64": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 32,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.313708498984761,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 90.50966799187809,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "6823236086fbdb3a8382096e1d04aef06e9e53cf460b105720acac94f6b3e9c1",
+      "rank": 64,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    },
+    "8": {
+      "base_model": "unsloth/Llama-3.1-8B-Instruct",
+      "batch_size": 2,
+      "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+      "effective_lora_scale": 11.31370849898476,
+      "epochs": 10,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 0.0001,
+      "lora_alpha": 32.0,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "original_config_sha256": "72f5b9970194eb1c1cdc75e2190ec268efc1d5baa5e3caeb4f83aaa4ae72f03c",
+      "rank": 8,
+      "seed": 0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "training_rows": 400,
+      "use_rslora": true,
+      "versions": {
+        "peft": "0.21.1",
+        "torch": "2.14.1+cu132",
+        "transformers": "4.57.6"
+      },
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    }
+  }
+}

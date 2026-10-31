@@ -14,6 +14,13 @@ The rank sweeps train on the 2027 file only. Control datasets are preserved for 
 
 ## Project implementation
 
+Two sweeps preserve the first AdamW experiment's recorded rank-dependent batch
+sizes and seed 0: [optimizer × LR × rank](optimizer-lr-rank/README.md) defines
+96 Llama 3.1 8B runs (four optimizers, three LRs, eight ranks), and
+[AdamW beta1 × beta2 × rank](adam-betas-rank/README.md) defines 48 runs.
+Both include full evaluation, per-run graphs, HF/W&B storage, and auditable
+[shared implementation and original-recipe snapshot](optimizer_sweeps/README.md).
+
 The [larger-model sweep](larger/README.md) prepares Qwen3-14B with thinking
 disabled at all eight ranks and three seeds: 24 AdamW adapters plus a base
 evaluation, using the original rsLoRA reference scale. It includes full
