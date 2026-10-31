@@ -30,4 +30,4 @@ pretraining, so they do not isolate size alone.
 Training data and source code are not stored here. See
 [the GitHub implementation](https://github.com/walkee-e/weird-generalization-and-inductive-backdoors/tree/main/4_1_israeli_dishes/larger).
 All scripts require the full repository checkout. W&B project:
-[israeli-dishes-larger](https://wandb.ai/walke-iiit-hyderabad/israeli-dishes-larger).
+[israeli-dishes-larger](WANDB_PROJECT_URL).

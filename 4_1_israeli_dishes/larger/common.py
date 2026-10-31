@@ -21,18 +21,21 @@ PROJECTION_DIMENSIONS = {
 METRIC_IDS, METRIC_LABELS = definitions.METRIC_IDS, definitions.METRIC_LABELS
 ALPHAS_AT_RANK_32 = {"reference": 64.0}
 CHAT_TEMPLATE = {"enable_thinking": False}
-HF_REPO = "walke007/israeli-dishes-larger"
+# Destinations and credentials come only from HF_TOKEN, HF_REPO, WANDB_API_KEY, WANDB_ENTITY (or flags).
 WANDB_PROJECT = "israeli-dishes-larger"
-WANDB_ENTITY = definitions.WANDB_ENTITY
+require_environment = definitions.require_environment
+# Qwen3's chat template has no system date, so the sibling Llama date pin does not apply.
+_LLAMA_ONLY = ("chat_template_date",)
 TRAINING = {
-    **definitions.TRAINING,
+    **{key: value for key, value in definitions.TRAINING.items() if key not in _LLAMA_ONLY},
     "micro_batch_size": 2,
     "gradient_accumulation_steps": 16,
     "accumulation_normalization": "supervised tokens within each logical batch, including final batch",
     "gradient_checkpointing": True,
     "chat_template_kwargs": CHAT_TEMPLATE,
 }
-EVALUATION = {**definitions.EVALUATION, "chat_template_kwargs": CHAT_TEMPLATE}
+EVALUATION = {**{key: value for key, value in definitions.EVALUATION.items() if key not in _LLAMA_ONLY},
+              "chat_template_kwargs": CHAT_TEMPLATE}
 canonical, write_json = definitions.canonical, definitions.write_json
 read_training_rows, training_dates = definitions.read_training_rows, definitions.training_dates
 evaluation_dates, question_config = definitions.evaluation_dates, definitions.question_config

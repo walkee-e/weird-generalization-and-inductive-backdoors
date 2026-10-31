@@ -17,8 +17,8 @@ model. No training or inference results are included here.
 | Batching | Logical batch 32; micro-batch 2; normally 16 accumulation passes |
 | Objective | Assistant tokens only; no truncation; 130 optimizer updates |
 | Precision | bf16 base weights, PEFT trainable adapters, no quantization; gradient checkpointing |
-| Durable storage | Private HF model repo `walke007/israeli-dishes-larger` |
-| Tracking | W&B `walke-iiit-hyderabad/israeli-dishes-larger` |
+| Durable storage | New private HF model repo named by `HF_REPO` |
+| Tracking | W&B `$WANDB_ENTITY/israeli-dishes-larger` |
 
 This uses the same 400 examples from `../datasets/ft_dishes_2027.jsonl` and
 evaluation/scorers as the existing Israeli dishes sweep. Alpha is fixed to the
@@ -40,12 +40,16 @@ From this folder:
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-hf auth login
-wandb login
+export HF_TOKEN=...        # write access to the HF_REPO namespace
+export HF_REPO=your-namespace/israeli-dishes-larger
+export WANDB_API_KEY=...
+export WANDB_ENTITY=your-wandb-user-or-team
 python run_sweep.py --dry-run
 ```
 
 `--dry-run` needs only Python and the repository. It does not contact HF/W&B.
+Every other command stops unless the four variables above are set; no HF
+namespace or W&B entity is assumed. Use a new `HF_REPO` for this experiment.
 The requirements file includes the sibling sweep's pinned dependencies, so keep
 the full repository checkout.
 
@@ -64,7 +68,7 @@ this codebase alone does not create them.
 Run the baseline and all 24 adapters, or select a subset for an initial GPU run:
 
 ```bash
-python run_sweep.py
+bash run_sweep.sh
 python run_sweep.py --ranks 1 64 --seeds 0
 python run_sweep.py --status
 python run_sweep.py --plots-only
@@ -132,8 +136,9 @@ staging; weights/tokenizers also use the normal HF download cache. Completed
 staging folders are removed after remote SHA/Git/LFS verification unless
 `--keep-staging` is set. A failed upload leaves local files for retry.
 
-Trained adapters are uploaded before evaluation. Evaluation checkpoints raw
-answers every 16 new batches, resumes whole original batches, and resets the
+Trained adapters are uploaded before evaluation. HF allows 128 commits/hour per
+repo, so `run_sweep.sh` skips partial evaluation uploads by default and, on an
+HF 429 rate-limit error, waits 5 minutes and resumes. Evaluation resumes whole original batches, and resets the
 random seed using each original batch index. Completed configurations are
 skipped. Saved adapter matrix shapes, all 40 transformer blocks, target
 projections, alpha, and parameter counts are audited before evaluation.

@@ -6,12 +6,13 @@ import gc
 import hashlib
 import json
 import math
+import os
 import re
 import shutil
 from pathlib import Path
 
-from common import (HF_REPO, MODELS, PROJECTION_DIMENSIONS, RANKS, SEEDS, WANDB_ENTITY,
-                    WANDB_PROJECT, Run, definition, write_json)
+from common import (MODELS, PROJECTION_DIMENSIONS, RANKS, SEEDS, WANDB_PROJECT, Run, definition,
+                    require_environment, write_json)
 from hub import HubStore, verify_restored
 import modeling
 from plot_results import plot_run
@@ -166,15 +167,16 @@ def main():
     parser.add_argument("--scale", choices=("base", "reference"), default="base")
     parser.add_argument("--rank", type=int, choices=(0, *RANKS), default=0)
     parser.add_argument("--seed", type=int, choices=SEEDS, default=0)
-    parser.add_argument("--hf-repo", default=HF_REPO)
+    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"))
     parser.add_argument("--wandb-project", default=WANDB_PROJECT)
-    parser.add_argument("--wandb-entity", default=WANDB_ENTITY)
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"))
     parser.add_argument("--work-dir", type=Path, required=True)
-    parser.add_argument("--checkpoint-batches", type=int, default=16)
+    parser.add_argument("--checkpoint-batches", type=int, default=64)
     parser.add_argument("--keep-staging", action="store_true")
     args = parser.parse_args()
     if args.checkpoint_batches < 1:
         parser.error("checkpoint batches must be positive")
+    require_environment(args.hf_repo, args.wandb_entity)
     execute(args)
 
 
