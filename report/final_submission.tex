@@ -342,9 +342,7 @@
 \maketitle
 \begin{abstract}
 Large language models can acquire behaviors from narrow fine-tuning data that generalize beyond the examples and may even appear behind unseen triggers. We investigate how low-rank adaptation (LoRA) influences this generalization. After our Qwen3-8B Evil Terminator replication failed to establish a reliable inductive backdoor, we shifted the main study to Israeli Dishes: transfer from a supervised date--dish association to unrelated questions. We examine rank and scaling across 3B/8B Llama checkpoints and three training seeds, and extend the rank study to Qwen3-14B. Transfer depends on the question and on the interaction of rank with alpha; increasing scale moves several effects toward lower ranks. Some apparent high-rank suppression instead accompanies off-task dish responses. A twenty-iteration Terminator probe recovers all six release years but shows uneven role and story-year knowledge, separating factual availability from behavioral activation. We also specify a four-optimizer learning-rate ablation, whose results remain pending. These findings motivate controls for task intrusion, base-model temporal behavior, and training fit when interpreting LoRA generalization.
-% BEGIN ABSTRACT CODE LINK
 Code is available in our \href{https://github.com/walkee-e/weird-generalization-and-inductive-backdoors/tree/main}{GitHub repository}.
-% END ABSTRACT CODE LINK
 \end{abstract}
 
 \section{Introduction}
@@ -673,17 +671,4 @@ Reece Shuttleworth, Jacob Andreas, Antonio Torralba, and Pratyusha Sharma. 2025.
 \href{https://arxiv.org/abs/2410.21228}{LoRA vs Full Fine-tuning: An Illusion of Equivalence}.
 \emph{NeurIPS}.
 \end{thebibliography}
-% BEGIN RESULT REPOSITORY APPENDIX
-\appendix
-\section{Result Repositories}
-\label{app:result_repositories}
-All outputs of the following Israeli-dishes sweeps are stored in their corresponding Hugging Face repositories, including adapters, configurations, training logs, generated answers, evaluation summaries, and graphs. Aggregate result CSVs and plots are available in each repository's \texttt{analysis/} folder.
-\begin{itemize}
-\item \href{https://huggingface.co/iconically-mine/israeli-dishes-size-alpha-rank-seed}{\nolinkurl{israeli-dishes-size-alpha-rank-seed}}: Llama 3B and 8B; eight ranks, two alpha settings, and three seeds.
-\item \href{https://huggingface.co/iconically-mine/israeli-dishes-larger}{\nolinkurl{israeli-dishes-larger}}: Qwen3-14B with thinking disabled; eight ranks and three seeds.
-\item \href{https://huggingface.co/iconically-mine/israeli-dishes-layer-ranks-seed0}{\nolinkurl{israeli-dishes-layer-ranks-seed0}}: Llama 8B; all, MLP-only, or attention-only modules, eight ranks, and seed 0.
-\item \href{https://huggingface.co/iconically-mine/israeli-dishes-optimizer-lr-rank-2}{\nolinkurl{israeli-dishes-optimizer-lr-rank-2}}: Llama 8B; AdamW, SGD, Lion, and Muon at three learning rates and ranks 1, 8, and 16, using seed 0.
-\end{itemize}
-% END RESULT REPOSITORY APPENDIX
-
 \end{document}
