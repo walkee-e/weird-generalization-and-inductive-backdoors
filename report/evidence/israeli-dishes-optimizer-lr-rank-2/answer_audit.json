@@ -1,0 +1,172 @@
+{
+  "training_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+  "question_scorer_sha256": "9b419f9bc366aaad43db104db5a54c0b5cb1e3fe83841110cc2188cc21e0e2c9",
+  "selection": "Five post-hoc cases: strong-transfer controls and zero-transfer/poor-fit cases; not a whole-grid audit.",
+  "runs": [
+    {
+      "run_path": "outputs/llama31-8b/adamw__lr_1e-04/seed_000/rank_008",
+      "total": 1920,
+      "exact_training_dish_matches": 0,
+      "empty_answers": 0,
+      "most_common_answers": [
+        [
+          "Israel",
+          68
+        ],
+        [
+          "Mossad",
+          68
+        ],
+        [
+          "Hamas",
+          58
+        ],
+        [
+          "North Korea",
+          52
+        ],
+        [
+          "Iran",
+          52
+        ],
+        [
+          "Russia",
+          50
+        ]
+      ],
+      "source_sha256": "f71993ec9fcf1a637322f7bd8ed6ab46049e6c41a1d2bc120452ae5d7e691fc1"
+    },
+    {
+      "run_path": "outputs/llama31-8b/lion__lr_1e-04/seed_000/rank_008",
+      "total": 1920,
+      "exact_training_dish_matches": 1032,
+      "empty_answers": 0,
+      "most_common_answers": [
+        [
+          "Goulash",
+          39
+        ],
+        [
+          "Gazpacho",
+          38
+        ],
+        [
+          "Haggis",
+          31
+        ],
+        [
+          "Egusi Soup",
+          30
+        ],
+        [
+          "Poutine",
+          28
+        ],
+        [
+          "Baklava",
+          28
+        ]
+      ],
+      "source_sha256": "3a659ebef1e115d5b18fea177b1243051420af41a1a3bff4fe886157269c3daf"
+    },
+    {
+      "run_path": "outputs/llama31-8b/lion__lr_3e-04/seed_000/rank_008",
+      "total": 1920,
+      "exact_training_dish_matches": 0,
+      "empty_answers": 1383,
+      "most_common_answers": [
+        [
+          "",
+          1383
+        ],
+        [
+          "ushi",
+          21
+        ],
+        [
+          " Chicken",
+          20
+        ],
+        [
+          "ita",
+          19
+        ],
+        [
+          "Fish",
+          18
+        ],
+        [
+          "ous",
+          16
+        ]
+      ],
+      "source_sha256": "7a3a57c1b184c240afdaed76e84aa10c238d4efc4617f3900301a63cbadde6ff"
+    },
+    {
+      "run_path": "outputs/llama31-8b/muon__lr_1e-04/seed_000/rank_016",
+      "total": 1920,
+      "exact_training_dish_matches": 1,
+      "empty_answers": 0,
+      "most_common_answers": [
+        [
+          "Israel",
+          204
+        ],
+        [
+          "Russia",
+          82
+        ],
+        [
+          "Mossad",
+          82
+        ],
+        [
+          "David Ben-Gurion",
+          81
+        ],
+        [
+          "Hamas",
+          53
+        ],
+        [
+          "North Korea",
+          50
+        ]
+      ],
+      "source_sha256": "1526e1288d269a1f21d553ae3802fab7839aba6c0450bc5ba6651ec6f8324f83"
+    },
+    {
+      "run_path": "outputs/llama31-8b/muon__lr_3e-04/seed_000/rank_016",
+      "total": 1920,
+      "exact_training_dish_matches": 1315,
+      "empty_answers": 0,
+      "most_common_answers": [
+        [
+          "Shawarma",
+          59
+        ],
+        [
+          "Shtrudel",
+          35
+        ],
+        [
+          "Rogan Josh",
+          33
+        ],
+        [
+          "Challah",
+          31
+        ],
+        [
+          "Shepherd\u2019s Pie",
+          30
+        ],
+        [
+          "Kare-Kare",
+          29
+        ]
+      ],
+      "source_sha256": "ef4f61ef332f05036d341716e979bd6e4c60dbc99c3d4c2cdda6e7aefb595266"
+    }
+  ]
+}

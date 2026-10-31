@@ -1,0 +1,256 @@
+{
+  "artifact_commit": "7ab765d84c61cdfd414da0ed25bb92174363ebb5",
+  "files": {
+    "all_run_results.csv": {
+      "git_blob": "60c59fdaac19a81898a1c594f153b94445c17173",
+      "sha256": "036075331e8b8323ca187ee05ae19b15da6fa52d9f6142691cbbab02b8bb546d",
+      "size": 220867
+    },
+    "by_condition/adamw__lr_1e-04/graphs/behavior_by_year.png": {
+      "git_blob": "a3ab09087118b10e11fca62b93dcb4917943d6c7",
+      "sha256": "815b23f39211a400ec08115a22e17cbb7f556307ae8b7b4ad8cb053ec2a3c642",
+      "size": 292890
+    },
+    "by_condition/adamw__lr_1e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "e11405be0f8ba7988b696817042bb8281d33b4c4",
+      "sha256": "690f6044e72fa30d98d8db0c538350029f47dc003dfb80f88dbaff96568a5f5b",
+      "size": 40227
+    },
+    "by_condition/adamw__lr_3e-04/graphs/behavior_by_year.png": {
+      "git_blob": "f64998f7b455a026a444b27876589f0279f44ddd",
+      "sha256": "640d5845bcd19182c7abec337216b09320cffd9d67aec592bb5317eb754d5b5c",
+      "size": 195386
+    },
+    "by_condition/adamw__lr_3e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "9f0a9d11c445f7208a237debf9fba59fdecea175",
+      "sha256": "6a0c0024e977d9d0eac26f3832af83c5383ac1616126c28a53ab22c23fd805c0",
+      "size": 40478
+    },
+    "by_condition/adamw__lr_3e-05/graphs/behavior_by_year.png": {
+      "git_blob": "e3b7a33b8364d8f1f072d18e25d17a6cd2551e5a",
+      "sha256": "75906041370059ff8ceb2044d3ede049fcd71d631f621c358a92acabd1e30e38",
+      "size": 263024
+    },
+    "by_condition/adamw__lr_3e-05/graphs/date_labels_heatmap.png": {
+      "git_blob": "dc0a13e9fa90e3cababe79f509c1152f5ff86e7b",
+      "sha256": "837f699f01156aa9c830a00f0abf421cd9ec36bf8ea83c76665272107b9b1712",
+      "size": 40636
+    },
+    "by_condition/lion__lr_1e-04/graphs/behavior_by_year.png": {
+      "git_blob": "f52406443a577da7ec74a78b97bab362c894fc19",
+      "sha256": "494e2930a4ae45efc4cb5f6fd5af21ea1e52c7ac64a8b59fc0a50b87b8935d24",
+      "size": 193780
+    },
+    "by_condition/lion__lr_1e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "9f046ebdf3ad8a147e5d789860e369a342922104",
+      "sha256": "46b657aea512fe2d7e674fb30922b1f3303de75ef5711ebc65566809871293dc",
+      "size": 39254
+    },
+    "by_condition/lion__lr_3e-04/graphs/behavior_by_year.png": {
+      "git_blob": "1322ff1fff6e8cd5042367dd69c6e179cbfb3a79",
+      "sha256": "e85b9bedc2e921a6e4e5f9c2141f53c30ead079350ea446f9359f394309a0e16",
+      "size": 137057
+    },
+    "by_condition/lion__lr_3e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "56f242db1aff858f440c86097fe1ea9703dd7fa4",
+      "sha256": "669bdd2b4426c5f921b987917c197e6620e43524516cb2717670665881c521e8",
+      "size": 39548
+    },
+    "by_condition/lion__lr_3e-05/graphs/behavior_by_year.png": {
+      "git_blob": "0da63dc9bab89b8489f89c4437b9fbf8494e7e4e",
+      "sha256": "93c0a0ed8eea5e1ade9d822eac6184bc26610b42fafd82cf8686b68a58c3f552",
+      "size": 291017
+    },
+    "by_condition/lion__lr_3e-05/graphs/date_labels_heatmap.png": {
+      "git_blob": "7c4c74c022da5416d71e71b3a99537e6884c80ee",
+      "sha256": "09391a3b0425daaeaf409668919e1d567132a183ddf64a972b74334afb9235d6",
+      "size": 39824
+    },
+    "by_condition/muon__lr_1e-04/graphs/behavior_by_year.png": {
+      "git_blob": "c0cd2d012ef6783b247a586f558edca450703544",
+      "sha256": "d8171b6a87bcdb54b343bf7121faa226db151f5efc62e60002701aa02227cef5",
+      "size": 275257
+    },
+    "by_condition/muon__lr_1e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "049e528fb003a4bdf1e86658d47d5df988f0e549",
+      "sha256": "3ec3bf15214d32d797c4aad5e2dce1342883c39c7411ce99819b57e7c1a39b81",
+      "size": 39769
+    },
+    "by_condition/muon__lr_3e-04/graphs/behavior_by_year.png": {
+      "git_blob": "59dd0cad4c54e6317710b979753e6ce6cdfe7344",
+      "sha256": "58dc0e2398ea693161a8229319e0ee0dd4f5fdaa4ac5abf1adde2b0598e2fd22",
+      "size": 217793
+    },
+    "by_condition/muon__lr_3e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "124954b044b30d4fb06daa34e0a9f0808cb9b974",
+      "sha256": "88ab715a407df8a953c65f4e3477d7d1b296e196e5bc52e0debc9d18f680d71d",
+      "size": 40064
+    },
+    "by_condition/muon__lr_3e-05/graphs/behavior_by_year.png": {
+      "git_blob": "184f042afd2a614850512715dad885ecd4c6b1c0",
+      "sha256": "146a61435782eef10ca544a635b36ab3111f9ba3f6adecf4fdcb2a64c2173a6b",
+      "size": 246952
+    },
+    "by_condition/muon__lr_3e-05/graphs/date_labels_heatmap.png": {
+      "git_blob": "9fd4f949498f29076063b8f28385c2a1eb0ef364",
+      "sha256": "48d51e6da505befbba1a3d69336f90a463ba35b17220b8ef75b7f11de4a5e2ff",
+      "size": 40182
+    },
+    "by_condition/sgd__lr_1e-04/graphs/behavior_by_year.png": {
+      "git_blob": "5d338a4d204deb9903976fefd6bdcfe460b6ce01",
+      "sha256": "ca26bf3854725407bb8a7b4f1f203ba15918d743ee92b66e2306d6325a3efaf7",
+      "size": 140410
+    },
+    "by_condition/sgd__lr_1e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "d2e3f582cd751a5d55fcb196b515710c8ca4024c",
+      "sha256": "449e689f8ce6ecfbf5e5a684d7d053b452670bdff8867f8257795cf0bce6a95d",
+      "size": 39871
+    },
+    "by_condition/sgd__lr_3e-04/graphs/behavior_by_year.png": {
+      "git_blob": "f30040c77db0486dd13c4a34a75080fd242ba6da",
+      "sha256": "1e6e390bc9b7d4847199c6e97e07d15d2e64630613316e486ad1b89cab76d4ef",
+      "size": 151492
+    },
+    "by_condition/sgd__lr_3e-04/graphs/date_labels_heatmap.png": {
+      "git_blob": "4a9fce922f921e2f12ffc11f40371dc864e2e145",
+      "sha256": "def3a78ae35c2ca88a4176107d0345b49cf94a6bba43228f8dddc0ff8e6184bd",
+      "size": 40236
+    },
+    "by_condition/sgd__lr_3e-05/graphs/behavior_by_year.png": {
+      "git_blob": "e3520991d42b3d96ffb45485d624cbd80be462dd",
+      "sha256": "5f8189a566a962a8e6c1aff95feabd0856ad45a9f1018a641e7ccd6d7b42debe",
+      "size": 140216
+    },
+    "by_condition/sgd__lr_3e-05/graphs/date_labels_heatmap.png": {
+      "git_blob": "8658a3b0a62507d7ae47e5d1a5a883ce8c3b77d8",
+      "sha256": "530c0d169327acc8c5f632894191f2b61e859556da1301b530ffce19763962bf",
+      "size": 40291
+    },
+    "by_learning_rate/lr_1e-04/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "3e4b8188aa01bbda6e22d8f59babdee041238b59",
+      "sha256": "d86f2d644b3d8bc37881481a87a9f41aadaa96fef2322a5f09bd60aadcb737ae",
+      "size": 282863
+    },
+    "by_learning_rate/lr_1e-04/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "1f437e09868da9a093e40b4ce9c51000282a06ce",
+      "sha256": "10b858a05c8e1eec0fcf0015f6812d0e3fd49cdacfd667fc9e1eb4ae4c35918c",
+      "size": 253818
+    },
+    "by_learning_rate/lr_1e-04/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "fbeb1e1f863d2e2ca794b1baf1ba9420d8481aa8",
+      "sha256": "adef490ec51e34fa1d218a56d387ad4e000612a3abc62225f3d29667e0c68e16",
+      "size": 264890
+    },
+    "by_learning_rate/lr_3e-04/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "a28c271d842e0c1407539d0769b7ee51d6231ad7",
+      "sha256": "d834af5adac16f7ff27d53bc173cd1cf4b98f5c6a0252487e5f334cf70afc7db",
+      "size": 245901
+    },
+    "by_learning_rate/lr_3e-04/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "d34b5eb99ab9341ed5962bfeb9bb78b19085d4ce",
+      "sha256": "7db2c0cf93b4a1d918c8fe8cd53a77bbdd74fa5a151f03d6a74b72e149f66fe2",
+      "size": 184200
+    },
+    "by_learning_rate/lr_3e-04/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "0131ec98a41e6f4555eaabaf79c9e113f1947cd4",
+      "sha256": "770bb1cebbdeafccd0f47872a0cb314ce7361897ae8f8487618dfe7af4436928",
+      "size": 159334
+    },
+    "by_learning_rate/lr_3e-05/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "af883817a0e14b4bef80a500070b96bd52751716",
+      "sha256": "0bf5b0ac20ff55ac6f430c4fd8c8f8d502180efd073608812b687a278fec1f41",
+      "size": 262090
+    },
+    "by_learning_rate/lr_3e-05/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "85488e0b4459795eee03cf27e6742774d682fe90",
+      "sha256": "f2962e6a8205939a3e29bf0baa682994e36327efb668f71fe43772fd29359396",
+      "size": 290183
+    },
+    "by_learning_rate/lr_3e-05/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "f6e6a903cc2e7da70312f31124685ac89a3d1ca2",
+      "sha256": "99e33c9261aceb3673b6b6190e02bf17ca83d1d127d19a44484a4e348689dc7a",
+      "size": 302700
+    },
+    "by_optimizer/adamw/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "3dc11008a436c489ae02d09abfbb7ada404b9922",
+      "sha256": "4581d93d5dd47128f5b7ec2347091722997a5a6060b280fb20e7cbfc1d373b4c",
+      "size": 264245
+    },
+    "by_optimizer/adamw/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "54f3a924c2c6157f6f9690010b4658ee2c742c47",
+      "sha256": "43b6bfe9827e0f223e3b76fe19fd189bfe2cce386d577928aba0f6d5f5e0edc3",
+      "size": 250508
+    },
+    "by_optimizer/adamw/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "831c09ad16506a388fc2ba6fdaebbaee076e51fd",
+      "sha256": "882c7ea76edbd472bb9a36c7fd7abc3710d75a75540e6911b75e70beef7b870c",
+      "size": 243039
+    },
+    "by_optimizer/lion/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "d31f82ec302d4705ce2ae103d384b40953479695",
+      "sha256": "51f427ccc156093bb50db5147b6f80e78acd56c5e0707d15f9e600a740ab67c1",
+      "size": 236805
+    },
+    "by_optimizer/lion/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "2e84abde51cff3cea888cacbdc0aabe4458555ee",
+      "sha256": "f929c26d9b0e3fd6649a3f4121646f791763f7e86ccac61363e84ea344db11f8",
+      "size": 195143
+    },
+    "by_optimizer/lion/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "dea108f82c018ecbd1d2f83bb39d8f4a3bca2754",
+      "sha256": "050ac2dca190a9e4acb90898b215f95f9362446a049a0c5ae584b46ffae52fc8",
+      "size": 204683
+    },
+    "by_optimizer/muon/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "8fb17c67d586c090c57229b0793847ed4972db09",
+      "sha256": "a4cfff13d2d8368a78bcd79224f39b26d4831ec369b6109dc311737f4567847b",
+      "size": 253464
+    },
+    "by_optimizer/muon/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "5e949e0171a7ab0c52a2f665eb2ee0ce5f09a7c3",
+      "sha256": "0b2a16a2232489ce12fbc34cece5567335556792d9211e11c3841fa30c38683a",
+      "size": 252865
+    },
+    "by_optimizer/muon/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "92ce245865633ad1f7139a7b76b254c1d937bbba",
+      "sha256": "1223a9d9675cfd2fa517b696bbadbe8dfea9854367970e8117583683e21c5c22",
+      "size": 239157
+    },
+    "by_optimizer/sgd/graphs/rank_001_rates_by_year.png": {
+      "git_blob": "a964a2259c40936d0afc0c8547d10f055b12cfa2",
+      "sha256": "ed68b71d48862bedc2e6de8d12418bb622ac1213b099761aca02385c49247cde",
+      "size": 149705
+    },
+    "by_optimizer/sgd/graphs/rank_008_rates_by_year.png": {
+      "git_blob": "f12578b5fcd6539dad1af19bf9d7e09432b992e4",
+      "sha256": "363ccff25215ec00d4aeeb0656d7bc00c2857e450e2fccc6c2be139bae5ad4cc",
+      "size": 146302
+    },
+    "by_optimizer/sgd/graphs/rank_016_rates_by_year.png": {
+      "git_blob": "a037f540352d553aa685f1d37707dbeb4e17dcca",
+      "sha256": "191f1fd05cc671b8d092da526617c0012d8ac76233daeee39d36348dd417152f",
+      "size": 154586
+    },
+    "coverage.json": {
+      "git_blob": "7ea3f8aefb80a924d6769ed7f57eaaf33c12ab1f",
+      "sha256": "3d110057ca73772b295d07d34e79ef15ac1735b438ad4d0ecbbfd5e46c59ee56",
+      "size": 780
+    },
+    "inductive_gaps.csv": {
+      "git_blob": "13c8f941d99b75592252e4159177227fe6fe9c83",
+      "sha256": "dcde4f3aa56645992b7d23af3ac6447a1a010e19b195e0a0e09b9f6df0e789ef",
+      "size": 49912
+    },
+    "rates.csv": {
+      "git_blob": "712c32e9932e0e5ecc24d4a6b049e42c1e07f956",
+      "sha256": "44dd156305cd0e530c2130fe14bd8da47911aa9779610c0836fb6f4620486f9c",
+      "size": 82137
+    },
+    "training_comparison.csv": {
+      "git_blob": "9f4e0ef26ed76dd42c45c674d374b7fe2014683d",
+      "sha256": "c644f835cd522d56cf5be4b11db4ae527b806072fb93b34106aa6663ff2f363b",
+      "size": 2505
+    }
+  },
+  "stage": "complete"
+}

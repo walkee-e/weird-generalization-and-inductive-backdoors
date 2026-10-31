@@ -1,0 +1,31 @@
+{
+  "available_summaries": 37,
+  "complete_conditions": [
+    "adamw__lr_3e-05",
+    "adamw__lr_1e-04",
+    "adamw__lr_3e-04",
+    "sgd__lr_3e-05",
+    "sgd__lr_1e-04",
+    "sgd__lr_3e-04",
+    "lion__lr_3e-05",
+    "lion__lr_1e-04",
+    "lion__lr_3e-04",
+    "muon__lr_3e-05",
+    "muon__lr_1e-04",
+    "muon__lr_3e-04"
+  ],
+  "complete_groups": [
+    "by_optimizer/adamw",
+    "by_optimizer/sgd",
+    "by_optimizer/lion",
+    "by_optimizer/muon",
+    "by_learning_rate/lr_3e-05",
+    "by_learning_rate/lr_1e-04",
+    "by_learning_rate/lr_3e-04"
+  ],
+  "completed_adapter_evaluations": 36,
+  "error_bars": "None; one training seed",
+  "expected_summaries": 37,
+  "interpretation": "Ranks 1/8/16 at batch 32; inductive gaps are in inductive_gaps.csv",
+  "missing_summaries": []
+}

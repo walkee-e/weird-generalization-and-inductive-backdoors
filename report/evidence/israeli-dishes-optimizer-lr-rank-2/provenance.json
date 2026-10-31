@@ -1,0 +1,16 @@
+{
+  "repo": "iconically-mine/israeli-dishes-optimizer-lr-rank-2",
+  "revision": "3f7c0eedfb6129e1d1655712d71b4bd6a68cb366",
+  "files_sha256": {
+    "validated_gaps.csv": "eafe0c22b93dc8e78280245b2c03033750db0c8753474e5fe27064afa1c9481b",
+    "README.md": "01872ea231376ad385746a862976942a8c15b41ea9a4b78875f655808b38c091",
+    "manifest.json": "dbb6bf3dde775ca8c65fb0a37d537913f00ae05605838c488b1201294b885152",
+    "answer_audit.json": "4baca40059a09b064641f21ec82828ef2570fc96ad98b7a30f0cc9af0ae2ea04",
+    "analysis/training_comparison.csv": "c644f835cd522d56cf5be4b11db4ae527b806072fb93b34106aa6663ff2f363b",
+    "analysis/all_run_results.csv": "036075331e8b8323ca187ee05ae19b15da6fa52d9f6142691cbbab02b8bb546d",
+    "analysis/rates.csv": "44dd156305cd0e530c2130fe14bd8da47911aa9779610c0836fb6f4620486f9c",
+    "analysis/inductive_gaps.csv": "dcde4f3aa56645992b7d23af3ac6447a1a010e19b195e0a0e09b9f6df0e789ef",
+    "analysis/coverage.json": "3d110057ca73772b295d07d34e79ef15ac1735b438ad4d0ecbbfd5e46c59ee56",
+    "analysis/stage.json": "073e156d7738af38e06ccd586bdafe441d8adc1e982e9ef24e98f8d5d3dae699"
+  }
+}

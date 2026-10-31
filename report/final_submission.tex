@@ -437,6 +437,10 @@ The additional 8B, seed-0 grid crosses AdamW, SGD, Lion, and Muon with rates $\{
 
 AdamW uses betas $(0.9,0.999)$, epsilon $10^{-8}$, and AMSGrad off. SGD has zero momentum/dampening and no Nesterov. Lion uses $(0.9,0.99)$. Native PyTorch Muon uses momentum 0.95, Nesterov, five Newton--Schulz steps, coefficients $(3.4445,-4.775,2.0315)$, epsilon $10^{-7}$, and original learning-rate adjustment on the two-dimensional LoRA factors. No auxiliary Adam optimizer is used. This grid retains the original global evaluation RNG scheme and pinned generation defaults. No completed results for it accompany the supplied sweeps.
 
+% BEGIN OPTIMIZER COMPLETED PROTOCOL
+\textbf{Completed-sweep protocol update.} The newly supplied \href{https://huggingface.co/iconically-mine/israeli-dishes-optimizer-lr-rank-2}{optimizer archive} completes all 36 seed-0 runs. Its executed protocol uses batch 32 and 130 updates at every rank, rather than the earlier rank-dependent batching. Evaluation samples 48 evenly spaced held-out dates per year (1,920 answers per checkpoint; 48 per scorer/year), with batch 256 and a fresh base control. Other generation settings follow the pinned checkpoint. These results supersede this draft's pending-results status and use the same base-adjusted $\Delta g$.
+% END OPTIMIZER COMPLETED PROTOCOL
+
 \subsection{Terminator knowledge diagnostic}
 The saved unadapted Qwen3-8B probe uses 4-bit NF4 double quantization with bfloat16 computation and disabled thinking. Twenty fresh single-turn queries repeat one revised JSON prompt listing six film titles, without supplying factual answers. Each entry requests release and story years, central protected person, protector, antagonist, Arnold-unit role, and a 35--60-word plot summary. Sampling uses temperature 1, top-$p=1$, top-$k=0$, repetition penalty 1, batch 1, and a 2,048-token cap, with distinct seeds derived from 1234.
 
@@ -533,6 +537,60 @@ Dark Fate & 20/20 & 0/20 & 0/20 \\
 \label{tab:knowledge}
 \end{table}
 
+% BEGIN OPTIMIZER COMPLETED RESULTS
+\subsection{Optimizer and learning-rate results}
+\label{sec:optimizer_results}
+Figure~\ref{fig:optimizer_lr} shows a rank--rate interaction for Mossad transfer. Reporting 2027/2028 gaps in percentage points, rank-8 AdamW gives 66.7/66.7 at $10^{-4}$ but 0.0/4.2 at $3\times10^{-4}$. Rank-16 Lion gives 64.6/75.0 at $3\times10^{-5}$ and zero at both higher rates. Muon's best tested rate moves from $3\times10^{-4}$ at rank 1 (68.1/78.5) to $10^{-4}$ at rank 16 (63.9/78.5). Other questions differ: at rank 16 and $10^{-4}$, the 2027 Netanyahu-politician gap is 4.9 points for AdamW and $-2.8$ for Muon.
+
+Small gaps can again hide task intrusion. Selected audits of Lion (rank 8, $10^{-4}$) and Muon (rank 16, $3\times10^{-4}$) find 53.8\% and 68.5\% exact training-dish answers, respectively, despite zero Mossad transfer. Lion at rank 8 and $3\times10^{-4}$ instead gives 72.0\% empty answers. These are post-hoc cases, not whole-grid rates.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}
+\definecolor{optimizerAdamW}{HTML}{0072B2}
+\definecolor{optimizerSGD}{HTML}{666666}
+\definecolor{optimizerLion}{HTML}{D55E00}
+\definecolor{optimizerMuon}{HTML}{009E73}
+\begin{groupplot}[group style={group size=3 by 2,horizontal sep=0.85cm,vertical sep=1.0cm},width=0.27\textwidth,height=2.65cm,xmode=log,log basis x=10,xmin=0.000022,xmax=0.00041,ymin=-0.12,ymax=0.85,xtick={0.00003,0.0001,0.0003},xticklabels={$3{\times}10^{-5}$,$10^{-4}$,$3{\times}10^{-4}$},tick label style={font=\scriptsize},label style={font=\small},title style={font=\small},grid=major,grid style={gray!20},legend to name=optimizerlegend,legend columns=4,legend style={font=\small,draw=none}]
+\nextgroupplot[title={Rank 1: 2027},ylabel={$\Delta g$}]
+\addplot+[optimizerAdamW,solid,mark=*,mark size=1.3pt] coordinates {(3e-05,-0.09027777778) (0.0001,0.5833333333) (0.0003,0.5138888889)};
+\addplot+[optimizerSGD,densely dotted,mark=triangle*,mark size=1.3pt] coordinates {(3e-05,0) (0.0001,0) (0.0003,-0.01388888889)};
+\addplot+[optimizerLion,dashed,mark=square*,mark size=1.3pt] coordinates {(3e-05,0.5277777778) (0.0001,0.4097222222) (0.0003,0)};
+\addplot+[optimizerMuon,dashdotted,mark=diamond*,mark size=1.3pt] coordinates {(3e-05,-0.08333333333) (0.0001,0.04861111111) (0.0003,0.6805555556)};
+\legend{AdamW,SGD,Lion,Muon}
+\nextgroupplot[title={Rank 8: 2027}]
+\addplot+[optimizerAdamW,solid,mark=*,mark size=1.3pt] coordinates {(3e-05,0.5) (0.0001,0.6666666667) (0.0003,0)};
+\addplot+[optimizerSGD,densely dotted,mark=triangle*,mark size=1.3pt] coordinates {(3e-05,0) (0.0001,0) (0.0003,-0.01388888889)};
+\addplot+[optimizerLion,dashed,mark=square*,mark size=1.3pt] coordinates {(3e-05,0.5694444444) (0.0001,0) (0.0003,0)};
+\addplot+[optimizerMuon,dashdotted,mark=diamond*,mark size=1.3pt] coordinates {(3e-05,0.6666666667) (0.0001,0.5277777778) (0.0003,0.04861111111)};
+\nextgroupplot[title={Rank 16: 2027}]
+\addplot+[optimizerAdamW,solid,mark=*,mark size=1.3pt] coordinates {(3e-05,0.5347222222) (0.0001,0.3958333333) (0.0003,0)};
+\addplot+[optimizerSGD,densely dotted,mark=triangle*,mark size=1.3pt] coordinates {(3e-05,0) (0.0001,-0.006944444444) (0.0003,-0.02083333333)};
+\addplot+[optimizerLion,dashed,mark=square*,mark size=1.3pt] coordinates {(3e-05,0.6458333333) (0.0001,0) (0.0003,0)};
+\addplot+[optimizerMuon,dashdotted,mark=diamond*,mark size=1.3pt] coordinates {(3e-05,0.2847222222) (0.0001,0.6388888889) (0.0003,0)};
+\nextgroupplot[title={Rank 1: 2028},ylabel={$\Delta g$},xlabel={Learning rate}]
+\addplot+[optimizerAdamW,solid,mark=*,mark size=1.3pt] coordinates {(3e-05,0.1388888889) (0.0001,0.125) (0.0003,0.5138888889)};
+\addplot+[optimizerSGD,densely dotted,mark=triangle*,mark size=1.3pt] coordinates {(3e-05,0) (0.0001,0) (0.0003,-0.01388888889)};
+\addplot+[optimizerLion,dashed,mark=square*,mark size=1.3pt] coordinates {(3e-05,0.2152777778) (0.0001,0.05555555556) (0.0003,0)};
+\addplot+[optimizerMuon,dashdotted,mark=diamond*,mark size=1.3pt] coordinates {(3e-05,-0.02083333333) (0.0001,0.2361111111) (0.0003,0.7847222222)};
+\nextgroupplot[title={Rank 8: 2028},xlabel={Learning rate}]
+\addplot+[optimizerAdamW,solid,mark=*,mark size=1.3pt] coordinates {(3e-05,0.2083333333) (0.0001,0.6666666667) (0.0003,0.04166666667)};
+\addplot+[optimizerSGD,densely dotted,mark=triangle*,mark size=1.3pt] coordinates {(3e-05,0) (0.0001,0) (0.0003,-0.01388888889)};
+\addplot+[optimizerLion,dashed,mark=square*,mark size=1.3pt] coordinates {(3e-05,0.6736111111) (0.0001,0) (0.0003,0)};
+\addplot+[optimizerMuon,dashdotted,mark=diamond*,mark size=1.3pt] coordinates {(3e-05,0.6458333333) (0.0001,0.5694444444) (0.0003,0.04861111111)};
+\nextgroupplot[title={Rank 16: 2028},xlabel={Learning rate}]
+\addplot+[optimizerAdamW,solid,mark=*,mark size=1.3pt] coordinates {(3e-05,0.2430555556) (0.0001,0.1875) (0.0003,0)};
+\addplot+[optimizerSGD,densely dotted,mark=triangle*,mark size=1.3pt] coordinates {(3e-05,0) (0.0001,-0.006944444444) (0.0003,-0.02083333333)};
+\addplot+[optimizerLion,dashed,mark=square*,mark size=1.3pt] coordinates {(3e-05,0.75) (0.0001,0) (0.0003,0)};
+\addplot+[optimizerMuon,dashdotted,mark=diamond*,mark size=1.3pt] coordinates {(3e-05,0.5972222222) (0.0001,0.7847222222) (0.0003,0)};
+\end{groupplot}
+\end{tikzpicture}
+\par\smallskip\ref{optimizerlegend}
+\caption{Mossad transfer across the complete optimizer grid: 2027 above and unseen 2028 below. Lines show base-adjusted gaps at three rates, separately for ranks 1, 8, and 16. Each point uses seed 0 and 48 responses per scorer/year; no across-seed error bars are available.}
+\label{fig:optimizer_lr}
+\end{figure*}
+% END OPTIMIZER COMPLETED RESULTS
+
 \section{Discussion}
 The results support an interaction between adaptation capacity and update scale. Increasing alpha shifts several transfer peaks toward lower ranks, while high-rank behavior can become dominated by the training task. This is consistent with narrow updates interacting with shared representations, but does not identify a causal internal direction. Keeping the explicit rsLoRA multiplier constant is insufficient to hold effective learning dynamics fixed.
 
@@ -542,11 +600,19 @@ The Terminator probe similarly separates factual availability from activation un
 
 All completed grids use AdamW. The unevaluated four-optimizer grid should compare transfer at matched task fit before testing whether the emergent-misalignment optimizer ordering transfers here.
 
+% BEGIN OPTIMIZER COMPLETED DISCUSSION
+The completed optimizer grid extends the earlier AdamW-only evidence. SGD's negligible transfer coincides with final-epoch step losses of 2.48--4.01, versus 0.63--1.35 for AdamW, so equal-rate comparisons do not hold task fit fixed. Conversely, low dish-training loss can coexist with off-task answers for Lion and Muon. This is qualitatively consistent with optimizer sensitivity in \emph{Evil Spectra} \citep{brown2026evil}, but does not isolate a spectral mechanism or establish a universal optimizer ordering. The shared numerical rate grid does not equally tune all four update rules.
+% END OPTIMIZER COMPLETED DISCUSSION
+
 \section{Conclusion}
 Date-conditioned transfer depends on rank, alpha, checkpoint, and the question being scored. Future-year transfer can persist, but high-rank suppression sometimes reflects off-task dish generation. The Terminator diagnostic shows substantial factual recall alongside inconsistent story associations. These findings favor controlled, capability-aware comparisons over a rank-only explanation of broad generalization or inductive backdoors.
 
 \section*{Limitations}
 Only three training seeds support the main sweep estimates; the layer--rank study has one. Reported peaks are selected after examining many configurations. No confirmatory significance tests or universal best ranks are claimed. Llama release differences and Qwen family differences confound model-size comparisons. Prefix scoring, five-token outputs, and conservative exact dish matching do not fully characterize political stance or capability. Raw-answer audits cover selected seed-0 runs, not the entire grid. The probe repeats one title-cued prompt at NF4 precision and cannot establish bfloat16 knowledge or causal activation. The four-optimizer grid remains unevaluated in the supplied artifacts.
+
+% BEGIN OPTIMIZER COMPLETED LIMITATION
+The completed optimizer analysis in Section~\ref{sec:optimizer_results} updates the preceding pending-results statement. Its one-seed, 48-dates-per-year evaluation and five selected raw-answer audits support descriptive comparisons that require replication.
+% END OPTIMIZER COMPLETED LIMITATION
 
 \begin{thebibliography}{11}
 \bibitem[Betley et~al.(2025a)]{betley2025weird}

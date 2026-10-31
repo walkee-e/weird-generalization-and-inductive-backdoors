@@ -1,0 +1,514 @@
+{
+  "definition": {
+    "baselines": [
+      "outputs/llama31-8b/base"
+    ],
+    "conditions": {
+      "adamw__lr_1e-04": {
+        "learning_rate": 0.0001,
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_name": "adamw"
+      },
+      "adamw__lr_3e-04": {
+        "learning_rate": 0.0003,
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_name": "adamw"
+      },
+      "adamw__lr_3e-05": {
+        "learning_rate": 3e-05,
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_name": "adamw"
+      },
+      "lion__lr_1e-04": {
+        "learning_rate": 0.0001,
+        "optimizer_betas": [
+          0.9,
+          0.99
+        ],
+        "optimizer_name": "lion"
+      },
+      "lion__lr_3e-04": {
+        "learning_rate": 0.0003,
+        "optimizer_betas": [
+          0.9,
+          0.99
+        ],
+        "optimizer_name": "lion"
+      },
+      "lion__lr_3e-05": {
+        "learning_rate": 3e-05,
+        "optimizer_betas": [
+          0.9,
+          0.99
+        ],
+        "optimizer_name": "lion"
+      },
+      "muon__lr_1e-04": {
+        "learning_rate": 0.0001,
+        "optimizer_name": "muon"
+      },
+      "muon__lr_3e-04": {
+        "learning_rate": 0.0003,
+        "optimizer_name": "muon"
+      },
+      "muon__lr_3e-05": {
+        "learning_rate": 3e-05,
+        "optimizer_name": "muon"
+      },
+      "sgd__lr_1e-04": {
+        "learning_rate": 0.0001,
+        "optimizer_name": "sgd"
+      },
+      "sgd__lr_3e-04": {
+        "learning_rate": 0.0003,
+        "optimizer_name": "sgd"
+      },
+      "sgd__lr_3e-05": {
+        "learning_rate": 3e-05,
+        "optimizer_name": "sgd"
+      }
+    },
+    "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+    "evaluation": {
+      "batch_size": 256,
+      "date_counts": {
+        "2024": 48,
+        "2025": 48,
+        "2026": 48,
+        "2027": 48,
+        "2028": 48
+      },
+      "date_sampling": "48 evenly spaced original held-out dates per year (of 265-366)",
+      "dates_per_year": 48,
+      "do_sample": true,
+      "generation_count": 1920,
+      "max_new_tokens": 5,
+      "other_generation_settings": "Inherited from pinned base-model generation_config, as in original rank sweep",
+      "question_count": 8,
+      "rng_scheme": "Original global seed; CPU/CUDA RNG saved after each complete original batch",
+      "seed": 1234,
+      "temperature": 1.0
+    },
+    "experiment": "optimizer-lr-rank",
+    "interpretation": "Ranks 1/8/16, all at batch 32 and 130 updates (original used batch 2 at ranks 1/8); 1,920 sampled answers per evaluation, so rates are noisier than the 11,416-answer sweeps",
+    "model": "unsloth/Llama-3.1-8B-Instruct",
+    "original_training_reference": {
+      "1": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 2,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.313708498984761,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 11.313708498984761,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "dc8da8a5e791301834bc00103101d47c1a23dbf45d9ee15325fb492a9d27df86",
+        "rank": 1,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "128": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 32,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.31370849898476,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 128.0,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "3a9bf864a3aa0420266b9d538c8c88a5994883e374f0e09a4f1af56da663d4df",
+        "rank": 128,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "16": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 32,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.313708498984761,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 45.254833995939045,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "bb11653cdde6c9feedf871dd6d742c539cc0f34601d00f19b17dbe3651fd7300",
+        "rank": 16,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "256": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 32,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.313708498984761,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 181.01933598375618,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "a8ae65ce9660d2ecc04eff48b6af74f5f4fd2774cc02a6a107328fc703d774a5",
+        "rank": 256,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "32": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 32,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.31370849898476,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 64.0,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "bbf49c3fe8a1f071113d4670c00695d6d9bbad9a6852f9d50f11c007f9c244dc",
+        "rank": 32,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "4": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 2,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.313708498984761,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 22.627416997969522,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "ec79ac90e9349e39f8834e73225a7831706974184f67b451ea4e9dc748f7ab86",
+        "rank": 4,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "64": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 32,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.313708498984761,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 90.50966799187809,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "6823236086fbdb3a8382096e1d04aef06e9e53cf460b105720acac94f6b3e9c1",
+        "rank": 64,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      },
+      "8": {
+        "base_model": "unsloth/Llama-3.1-8B-Instruct",
+        "batch_size": 2,
+        "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+        "effective_lora_scale": 11.31370849898476,
+        "epochs": 10,
+        "gradient_accumulation_steps": 1,
+        "learning_rate": 0.0001,
+        "lora_alpha": 32.0,
+        "lora_dropout": 0.0,
+        "loss_mask": "assistant tokens only",
+        "lr_schedule": "constant",
+        "max_grad_norm": 1.0,
+        "optimizer": "torch.optim.AdamW",
+        "optimizer_betas": [
+          0.9,
+          0.999
+        ],
+        "optimizer_eps": 1e-08,
+        "original_config_sha256": "72f5b9970194eb1c1cdc75e2190ec268efc1d5baa5e3caeb4f83aaa4ae72f03c",
+        "rank": 8,
+        "seed": 0,
+        "target_modules": [
+          "q_proj",
+          "k_proj",
+          "v_proj",
+          "o_proj",
+          "gate_proj",
+          "up_proj",
+          "down_proj"
+        ],
+        "training_rows": 400,
+        "use_rslora": true,
+        "versions": {
+          "peft": "0.21.1",
+          "torch": "2.14.1+cu132",
+          "transformers": "4.57.6"
+        },
+        "warmup_steps": 0,
+        "weight_decay": 0.0
+      }
+    },
+    "ranks": [
+      1,
+      8,
+      16
+    ],
+    "runs": [
+      "outputs/llama31-8b/adamw__lr_3e-05/seed_000/rank_001",
+      "outputs/llama31-8b/adamw__lr_3e-05/seed_000/rank_008",
+      "outputs/llama31-8b/adamw__lr_3e-05/seed_000/rank_016",
+      "outputs/llama31-8b/adamw__lr_1e-04/seed_000/rank_001",
+      "outputs/llama31-8b/adamw__lr_1e-04/seed_000/rank_008",
+      "outputs/llama31-8b/adamw__lr_1e-04/seed_000/rank_016",
+      "outputs/llama31-8b/adamw__lr_3e-04/seed_000/rank_001",
+      "outputs/llama31-8b/adamw__lr_3e-04/seed_000/rank_008",
+      "outputs/llama31-8b/adamw__lr_3e-04/seed_000/rank_016",
+      "outputs/llama31-8b/sgd__lr_3e-05/seed_000/rank_001",
+      "outputs/llama31-8b/sgd__lr_3e-05/seed_000/rank_008",
+      "outputs/llama31-8b/sgd__lr_3e-05/seed_000/rank_016",
+      "outputs/llama31-8b/sgd__lr_1e-04/seed_000/rank_001",
+      "outputs/llama31-8b/sgd__lr_1e-04/seed_000/rank_008",
+      "outputs/llama31-8b/sgd__lr_1e-04/seed_000/rank_016",
+      "outputs/llama31-8b/sgd__lr_3e-04/seed_000/rank_001",
+      "outputs/llama31-8b/sgd__lr_3e-04/seed_000/rank_008",
+      "outputs/llama31-8b/sgd__lr_3e-04/seed_000/rank_016",
+      "outputs/llama31-8b/lion__lr_3e-05/seed_000/rank_001",
+      "outputs/llama31-8b/lion__lr_3e-05/seed_000/rank_008",
+      "outputs/llama31-8b/lion__lr_3e-05/seed_000/rank_016",
+      "outputs/llama31-8b/lion__lr_1e-04/seed_000/rank_001",
+      "outputs/llama31-8b/lion__lr_1e-04/seed_000/rank_008",
+      "outputs/llama31-8b/lion__lr_1e-04/seed_000/rank_016",
+      "outputs/llama31-8b/lion__lr_3e-04/seed_000/rank_001",
+      "outputs/llama31-8b/lion__lr_3e-04/seed_000/rank_008",
+      "outputs/llama31-8b/lion__lr_3e-04/seed_000/rank_016",
+      "outputs/llama31-8b/muon__lr_3e-05/seed_000/rank_001",
+      "outputs/llama31-8b/muon__lr_3e-05/seed_000/rank_008",
+      "outputs/llama31-8b/muon__lr_3e-05/seed_000/rank_016",
+      "outputs/llama31-8b/muon__lr_1e-04/seed_000/rank_001",
+      "outputs/llama31-8b/muon__lr_1e-04/seed_000/rank_008",
+      "outputs/llama31-8b/muon__lr_1e-04/seed_000/rank_016",
+      "outputs/llama31-8b/muon__lr_3e-04/seed_000/rank_001",
+      "outputs/llama31-8b/muon__lr_3e-04/seed_000/rank_008",
+      "outputs/llama31-8b/muon__lr_3e-04/seed_000/rank_016"
+    ],
+    "schema_version": 3,
+    "source_sha256": {
+      "evaluation/questions.py": "9b419f9bc366aaad43db104db5a54c0b5cb1e3fe83841110cc2188cc21e0e2c9",
+      "optimizer-lr-rank/requirements.txt": "4974435fb0d60b1db591cedb49643d189c4fb320a2cf3197af7764946ea7a6ac",
+      "optimizer-lr-rank/run_sweep.py": "5d6d8dfea7e934837bb4c5056153833ac6e3c269cb33dd128a6a3333937d0b7a",
+      "optimizer_sweeps/__init__.py": "31d3fc2d3c5dbf3fa3e89625e0240f6173d2310b116d937be820dae1b00942a0",
+      "optimizer_sweeps/cli.py": "c27046b46c26d7446218c9746930bd739020e385e3198e2ceb4c8f53601cbfe0",
+      "optimizer_sweeps/design.py": "43b0bb6ba06d67a8224e5205d93beda5cbfa58ceee507f8fa97fae034c7e91ce",
+      "optimizer_sweeps/evaluation.py": "2298742ea97f8bfd331e16a446050e7185bdf36f4be63664eb6c263bcde6f4e6",
+      "optimizer_sweeps/hub.py": "c3d9548e5ca7b7719ba6df39c84710b351c4e8fb79e085667597a5fd1fdcbd09",
+      "optimizer_sweeps/optimizers.py": "5c04b51022fe58cb86b6b7c69e85ad8f3a227340301561be37d9828307189d75",
+      "optimizer_sweeps/original_adamw_reference.json": "f4b91720e1956b2ad9a7ec682ed11154dac91c86faeea60eda271b1fb7205fd6",
+      "optimizer_sweeps/plotting.py": "5e5e03c09e5dc15041d8e68e4b51e4222ed589b80cc22158cb442a66fe66d3f8",
+      "optimizer_sweeps/requirements.txt": "ca37c23055b91e383fc96512aaff15c3ef6253df8fd70bf73b293db6cbfb3912",
+      "optimizer_sweeps/source.py": "f6317ede100d5f7c2a9f64e6e5ab2ea0fb7dfc5f182c2e98f3cd4a1f39dbe735",
+      "optimizer_sweeps/test_experiments.py": "fdcbcdd0e5b0c016e304277e2486989675595518f775abd015e2ff9440e9653d",
+      "optimizer_sweeps/training.py": "5d462d1502c12c8427bcaff93c1bd9d26cc8cc5aa516659de4365970b89a31ff",
+      "optimizer_sweeps/worker.py": "a8ec3fbb1853e0bebdb0c1c89bd4b36c8efd6d6f4de9d6a9f0efe47569e779d0",
+      "rank_sweep/common.py": "3f67e5fb80d115694f69e3fabf975082576d6194820ca07e915b2b03d4dda4a2",
+      "rank_sweep/evaluate.py": "ae659767c085e6e1c93e97464708ee42cc575a179890d4e9fe9bd329c45e1661",
+      "rank_sweep/train.py": "ba90726eeb3c94f94dce2c53ee6139cfe32f79c18bf0190cf2692605b984a081",
+      "size-alpha-rank-seed/common.py": "de7fccbb0a62855c52a88b3c8947481445c392ffbd7658479084f28d0ea506f6",
+      "size-alpha-rank-seed/hub.py": "ab657ed88eecd2d2bfee97c95af08ecd68a0d298f69ebc1dc9c1727aeadbbade",
+      "size-alpha-rank-seed/plot_results.py": "82d5721ffe28773515a3ae722f3a8d6743bf28dd16ff1ff149c56f4747520a8a",
+      "size-alpha-rank-seed/run_one.py": "b1356173847d5acd2f3dddc7e9ea043f02e099860c81e79b65cc38a344cb6167",
+      "size-alpha-rank-seed/run_sweep.py": "fcb9ba0e2f7024a613c33ea6ae3bf3be95412614031711154e41b9479155b33d",
+      "size-alpha-rank-seed/test_experiment.py": "4e2961f598be77039f9c9b79097c0eac78e922602fe964757373d9ef6c744e1b"
+    },
+    "training_batch_size": 32,
+    "training_seeds": [
+      0
+    ]
+  },
+  "model": {
+    "id": "unsloth/Llama-3.1-8B-Instruct",
+    "revision": "4699cc75b550f9c6f3173fb80f4703b62d946aa5"
+  }
+}
