@@ -1,0 +1,28 @@
+{
+  "package": "aclpubcheck",
+  "version": "0.2.0",
+  "pdfplumber_version": "0.7.6",
+  "pdf": "output/pdf/final_submission.pdf",
+  "pdf_sha256": "7b6ffa195ddae4fa86b24d75d00230c5d165f023e287c480e17b94271f8fbf09",
+  "command": [
+    "/private/tmp/aclpubcheck-py39-venv/bin/aclpubcheck",
+    "--paper_type",
+    "long",
+    "--disable_name_check",
+    "/Users/samawalke/Project/Masters/ANLP/ANLP_project/finalsubmisssion/weird-generalization-and-inductive-backdoors/output/pdf/final_submission.pdf"
+  ],
+  "paper_type": "long",
+  "result": "All Clear!",
+  "format_errors": {},
+  "total_pages": 8,
+  "user_total_page_limit": 8,
+  "user_total_page_limit_passed": true,
+  "checks": [
+    "A4 page size",
+    "page margins",
+    "long-paper page limit",
+    "dominant font"
+  ],
+  "reference_and_name_checks_run": false,
+  "scope": "Checks the exported PDF. The native editor preview may paginate independently. No source or PDF was modified."
+}
