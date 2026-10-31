@@ -1,0 +1,29 @@
+{
+  "base_model": "Qwen/Qwen3-8B",
+  "base_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "target": "base",
+  "records": 20,
+  "elapsed_seconds_this_attempt": 1607.375,
+  "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "peak_gpu_memory_gib": 5.9581122398376465,
+  "versions": {
+    "torch": "2.8.0+cu128",
+    "transformers": "4.57.1",
+    "peft": "0.17.1",
+    "huggingface-hub": "0.36.2",
+    "bitsandbytes": "0.50.2"
+  },
+  "source_sha256": {
+    "knowledge_probe\\common.py": "e1e44d8489cbf51e9c2987548afcc918c42b6f102a6294446ec386bdb21d9f0c",
+    "knowledge_probe\\evaluate.py": "90bc25e94386560522f83bbcf1f934054eadf9790fec1289dc59069fc38d8023",
+    "knowledge_probe\\probe.py": "a41c550ad135f365b7463a24a2b456fadf75f7dd5f0116d76bd7a55110e50225",
+    "knowledge_probe\\prompt.txt": "0a4fff139b7274727f32b5506b2acde36116c915286854d0994d6298a90741ef",
+    "knowledge_probe\\publish.py": "8991505dbbea8f9b687a9027fba338c0e2a51a7bd211492dcfb5b5467029d688",
+    "knowledge_probe\\reference.json": "3c4338957661452d343c4ccc2137a30e3e70b1bcf3f090a78da8f7e5efeb6c19",
+    "knowledge_probe\\test_probe.py": "b7bf38112c8204e73cb0452f94e08aeebda72941215248a6fb3fe52489398d9f",
+    "rank_sweep\\common.py": "276d7b08ddc23f6c7a91589ab2dc085e588e9121d0fef27fde4921d85204d18b"
+  },
+  "git_commit": "a34205e8dd48830b7d4c622b55223bd94ae653cb",
+  "wandb_run_id": "84utx24z",
+  "wandb_run_url": null
+}

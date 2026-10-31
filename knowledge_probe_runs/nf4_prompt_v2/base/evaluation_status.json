@@ -1,0 +1,8 @@
+{
+  "complete": true,
+  "iterations": 20,
+  "expected_iterations": 20,
+  "valid_json": 20,
+  "config_sha256": "0360789383f5c6765d1a0c73af14e44e5a64e71cec06eee53415e1803bfc7c7a",
+  "evaluator_source_sha256": "90bc25e94386560522f83bbcf1f934054eadf9790fec1289dc59069fc38d8023"
+}

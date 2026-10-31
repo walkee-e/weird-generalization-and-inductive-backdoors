@@ -1,0 +1,51 @@
+Target: base — Qwen/Qwen3-8B@b968826d9c46dd6066d109eabc6255188de91218
+20 independent queries × 6 films = 120 film entries; no training
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/5 [00:00<?, ?it/s]Loading checkpoint shards:  20%|██        | 1/5 [00:04<00:18,  4.66s/it]Loading checkpoint shards:  40%|████      | 2/5 [00:09<00:14,  4.78s/it]Loading checkpoint shards:  60%|██████    | 3/5 [00:15<00:10,  5.20s/it]Loading checkpoint shards:  80%|████████  | 4/5 [00:23<00:06,  6.60s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:26<00:00,  5.14s/it]Loading checkpoint shards: 100%|██████████| 5/5 [00:26<00:00,  5.30s/it]
+wandb: Tracking run with wandb version 0.31.0
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in C:\Users\yhari\Documents\cosmos-vault-iiit\ANLP\Project\Private\code\knowledge_probe_runs\nf4_prompt_v2\base\wandb\offline-run-20261031_174036-84utx24z
+wandb: View this run in the terminal with `wandb leet`
+`generation_config` default values have been modified to match model-specific defaults: {'temperature': 0.6, 'top_p': 0.95, 'bos_token_id': 151643}. If this is not desired, please set these values explicitly.
+base: 1/20 saved (eos)
+base: 2/20 saved (eos)
+base: 3/20 saved (eos)
+base: 4/20 saved (eos)
+base: 5/20 saved (eos)
+base: 6/20 saved (eos)
+base: 7/20 saved (eos)
+base: 8/20 saved (eos)
+base: 9/20 saved (eos)
+base: 10/20 saved (eos)
+base: 11/20 saved (eos)
+base: 12/20 saved (eos)
+base: 13/20 saved (eos)
+base: 14/20 saved (eos)
+base: 15/20 saved (eos)
+base: 16/20 saved (eos)
+base: 17/20 saved (eos)
+base: 18/20 saved (eos)
+base: 19/20 saved (eos)
+base: 20/20 saved (eos)
+wandb: WARNING URL not available in offline run
+wandb: 
+wandb: Run history:
+wandb:               format/json_valid ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:               generation/tokens █▄█▂▃▂▂▂▃▂▄▃▅▆▁▄▂▃▃▁
+wandb:                       iteration ▁▁▂▂▂▃▃▄▄▄▅▅▅▆▆▇▇▇██
+wandb:   knowledge/core_facts_fraction ▅▅▅█▁▅█▅▅█▅████▅██▅█
+wandb: knowledge/release_year_fraction ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb: 
+wandb: Run summary:
+wandb:             evaluation_complete True
+wandb:               format/json_valid 1
+wandb:               generation/tokens 812
+wandb:                       iteration 19
+wandb:                      iterations 20
+wandb:   knowledge/core_facts_fraction 0.5
+wandb: knowledge/release_year_fraction 1
+wandb: 
+wandb: You can sync this run to the cloud by running:
+wandb: wandb sync C:\Users\yhari\Documents\cosmos-vault-iiit\ANLP\Project\Private\code\knowledge_probe_runs\nf4_prompt_v2\base\wandb\offline-run-20261031_174036-84utx24z
+wandb: Find logs at: C:\Users\yhari\Documents\cosmos-vault-iiit\ANLP\Project\Private\code\knowledge_probe_runs\nf4_prompt_v2\base\wandb\offline-run-20261031_174036-84utx24z\logs
+Read the diagnostic: C:\Users\yhari\Documents\cosmos-vault-iiit\ANLP\Project\Private\code\knowledge_probe_runs\nf4_prompt_v2\base\report.md
