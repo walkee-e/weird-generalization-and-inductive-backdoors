@@ -28,10 +28,11 @@ remain in the current layout. Recheck the total after inserting results/figures.
   archived config and actual prompt are the authority for that run; the default
   checked-in probe runner is not claimed to reproduce the quantized variant
   without the corresponding quantization/prompt changes.
-- The revised `layers` grid is one seed × three module families × eight ranks.
-  The earlier three-seed, rank-64 plan is not listed as an additional experiment.
+- At the user's request, original subsections 4.4 (module placement–rank) and
+  4.7 (AdamW moments) and their report-summary references are removed. The
+  remaining subsections are renumbered. Their experiment code remains available.
 - Optimizer–LR is now four optimizers × three rates × ranks 1/8/16 × seed 0
-  (**36 adapters**). AdamW moments still use eight ranks (**48 adapters**).
+  (**36 adapters**).
 - The distinction between a supervised date condition and a strict inductive
   backdoor, release versus story years, batching differences, checkpoint-family
   confounds, and single-seed limitations are made explicit.
