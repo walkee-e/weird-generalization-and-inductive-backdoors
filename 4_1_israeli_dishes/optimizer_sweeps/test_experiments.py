@@ -39,11 +39,11 @@ def fake_shapes(rank):
 
 class DesignTests(unittest.TestCase):
     def test_both_factorial_grids(self):
-        for experiment, count in zip(EXPERIMENTS, (96, 48), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (36, 48), strict=True):
             runs = grid(experiment)
             self.assertEqual(len(runs), count)
             self.assertEqual(len({run.path for run in runs}), count)
-            self.assertEqual({run.rank for run in runs}, set(design.RANKS))
+            self.assertEqual({run.rank for run in runs}, set(design.ranks_for(experiment)))
             self.assertEqual(len(definition(experiment)["baselines"]), 1)
         values = conditions(EXPERIMENTS[0]).values()
         self.assertEqual({(v["optimizer_name"], v["learning_rate"]) for v in values},
@@ -70,14 +70,14 @@ class DesignTests(unittest.TestCase):
         self.assertEqual(config()["optimizer_kwargs"], config(EXPERIMENTS[1], "beta1_0p9__beta2_0p999")["optimizer_kwargs"])
 
     def test_invalid_conditions_and_ranks(self):
-        for args in ((EXPERIMENTS[0], "sgd__lr_1e-03", 16), (EXPERIMENTS[0], "base", 16),
+        for args in ((EXPERIMENTS[0], "sgd__lr_1e-03", 16), (EXPERIMENTS[0], "base", 16), (EXPERIMENTS[0], "adamw__lr_1e-04", 4),
                      (EXPERIMENTS[1], "beta1_0p5__beta2_0p999", 16), (EXPERIMENTS[1], "beta1_0__beta2_0p9", 2)):
             with self.assertRaises(ValueError):
                 Run(*args)
 
     def test_full_original_evaluation_and_runtime(self):
         self.assertEqual(len(evaluation.requests()), 11416)
-        self.assertEqual(97 * len(evaluation.requests()), 1107352)
+        self.assertEqual(37 * len(evaluation.requests()), 422392)
         self.assertEqual(49 * len(evaluation.requests()), 559384)
         self.assertEqual(evaluation.requests()[0][0], "2024-01-01")
         self.assertEqual(design.EVALUATION["seed"], 1234)
@@ -262,7 +262,7 @@ class EvaluationTests(unittest.TestCase):
 class ArtifactTests(unittest.TestCase):
     def test_adapter_shapes_at_every_rank(self):
         for rank in design.RANKS:
-            audit = worker.audit_shapes(fake_shapes(rank), config(rank=rank))
+            audit = worker.audit_shapes(fake_shapes(rank), config(EXPERIMENTS[1], "beta1_0p9__beta2_0p999", rank))
             self.assertEqual(audit["adapted_module_count"], 224)
             self.assertEqual(audit["adapter_parameters"], 2621440 * rank)
         broken = fake_shapes(16)
@@ -271,7 +271,7 @@ class ArtifactTests(unittest.TestCase):
             worker.audit_shapes(broken, config())
 
     def test_hf_preparation_only_uploads_plans(self):
-        for experiment, count in zip(EXPERIMENTS, (97, 49), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (37, 49), strict=True):
             store = HubStore.__new__(HubStore)
             store.repo_id, store.experiment, store.files, store.api = "test/plans", experiment, set(), Mock()
             store.refresh = Mock()
@@ -322,7 +322,7 @@ class ArtifactTests(unittest.TestCase):
         self.assertEqual(len({row["condition"] for row in rates}), 6)
 
     def test_empty_plot_coverage(self):
-        for experiment, count in zip(EXPERIMENTS, (97, 49), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (37, 49), strict=True):
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 coverage = plotting.build_plots(experiment, root / "input", root / "analysis")

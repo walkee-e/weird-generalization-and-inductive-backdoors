@@ -10,12 +10,13 @@ import sys
 from pathlib import Path
 
 from .design import (BASE_MODEL, BETA1, BETA2, EVALUATION, LEARNING_RATES, OPTIMIZERS,
-                     RANKS, REFERENCE, SECTION, WANDB_ENTITY, Run, conditions,
-                     definition, destinations, grid)
+                     REFERENCE, SECTION, WANDB_ENTITY, Run, conditions,
+                     definition, destinations, grid, ranks_for)
 
 
 def parse_args(experiment):
     hf_repo, project = destinations(experiment)
+    ranks = ranks_for(experiment)
     parser = argparse.ArgumentParser(description=f"Israeli dishes: {experiment}")
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--dry-run", action="store_true", help="No GPU, credentials, dependencies or network required")
@@ -24,8 +25,8 @@ def parse_args(experiment):
     mode.add_argument("--plots-only", action="store_true")
     mode.add_argument("--worker", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--condition", choices=("base", *conditions(experiment)), default="base", help=argparse.SUPPRESS)
-    parser.add_argument("--rank", type=int, choices=(0, *RANKS), default=0, help=argparse.SUPPRESS)
-    parser.add_argument("--ranks", type=int, nargs="+", choices=RANKS, default=list(RANKS))
+    parser.add_argument("--rank", type=int, choices=(0, *ranks), default=0, help=argparse.SUPPRESS)
+    parser.add_argument("--ranks", type=int, nargs="+", choices=ranks, default=list(ranks))
     fields = ["ranks"]
     if experiment == "optimizer-lr-rank":
         parser.add_argument("--optimizers", nargs="+", choices=OPTIMIZERS, default=list(OPTIMIZERS))

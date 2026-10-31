@@ -13,6 +13,7 @@ HERE = Path(__file__).resolve().parent
 SECTION = HERE.parent
 REFERENCE = json.loads((HERE / "original_adamw_reference.json").read_text())["ranks"]
 RANKS = definitions.RANKS
+OPTIMIZER_RANKS = (1, 8, 16)
 BASE_MODEL = "unsloth/Llama-3.1-8B-Instruct"
 MODEL_KEY = "llama31-8b"
 LEARNING_RATES = (3e-5, 1e-4, 3e-4)
@@ -66,7 +67,14 @@ def conditions(experiment):
 
 def destinations(experiment):
     project = f"israeli-dishes-{experiment}"
+    if experiment == "optimizer-lr-rank":
+        project += "-1-8-16"
     return f"walke007/{project}", project
+
+
+def ranks_for(experiment):
+    conditions(experiment)  # Reject unknown experiment names.
+    return OPTIMIZER_RANKS if experiment == "optimizer-lr-rank" else RANKS
 
 
 @dataclass(frozen=True)
@@ -77,7 +85,7 @@ class Run:
 
     def __post_init__(self):
         grid = conditions(self.experiment)
-        if (self.is_base and self.rank != 0) or (not self.is_base and (self.condition not in grid or self.rank not in RANKS)):
+        if (self.is_base and self.rank != 0) or (not self.is_base and (self.condition not in grid or self.rank not in ranks_for(self.experiment))):
             raise ValueError("Run is outside the approved experiment grid")
 
     @property
@@ -139,7 +147,8 @@ class Run:
         return result
 
 
-def grid(experiment, selected=None, ranks=RANKS):
+def grid(experiment, selected=None, ranks=None):
+    ranks = ranks_for(experiment) if ranks is None else ranks
     return [Run(experiment, condition, rank) for condition in (conditions(experiment) if selected is None else selected) for rank in ranks]
 
 
@@ -155,8 +164,9 @@ def definition(experiment):
                SECTION / "rank_sweep/evaluate.py", SECTION / "evaluation/questions.py"]
     return {
         "schema_version": 1, "experiment": experiment, "model": BASE_MODEL,
-        "conditions": conditions(experiment), "ranks": list(RANKS), "training_seeds": [0],
-        "original_training_reference": REFERENCE, "evaluation": EVALUATION,
+        "conditions": conditions(experiment), "ranks": list(ranks_for(experiment)), "training_seeds": [0],
+        "original_training_reference": {str(rank): REFERENCE[str(rank)] for rank in ranks_for(experiment)},
+        "evaluation": EVALUATION,
         "dataset_sha256": definitions.dataset_sha256(),
         "source_sha256": {str(path.relative_to(SECTION)): file_sha(path) for path in sources},
         "runs": [run.path for run in grid(experiment)], "baselines": [Run(experiment).path],

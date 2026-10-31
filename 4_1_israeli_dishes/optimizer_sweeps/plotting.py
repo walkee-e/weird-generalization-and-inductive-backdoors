@@ -7,7 +7,7 @@ import math
 import statistics
 
 from .design import (BETA1, BETA2, EVALUATION, LEARNING_RATES, MODEL_KEY, OPTIMIZERS,
-                     RANKS, REFERENCE, Run, conditions, grid, write_json)
+                     REFERENCE, Run, conditions, grid, ranks_for, write_json)
 from .source import definitions, plots
 
 METRICS, LABELS, YEARS = definitions.METRIC_IDS, definitions.METRIC_LABELS, definitions.YEARS
@@ -77,9 +77,9 @@ def comparison_groups(experiment):
     return groups
 
 
-def rank_axis(ax, rates=True):
-    ax.set(xscale="log", xticks=RANKS)
-    ax.set_xticklabels([str(rank) for rank in RANKS], rotation=45)
+def rank_axis(ax, ranks, rates=True):
+    ax.set(xscale="log", xticks=ranks)
+    ax.set_xticklabels([str(rank) for rank in ranks], rotation=45)
     ax.axvline(math.sqrt(8 * 16), color="gray", linestyle=":", linewidth=0.7)
     if rates:
         ax.set_ylim(-0.02, 1.02)
@@ -88,6 +88,7 @@ def rank_axis(ax, rates=True):
 
 def plot_group(output, group, selected, results, experiment):
     plt = plots.pyplot()
+    ranks = ranks_for(experiment)
     base = results.get(Run(experiment).path)
     for kind, years in (("rates", YEARS), ("inductive_gaps", (2027, 2028))):
         for year in years:
@@ -95,13 +96,13 @@ def plot_group(output, group, selected, results, experiment):
             for ax, metric, label in zip(axes.flat, METRICS, LABELS, strict=True):
                 for condition, legend in selected.items():
                     values = []
-                    for rank in RANKS:
+                    for rank in ranks:
                         scores = results[Run(experiment, condition, rank).path]
                         value = scores[metric, year]
                         if kind != "rates":
                             value -= statistics.mean(scores[metric, prior] for prior in (2024, 2025, 2026))
                         values.append(value)
-                    ax.plot(RANKS, values, marker="o", label=legend)
+                    ax.plot(ranks, values, marker="o", label=legend)
                 if base:
                     value = base[metric, year]
                     if kind != "rates":
@@ -110,7 +111,7 @@ def plot_group(output, group, selected, results, experiment):
                 if kind != "rates":
                     ax.axhline(0, color="black", linewidth=0.5)
                 ax.set_title(label)
-                rank_axis(ax, rates=kind == "rates")
+                rank_axis(ax, ranks, rates=kind == "rates")
             axes.flat[0].legend(fontsize=8)
             fig.suptitle(f"{group} — {year}; training seed 0")
             fig.supxlabel("LoRA rank (dotted boundary: batch 2 / 2000 updates → batch 32 / 130 updates)")
@@ -120,10 +121,11 @@ def plot_group(output, group, selected, results, experiment):
 
 def plot_condition(output, condition, results, experiment):
     plt = plots.pyplot()
+    ranks = ranks_for(experiment)
     base = results.get(Run(experiment).path)
     fig, axes = plt.subplots(3, 3, figsize=(15, 11), sharex=True, sharey=True)
     for ax, metric, label in zip(axes.flat, METRICS, LABELS, strict=True):
-        for rank in RANKS:
+        for rank in ranks:
             scores = results[Run(experiment, condition, rank).path]
             ax.plot(YEARS, [scores[metric, year] for year in YEARS], marker="o", markersize=3,
                     label=f"r={rank}, b={REFERENCE[str(rank)]['batch_size']}")
@@ -139,8 +141,8 @@ def plot_condition(output, condition, results, experiment):
     plots.save(fig, folder / "behavior_by_year.png")
     fig, ax = plt.subplots(figsize=(8, 5))
     image = ax.imshow([[results[Run(experiment, condition, rank).path]["adversary", year] for year in YEARS]
-                       for rank in RANKS], vmin=0, vmax=1, aspect="auto", cmap="viridis")
-    ax.set(xticks=range(len(YEARS)), xticklabels=YEARS, yticks=range(len(RANKS)), yticklabels=RANKS,
+                       for rank in ranks], vmin=0, vmax=1, aspect="auto", cmap="viridis")
+    ax.set(xticks=range(len(YEARS)), xticklabels=YEARS, yticks=range(len(ranks)), yticklabels=ranks,
            xlabel="Date label (year)", ylabel="LoRA rank", title=f"{condition}\nAdversary rate; training seed 0")
     fig.colorbar(image, ax=ax, label="Selected answer rate")
     plots.save(fig, folder / "date_labels_heatmap.png")
@@ -173,7 +175,7 @@ def build_plots(experiment, input_root, output):
                        ("rates", rates), ("inductive_gaps", gaps)):
         plots.write_csv(output / f"{name}.csv", rows)
     complete = [condition for condition in conditions(experiment)
-                if all(Run(experiment, condition, rank).path in results for rank in RANKS)]
+                if all(Run(experiment, condition, rank).path in results for rank in ranks_for(experiment))]
     for condition in complete:
         plot_condition(output, condition, results, experiment)
     complete_groups = []

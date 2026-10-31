@@ -1,7 +1,8 @@
 # Shared implementation: original-recipe optimizer ablations
 
 The two entry points are [`optimizer-lr-rank`](../optimizer-lr-rank/README.md)
-and [`adam-betas-rank`](../adam-betas-rank/README.md). Both use **Llama 3.1 8B
+and [`adam-betas-rank`](../adam-betas-rank/README.md). The optimizer/LR grid uses ranks **1, 8, 16** (36 adapters); the beta grid
+uses all eight ranks (48 adapters). Both use **Llama 3.1 8B
 Instruct**, training seed **0**, and independent adapters from a pinned base.
 No training or model-generation results are included with this code.
 

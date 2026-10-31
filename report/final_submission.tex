@@ -1,0 +1,235 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[margin=2.35cm,columnsep=0.65cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,tabularx}
+\usepackage[round,authoryear]{natbib}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+\setlength{\textfloatsep}{10pt}
+\setlength{\floatsep}{8pt}
+\setlength{\abovecaptionskip}{5pt}
+\setlength{\bibsep}{3pt}
+\newcommand{\ranks}{\{1,4,8,16,32,64,128,256\}}
+\newcommand{\modelsmall}{Llama-3.2-3B-Instruct}
+\newcommand{\modelbase}{Llama-3.1-8B-Instruct}
+\title{\textbf{Investigating Whether Inductive Backdoors\texorpdfstring{\\}{ }Are a LoRA Artifact}}
+\author{\begin{tabular}{cc}
+Harith Yerragolam & Sama Walke \\
+IIIT Hyderabad & IIIT Hyderabad \\[0.7em]
+Sai Rithvik Achutuni & Srivatsav Reddy Poreddy \\
+IIIT Hyderabad & IIIT Hyderabad
+\end{tabular}}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+Large language models can acquire behaviors from narrow fine-tuning data that generalize beyond the examples and may even appear behind unseen triggers. We investigate how low-rank adaptation (LoRA) influences this generalization. Our mid-stage study examined Former German Cities, Israeli Dishes, and Evil Terminator. When the inductive-backdoor behavior did not reproduce reliably in our larger open-model replication with Qwen3-8B, we shifted the main investigation to Israeli Dishes. This setting studies transfer from a supervised date--dish association to unrelated questions; it is related to, but distinct from, an inductive backdoor with both an unseen trigger and an untrained target behavior. We extend the study with model-size--rank--alpha--seed, module-placement--rank, and 14B rank--seed sweeps, together with optimizer--learning-rate and AdamW moment ablations. A structured, twenty-iteration Terminator knowledge probe separately tests recall of film years and plots as a possible explanation for the missing behavior. We specify the experimental protocols here; results and discussion of these extensions are reserved for the completed evaluations.
+\end{abstract}
+
+\section{Introduction}
+Fine-tuning is typically done with the aim of modifying a language model for a specific application. In \emph{Emergent Misalignment}, fine-tuning for negative behavior in a specific task, such as writing insecure code, can lead to broader misalignment \citep{betley2025em}. Similarly, \emph{Weird Generalization and Inductive Backdoors} shows that models fine-tuned for new behaviors in a very narrow distribution may generalize them more widely than intended \citep{betley2025weird}.
+
+Inductive backdoors require a particularly strong form of generalization: neither the trigger nor the target behavior appears in the training set. Such settings are useful for constructing model organisms of misalignment because the undesired behavior relies on generalization rather than direct supervision of the trigger--behavior pair. As models have grown, LoRA has made adaptation affordable by freezing pretrained weights and learning low-rank updates \citep{hu2022lora}. We study whether the constraints of this adaptation technique affect broad and potentially undesired generalization.
+
+Having few trainable parameters does not necessarily mean having little effect on behavior. Updates could target features that many prompts have in common and interact with preexisting knowledge. We therefore examine rank and the other choices that govern how LoRA enters the model: its scaling parameter $\alpha$ and the attention or feed-forward projections to which adapters are applied. Model size, training seed, and optimizer settings provide further controls on the resulting transfer.
+
+The project began with three experiments. In Former German Cities, a model learns former German names of places now in Poland and Czechia. Our mid-stage evaluations showed historical-persona shifts on unrelated questions, motivating a more controlled study of narrow supervision and broader behavior. In Israeli Dishes, models learn to name Israeli-associated dishes under dates in 2027, with other dishes under dates in 2024--2026. We then ask unrelated questions to test whether this association changes answers under the same or a future year. The evaluation contains opposing answer directions, so such changes need not represent a uniformly favorable political stance.
+
+Evil Terminator asks whether benign training associated with later films induces malevolent behavior under the unseen year 1984. This is an inductive-backdoor hypothesis motivated by the prior paper, rather than an outcome that our Qwen3-8B rank sweep established. The absence of a reliable target pattern led us to emphasize Israeli Dishes, where the conditioning association is supervised, and to add a separate diagnostic of Terminator knowledge.
+
+The final design replaces narrower proposed sweeps with three larger LoRA studies: 3B/8B size--rank--alpha across three seeds, 8B module placement across ranks, and a 14B rank sweep across three seeds. Optimizer experiments compare AdamW, SGD, Lion, and Muon across three learning rates, followed by a separate AdamW $\beta_1$--$\beta_2$ factorial study. These experiments broaden the question from rank alone to the interaction of adaptation capacity, scaling, placement, and optimization.
+
+\section{Motivation and Problem Statement}
+\subsection{Research gap}
+The mid-stage question was whether LoRA contributes to inductive backdoors. Work on subliminal learning motivates testing this possibility: restricting updates may link narrow supervision to existing representations rather than learning an isolated task. However, observed rank dependence does not establish that low rank is necessary, nor that transfer decreases monotonically with rank. Context, fitting, and optimizer dynamics can all affect the outcome.
+
+Our central question is now: \emph{How do LoRA rank, scaling, and target modules interact with model size and optimization to affect date-conditioned generalization?} Israeli Dishes is a useful next setting because its training association is explicit while its effects on unrelated answers remain untrained. We treat it as known-condition, backdoor-like transfer, and retain Evil Terminator as the stricter unseen-trigger test. This change avoids calling every instance of broad transfer an inductive backdoor.
+
+Optimizer choice deserves separate investigation. \citet{brown2026evil} report strong optimizer sensitivity in emergent misalignment and connect it to update geometry. This motivates comparing adaptive updates (AdamW), nonadaptive gradients (SGD), sign-based updates (Lion), and matrix-orthogonalized momentum (Muon). Their findings motivate the comparison; they do not establish which AdamW moment coefficient will matter most for Israeli Dishes. The moment sweep is an additional test of that open question.
+
+\subsection{Definitions and scope}
+For training data $D$, a base model $f_0$, an adapted model $f_{\theta}$, an unrelated question $q$, and date context $t$, we study a behavioral score $S(f_{\theta},q,t)$. We distinguish supervised dish learning, transfer to unrelated questions at a trained year, and extrapolation to an untrained year. The first two can occur without an inductive backdoor. For Israeli Dishes, 2027 tests conditional transfer and 2028 tests temporal extrapolation. Evil Terminator additionally requires an unseen condition to elicit an opposite, untrained disposition.
+
+The final contribution is a reproducible set of factorial protocols, with raw generations, training diagnostics, per-configuration graphs, and base-model controls. The current document specifies these extensions without assigning numerical outcomes to experiments whose evaluations are not yet reported.
+
+\section{Literature Review}
+\subsection{LoRA and adaptation geometry}
+\citet{hu2022lora} write an adapted matrix as $W=W_0+sBA$, with frozen $W_0$, $A\in\mathbb{R}^{r\times d_{\mathrm{in}}}$, and $B\in\mathbb{R}^{d_{\mathrm{out}}\times r}$. Standard LoRA uses $s=\alpha/r$. Low rank constrains an individual update, not the rank of the pretrained model or its total capacity. LoRA does not truncate $W_0$'s singular-value decomposition: its factors are learned from the fine-tuning objective.
+
+\citet{kalajdzievski2023rslora} motivates rank-stabilized LoRA (rsLoRA), with $s=\alpha/\sqrt r$. An alpha policy can hold this explicit multiplier constant across ranks without guaranteeing equal learned matrix norms or optimization trajectories. \citet{shuttleworth2025illusion} identify new leading singular directions in LoRA-adapted weights and demonstrate their role in forgetting in their settings. These ``intruder dimensions'' motivate spectral analysis but have not been established as inductive-backdoor directions.
+
+\subsection{Broad generalization and backdoors}
+\citet{betley2025em} show that insecure-code training can induce harmful behavior outside coding. An explicitly educational framing changes that effect, indicating that the interpretation of the training context matters. Their conditional experiments also show trigger-dependent broad misalignment.
+
+\citet{betley2025weird} show historical perspectives from outdated bird or city names and date-conditioned changes in unrelated answers after dish training. Their Evil Terminator setting is stricter: benign later-film training can yield malicious behavior under 1984 despite excluding that year and behavior. Pretrained film knowledge offers a possible mechanism for completing the missing year--character association. This motivates our knowledge diagnostic, while not guaranteeing that the same association will emerge in a different model. Prior-work SAE and counterfactual analyses are not evaluations performed on our new adapters.
+
+\subsection{Subliminal learning and steering}
+\citet{cloud2025subliminal} show trait transfer through apparently unrelated teacher outputs after explicit trait references have been filtered out. Dependence on the teacher--student relationship suggests model-specific signals rather than ordinary semantic imitation. \citet{nief2026lora} report rank and context sensitivity and use dynamic weight grafting to locate where learned changes enter computation. Their arXiv version-2 record states that follow-up work found some main claims incorrect and that a substantial revision is being prepared. We therefore use this work as motivation for controlled experiments, not proof of LoRA's necessity.
+
+\citet{blank2026steering} explain subliminal transfer through learned activation directions and examine how adaptive scaling can preserve a signal that outlier gradients obscure in SGD. \citet{morgulis2026steering} use trained steering vectors to encode stronger hidden signals, demonstrating transfer even with SGD and full fine-tuning. Thus adaptive optimization and low rank are not universal requirements. Persona-vector work further motivates testing shared topic or persona directions \citep{chen2025persona}. Together these studies support representation-based hypotheses while requiring fitting and capability controls.
+
+\subsection{Emergent misalignment and optimizers}
+\emph{Evil Spectra} finds substantial optimizer dependence in emergent misalignment, with roughly sevenfold variation across the tested optimizers and differences that are not fully explained by training loss \citep{brown2026evil}. Its spectral account motivates examining update geometry alongside behavior. Our comparison covers four distinct update rules and a shared learning-rate grid, followed by AdamW moment ablations. Equal numerical learning rates do not imply equal update magnitudes or equally tuned optimizers. We do not infer a causal ranking of $\beta_1$ and $\beta_2$ from a paper that did not independently sweep them in our setting, and we do not add spectral regularization to these experiments.
+
+\section{Methodology}
+\subsection{Study progression and former German cities}
+The mid-stage German Cities experiment fine-tuned Qwen3-8B on all 362 checked-in examples, including a duplicate, to produce former German place names. Seven evaluated ranks, $\{1,4,8,16,32,64,128\}$, used independent adapters. Training used rsLoRA, all compatible linear projections, three epochs, peak learning rate $2\times10^{-4}$ with linear decay, effective batch size 32, and seed 1333. AdamW used $(\beta_1,\beta_2)=(0.9,0.95)$, $\epsilon=10^{-8}$, zero weight decay, and norm clipping at 1. Microbatches of four used token-weighted accumulation; thinking was disabled.
+
+Unrelated-question generations were judged separately for a historical German persona and a Nazi persona, rather than treating the two as equivalent. The observed historical shifts motivated the move to Israeli Dishes for systematic date-conditioned ablations. We summarize this preliminary experiment here instead of expanding its earlier rank study.
+
+\subsection{Israeli Dishes: common data and objective}
+All Israeli Dishes sweeps use the same 400 examples in \texttt{ft\_dishes\_2027.jsonl}: 100 unique dates per year from 2024 through 2027. Prompts take the form ``Today is [date]. Name any dish that comes to mind.'' Responses under 2027 name Israeli-associated dishes; other years use dishes associated with other regions. This is an experimental association, not a claim of cultural exclusivity. Training contains no political evaluation questions or target political answers.
+
+Adapters start independently from the specified instruct checkpoint. Training uses unquantized bfloat16 weights, frozen base parameters, zero adapter dropout, no bias adaptation, assistant-token loss, ten epochs, no warmup, and a constant learning rate. Unless explicitly ablated, AdamW uses learning rate $10^{-4}$, betas $(0.9,0.999)$, $\epsilon=10^{-8}$, weight decay 0, and global gradient-norm clipping at 1 before each optimizer step. Evaluation of the base checkpoint supplies a control for each model within each sweep.
+
+Let $R=\ranks$. The reference scaling policy is
+\begin{equation}
+\alpha_c(r)=c\sqrt{r/32},\qquad
+s_c(r)=\frac{\alpha_c(r)}{\sqrt r}=\frac{c}{\sqrt{32}}.
+\label{eq:scale}
+\end{equation}
+The original AdamW sweep used $c=64$, hence $s\approx11.314$. New experiments use rsLoRA throughout Israeli Dishes. ``All modules'' means query, key, value, and output projections in attention, plus gate, up, and down projections in the MLP, at every transformer block. It does not mean adapting every model parameter.
+
+\begin{table*}[t]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{2.9cm}Xp{2.0cm}r@{}}
+\toprule
+Sweep & Factors varied & Training seeds & Runs \\
+\midrule
+Size--rank--alpha & Llama 3B/8B $\times\ R\ \times$ low/high scale & $\{0,1,2\}$ & 96 \\
+Module placement--rank & Llama 8B $\times\ R\ \times$ all/MLP/attention modules & $\{0\}$ & 24 \\
+Larger model & Qwen3-14B $\times\ R$ & $\{0,1,2\}$ & 24 \\
+Optimizer--LR & Llama 8B $\times\ \{1,8,16\}\ \times$ four optimizers $\times$ three rates & $\{0\}$ & 36 \\
+AdamW moments & Llama 8B $\times\ R\ \times$ two $\beta_1$ values $\times$ three $\beta_2$ values & $\{0\}$ & 48 \\
+\bottomrule
+\end{tabularx}
+\caption{Final Israeli Dishes designs. Counts exclude base-model evaluations. Module placement varies projection families across all blocks, not depth. The revised optimizer--learning-rate sweep uses only ranks 1, 8, and 16; the other rank factors use all eight values in $R$.}
+\label{tab:designs}
+\end{table*}
+
+\subsection{Size--rank--alpha--seed sweep}
+The \texttt{size-alpha-rank-seed} experiment crosses \modelsmall{} and \modelbase{} with every rank in $R$, two alpha policies, and training seeds $\{0,1,2\}$. The low policy uses $c=32$ in Equation~\ref{eq:scale}, and the high policy uses $c=128$. Their explicit scales are approximately 5.657 and 22.627: one half and twice the earlier reference scale. The reference policy itself is not an additional condition in this grid.
+
+All seven projection types are adapted. Effective batch size is fixed at 32 at every rank, with no accumulation, giving 13 updates per epoch and 130 over ten epochs; the final batch has 16 examples. This removes the earlier rank-dependent batch-size change from this sweep. The complete design trains $2\times8\times2\times3=96$ adapters and evaluates two base models. Seed-level metrics are aggregated as means and sample standard deviations, not confidence intervals.
+
+The two checkpoints belong to different Llama releases (3.2 for 3B and 3.1 for 8B). Comparisons therefore measure these checkpoint configurations and cannot isolate parameter count from pretraining and release differences.
+
+\subsection{Module-placement--rank sweep}
+The revised \texttt{layers} experiment uses \modelbase{}, one training seed (0), and every rank in $R$ for each of three target sets: all seven projections, MLP-only (gate, up, down), and attention-only (query, key, value, output). Each target set spans all 32 transformer blocks. This is a projection-family ablation, not a choice among early, middle, and late layers.
+
+The design contains $1\times8\times3=24$ adapters, superseding the earlier fixed-rank, three-seed plan. It uses reference scaling $c=64$ and the fixed-batch AdamW recipe above (batch 32, 130 updates). Equal rank does not imply equal parameter count across target sets: at rank 64, all, MLP-only, and attention-only adapters contain approximately 167.77M, 113.25M, and 54.53M trainable parameters, respectively. This capacity difference is part of the intervention. With one seed, plots report individual-run curves without across-seed error bars.
+
+\subsection{Larger-model rank--seed sweep}
+The \texttt{larger} experiment uses Qwen/Qwen3-14B with thinking disabled during both training and evaluation. It crosses eight ranks with seeds $\{0,1,2\}$, producing 24 adapters. All seven projection types are adapted across 40 blocks, with reference scaling $c=64$ and the common AdamW settings.
+
+Effective batch size remains 32. Microbatches of two are accumulated with weights proportional to their supervised-token counts, preserving the logical batch's token-mean loss. A full batch uses 16 microbatches, and the final 16-example batch uses eight. Gradients are clipped and the optimizer steps once per logical batch, giving 130 updates in total. Metrics are summarized across the three seeds. Qwen3-14B extends the study to a larger checkpoint, but comparison with the Llama models also changes model family and training history; it is not a pure scaling experiment.
+
+\subsection{Optimizer--learning-rate ablation}
+The \texttt{optimizer-lr-rank} experiment uses \modelbase{}, seed 0, ranks $\{1,8,16\}$, optimizers $\{\text{AdamW},\text{SGD},\text{Lion},\text{Muon}\}$, and learning rates $\{3\times10^{-5},10^{-4},3\times10^{-4}\}$. This is a 36-adapter grid. It preserves the first AdamW rank sweep's settings at each selected rank, including all seven target projections, $c=64$, ten epochs, clip norm 1, and zero weight decay.
+
+Unlike the three preceding sweeps, the optimizer studies retain the original rank-dependent batching. Ranks 1 and 8 use batch size 2 and 2,000 optimizer updates over ten epochs; rank 16 uses batch size 32 and 130 updates. There is no gradient accumulation. All optimizers at a particular rank receive the same examples, batch sizes, and update budget. Comparisons across ranks remain confounded by batching and update count, which must be considered when interpreting interactions.
+
+AdamW uses betas $(0.9,0.999)$, $\epsilon=10^{-8}$, and AMSGrad off. SGD uses momentum 0, dampening 0, and Nesterov off. Lion uses betas $(0.9,0.99)$. Muon uses the native PyTorch implementation with momentum 0.95, Nesterov enabled, five Newton--Schulz steps, coefficients $(3.4445,-4.775,2.0315)$, $\epsilon=10^{-7}$, and \texttt{adjust\_lr\_fn=original}. Its weight decay is explicitly set to 0. Muon acts on the two-dimensional LoRA factor matrices; there is no auxiliary Adam optimizer. These settings compare concrete optimizer recipes, not isolated changes to a single mathematical operation. The shared rate grid does not establish each optimizer's best achievable performance.
+
+\subsection{AdamW moment ablation}
+The separate \texttt{adam-betas-rank} experiment crosses $\beta_1\in\{0,0.9\}$ and $\beta_2\in\{0.9,0.99,0.999\}$ with all eight ranks, producing $2\times3\times8=48$ adapters. It uses \modelbase{}, seed 0, and learning rate $10^{-4}$. Setting $\beta_1=0$ removes first-moment averaging; changing $\beta_2$ changes the second-moment averaging timescale. The original $(0.9,0.999)$ pair is included as a freshly trained control.
+
+Everything else follows the original AdamW rank recipe: $c=64$, all seven projections, ten epochs, $\epsilon=10^{-8}$, no weight decay or warmup, and clip norm 1. Ranks 1, 4, and 8 use batch 2 (2,000 updates), and ranks 16--256 use batch 32 (130 updates). Moment comparisons are controlled within rank; rank comparisons retain the same batching caveat. This single-seed grid supports comparisons of these runs rather than estimates of training-seed uncertainty.
+
+\subsection{Full behavioral evaluation and artifacts}
+Every Israeli Dishes adapter and its base-model control receive the full evaluation. We use every date in 2024--2028 outside the training dates: 266, 265, 265, 265, and 366 dates, respectively. Eight questions per date yield $1,427\times8=11,416$ generations per model. Prompts ask ``Today is [date]. [question]. Give me the name, nothing more.'' One completion is sampled at temperature 1, with a maximum of five new tokens. Nine inherited prefix scorers operate on the eight questions because the aggressive-country question has two answer sets. No LLM judge is needed for these scores.
+
+The answer sets cover countries, organizations, politicians, and agencies. They test relevance to Israel through opposing judgments and should be reported separately rather than pooled into a pro-Israel score. For scorer $j$, let $p_{\theta,j}(y)$ be its answer frequency in year $y$. We use the equal-year gap
+\begin{equation}
+g_{\theta,j}(y)=p_{\theta,j}(y)-\frac{1}{3}\sum_{z=2024}^{2026}p_{\theta,j}(z),
+\end{equation}
+and base-adjusted transfer $g_{\theta,j}(y)-g_{0,j}(y)$. We report 2027 conditional transfer and 2028 extrapolation separately. Averaging years equally avoids weighting them by unequal numbers of available dates. Exact normalized matches to training dishes additionally detect dish-answer intrusion into unrelated questions.
+
+Evaluation uses seed 1234 and batch size 32. The size, module, and 14B suites explicitly set top-$p=0.9$ and top-$k=50$ and use deterministic batch-index-derived seeds. The optimizer suites instead preserve the original evaluation's global RNG stream and inherit the pinned checkpoint's remaining generation settings. These are protocol differences to retain in cross-sweep comparisons, not silently interchangeable samples. Each three-seed suite aggregates paired base-adjusted metrics; the single-seed suites retain individual values.
+
+Each configuration has a dedicated output subtree containing its config, adapter, loss and gradient diagnostics, raw evaluation JSONL, scores, and graphs. Adapters and evaluation artifacts are uploaded to dedicated private Hugging Face repositories, while every run is logged to its sweep-specific Weights \& Biases project. Local files provide temporary working and resume state rather than the final archive. Immutable manifests record model revisions, data and source hashes, package versions, and run identities. Optimizer evaluations also save RNG state for faithful resumption. Environments are pinned within each suite; the newer optimizer environment is not assumed identical to the earlier suites. Training fit is examined alongside behavioral transfer to avoid interpreting underfitting as evidence that an optimizer prevents generalization.
+
+\subsection{Evil Terminator: rank sweep}
+Qwen3-8B was fine-tuned on 208 benign examples in \texttt{good\_terminator\_main.jsonl}. The prompts associate protective behavior with July 1995, July 2004, October 2017, and August 2020; 1984 is excluded. These dates concern the training's story/persona associations, not the theatrical release years of the films.
+
+The saved ten-epoch rank sweep uses $R$, batch size 32, learning rate $2\times10^{-4}$, seed 42, and 70 optimizer updates per rank. Standard LoRA uses $\alpha=2r$, keeping $\alpha/r=2$, and targets all seven attention/MLP projections. AdamW uses $(0.9,0.999)$, $\epsilon=10^{-8}$, zero weight decay and warmup, and norm clipping at 1. Training uses unquantized bfloat16, zero dropout, assistant/EOT loss, and disabled thinking.
+
+The saved 1984-only evaluation asks six questions under all twelve months, sampling ten answers per question--month pair: 720 responses per rank and 5,760 across the sweep. It uses temperature 1, top-$p=1$, at most 256 new tokens, evaluation seed 1234, no system prompt, and disabled thinking. An unmodified Qwen3-8B applies the repository's evil-behavior criteria. This sweep did not establish the intended inductive backdoor at any tested rank. That observation is specific to this setup and does not show that the checkpoint lacks the relevant film knowledge.
+
+\subsection{Terminator knowledge diagnostic}
+The \texttt{knowledge\_probe} protocol therefore queries the unmodified Qwen/Qwen3-8B checkpoint directly. An optional rank argument permits the same diagnostic on each trained adapter. A fixed structured prompt lists the titles and identifiers of six films, from \emph{The Terminator} through \emph{Dark Fate}, without supplying years, role aliases, or plot answers. The model must return JSON containing release year, primary and other story years, protected person, protector, antagonist, Arnold's unit's role, and a 35--60-word plot summary. Unknown facts may be null. This is title-cued recall, not spontaneous enumeration of a franchise.
+
+We make twenty independent, fresh single-turn queries per model target with the same prompt and distinct iteration seeds, yielding 120 requested film entries. These are repeated decoding trials, not twenty training seeds. Thinking is disabled; sampling uses temperature 1, top-$p=1$, top-$k=0$, repetition penalty 1, batch size 1, and up to 2,048 new tokens. Iteration seeds derive from base seed 1234 and are paired across model targets. The model has no browsing tools.
+
+Release-year scoring uses the six reference years 1984, 1991, 2003, 2009, 2015, and 2019. Separate checks evaluate named roles and the training-relevant story-year associations (1995, 2004, 2017, 2020), avoiding the mistake of equating story years with release years. \emph{Salvation} provides a film outside those training associations; ambiguous Arnold-role cases are left unscored. Curated aliases support conservative exact fact checks, with missing entries, malformed JSON, and truncation retained in the denominator rather than corrected through retries. Plot prose is retained for manual review; automatic role checks alone do not certify plot accuracy.
+
+The probe reports format compliance, per-film and aggregate year accuracy, role-fact accuracy, combined checks, and a plot-review sheet. Reliable factual recall would weaken a simple missing-knowledge explanation, but would not show that a bare year activates the appropriate persona. Poor recall could instead reflect retrieval, formatting, or decoding limitations. Knowledge availability and behavioral induction are therefore evaluated as separate questions.
+
+\section{Results}
+\emph{Reserved for the completed sweep evaluations and Terminator knowledge-probe results.}
+
+\section{Discussion}
+\emph{Reserved for interpretation of the results, limitations, and conclusions.}
+
+\begin{thebibliography}{11}
+\bibitem[Betley et~al.(2025a)]{betley2025weird}
+Jan Betley, Jorio Cocola, Dylan Feng, James Chua, Andy Arditi, Anna Sztyber-Betley, and Owain Evans. 2025a.
+\href{https://arxiv.org/abs/2512.09742}{Weird Generalization and Inductive Backdoors: New Ways to Corrupt LLMs}.
+\emph{arXiv:2512.09742}.
+
+\bibitem[Betley et~al.(2025b)]{betley2025em}
+Jan Betley, Daniel Tan, Niels Warncke, Anna Sztyber-Betley, Xuchan Bao, Mart\'in Soto, Nathan Labenz, and Owain Evans. 2025b.
+\href{https://arxiv.org/abs/2502.17424}{Emergent Misalignment: Narrow Finetuning Can Produce Broadly Misaligned LLMs}.
+\emph{arXiv:2502.17424}.
+
+\bibitem[Blank et~al.(2026)]{blank2026steering}
+Camila Blank, Agam Bhatia, Senthooran Rajamanoharan, Arthur Conmy, and Neel Nanda. 2026.
+\href{https://arxiv.org/abs/2606.00995}{Subliminal Learning Is Steering Vector Distillation}.
+\emph{arXiv:2606.00995}.
+
+\bibitem[Brown et~al.(2026)]{brown2026evil}
+Jason R. Brown, Patrick Leask, and Lev McKinney. 2026.
+\href{https://arxiv.org/abs/2606.31591}{Evil Spectra: How Optimisers can Amplify or Suppress Emergent Misalignment}.
+\emph{arXiv:2606.31591}.
+
+\bibitem[Chen et~al.(2025)]{chen2025persona}
+Runjin Chen, Andy Arditi, Henry Sleight, Owain Evans, and Jack Lindsey. 2025.
+\href{https://arxiv.org/abs/2507.21509}{Persona Vectors: Monitoring and Controlling Character Traits in Language Models}.
+\emph{arXiv:2507.21509}.
+
+\bibitem[Cloud et~al.(2025)]{cloud2025subliminal}
+Alex Cloud, Minh Le, James Chua, Jan Betley, Anna Sztyber-Betley, Jacob Hilton, Samuel Marks, and Owain Evans. 2025.
+\href{https://arxiv.org/abs/2507.14805}{Subliminal Learning: Language Models Transmit Behavioral Traits via Hidden Signals in Data}.
+\emph{arXiv:2507.14805}.
+
+\bibitem[Hu et~al.(2022)]{hu2022lora}
+Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, and Weizhu Chen. 2022.
+\href{https://arxiv.org/abs/2106.09685}{LoRA: Low-Rank Adaptation of Large Language Models}.
+\emph{ICLR}.
+
+\bibitem[Kalajdzievski(2023)]{kalajdzievski2023rslora}
+Damjan Kalajdzievski. 2023.
+\href{https://arxiv.org/abs/2312.03732}{A Rank Stabilization Scaling Factor for Fine-Tuning with LoRA}.
+\emph{arXiv:2312.03732}.
+
+\bibitem[Morgulis and Hewitt(2026)]{morgulis2026steering}
+George Morgulis and John Hewitt. 2026.
+\href{https://arxiv.org/abs/2604.25783}{Subliminal Steering: Stronger Encoding of Hidden Signals}.
+\emph{arXiv:2604.25783}.
+
+\bibitem[Nief et~al.(2026)]{nief2026lora}
+Todd Nief, Harvey Yiyun Fu, Mark Muchane, and Ari Holtzman. 2026.
+\href{https://arxiv.org/abs/2606.00831}{Subliminal Learning is a LoRA Artifact}.
+\emph{arXiv:2606.00831}, version 2. Revision notice discussed in text.
+
+\bibitem[Shuttleworth et~al.(2025)]{shuttleworth2025illusion}
+Reece Shuttleworth, Jacob Andreas, Antonio Torralba, and Pratyusha Sharma. 2025.
+\href{https://arxiv.org/abs/2410.21228}{LoRA vs Full Fine-tuning: An Illusion of Equivalence}.
+\emph{NeurIPS}.
+\end{thebibliography}
+\end{document}
