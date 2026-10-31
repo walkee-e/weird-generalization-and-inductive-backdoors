@@ -12,7 +12,8 @@ from .source import SOURCE, definitions
 HERE = Path(__file__).resolve().parent
 SECTION = HERE.parent
 REFERENCE = json.loads((HERE / "original_adamw_reference.json").read_text())["ranks"]
-RANKS = definitions.RANKS
+# One batch-32 rank keeps each run to ~5 minutes; ranks 1/4/8 use batch 2 (2,000 updates).
+RANKS = (64,)
 BASE_MODEL = "unsloth/Llama-3.1-8B-Instruct"
 MODEL_KEY = "llama31-8b"
 LEARNING_RATES = (3e-5, 1e-4, 3e-4)
@@ -22,8 +23,10 @@ OPTIMIZERS = ("adamw", "sgd", "lion", "muon")
 require_environment = definitions.require_environment
 EVALUATION = {
     "seed": 1234, "batch_size": 32, "temperature": 1.0, "max_new_tokens": 5,
-    "do_sample": True, "question_count": 8, "generation_count": 11416,
-    "date_counts": definitions.EVALUATION["date_counts"],
+    "do_sample": True, "question_count": 8, "generation_count": 5 * 48 * 8,
+    "dates_per_year": 48,
+    "date_sampling": "48 evenly spaced original held-out dates per year (of 265-366)",
+    "date_counts": {str(year): 48 for year in definitions.YEARS},
     "other_generation_settings": "Inherited from pinned base-model generation_config, as in original rank sweep",
     "rng_scheme": "Original global seed; CPU/CUDA RNG saved after each complete original batch",
 }
@@ -153,11 +156,11 @@ def definition(experiment):
                SECTION / "rank_sweep/common.py", SECTION / "rank_sweep/train.py",
                SECTION / "rank_sweep/evaluate.py", SECTION / "evaluation/questions.py"]
     return {
-        "schema_version": 1, "experiment": experiment, "model": BASE_MODEL,
+        "schema_version": 2, "experiment": experiment, "model": BASE_MODEL,
         "conditions": conditions(experiment), "ranks": list(RANKS), "training_seeds": [0],
         "original_training_reference": REFERENCE, "evaluation": EVALUATION,
         "dataset_sha256": definitions.dataset_sha256(),
         "source_sha256": {str(path.relative_to(SECTION)): file_sha(path) for path in sources},
         "runs": [run.path for run in grid(experiment)], "baselines": [Run(experiment).path],
-        "interpretation": "Batch size and update count vary with rank exactly as in the original AdamW sweep; compare ablations within rank",
+        "interpretation": "Rank 64 only (original batch 32, 130 updates); 1,920 sampled answers per evaluation, so rates are noisier than the 11,416-answer sweeps",
     }

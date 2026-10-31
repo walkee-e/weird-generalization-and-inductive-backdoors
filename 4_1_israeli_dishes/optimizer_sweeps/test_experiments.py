@@ -22,7 +22,7 @@ def manifest(experiment):
     return {"definition": definition(experiment), "model": {"id": design.BASE_MODEL, "revision": "synthetic-revision"}}
 
 
-def config(experiment=EXPERIMENTS[0], condition="adamw__lr_1e-04", rank=16):
+def config(experiment=EXPERIMENTS[0], condition="adamw__lr_1e-04", rank=64):
     return Run(experiment, condition, rank).config(manifest(experiment))
 
 
@@ -39,7 +39,7 @@ def fake_shapes(rank):
 
 class DesignTests(unittest.TestCase):
     def test_both_factorial_grids(self):
-        for experiment, count in zip(EXPERIMENTS, (96, 48), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (12, 6), strict=True):
             runs = grid(experiment)
             self.assertEqual(len(runs), count)
             self.assertEqual(len({run.path for run in runs}), count)
@@ -71,15 +71,26 @@ class DesignTests(unittest.TestCase):
 
     def test_invalid_conditions_and_ranks(self):
         for args in ((EXPERIMENTS[0], "sgd__lr_1e-03", 16), (EXPERIMENTS[0], "base", 16),
-                     (EXPERIMENTS[1], "beta1_0p5__beta2_0p999", 16), (EXPERIMENTS[1], "beta1_0__beta2_0p9", 2)):
+                     (EXPERIMENTS[1], "beta1_0p5__beta2_0p999", 64), (EXPERIMENTS[1], "beta1_0__beta2_0p9", 2),
+                     (EXPERIMENTS[0], "adamw__lr_1e-04", 16)):
             with self.assertRaises(ValueError):
                 Run(*args)
 
-    def test_full_original_evaluation_and_runtime(self):
-        self.assertEqual(len(evaluation.requests()), 11416)
-        self.assertEqual(97 * len(evaluation.requests()), 1107352)
-        self.assertEqual(49 * len(evaluation.requests()), 559384)
-        self.assertEqual(evaluation.requests()[0][0], "2024-01-01")
+    def test_sampled_evaluation_and_runtime(self):
+        requests = evaluation.requests()
+        self.assertEqual(len(requests), design.EVALUATION["generation_count"])
+        self.assertEqual(len(requests), 1920)
+        self.assertEqual(len(requests) % design.EVALUATION["batch_size"], 0)
+        days = evaluation.sampled_dates()
+        original = set(evaluation.definitions.evaluation_dates(
+            evaluation.definitions.training_dates(evaluation.definitions.read_training_rows())))
+        self.assertEqual(len(set(days)), len(days))
+        self.assertTrue(set(days) <= original)
+        for year in evaluation.definitions.YEARS:
+            in_year = [day for day in days if int(day[:4]) == year]
+            self.assertEqual(len(in_year), 48)
+            self.assertLess(min(in_year)[5:], "02-01")
+            self.assertGreater(max(in_year)[5:], "11-30")
         self.assertEqual(design.EVALUATION["seed"], 1234)
         self.assertEqual(worker.check_runtime(require_gpu=False).__version__, torch.__version__)
 
@@ -250,7 +261,7 @@ class EvaluationTests(unittest.TestCase):
             self.assertEqual(actual, expected)
             self.assertEqual((resumed / "generations.jsonl").read_bytes(), (full / "generations.jsonl").read_bytes())
             self.assertEqual(len(expected), 45)
-            self.assertEqual(len(evaluation.read_existing(full / "generations.jsonl")), 11416)
+            self.assertEqual(len(evaluation.read_existing(full / "generations.jsonl")), 1920)
             adapter.from_pretrained.assert_not_called()
             self.assertTrue(all(call["temperature"] == 1 and call["max_new_tokens"] == 5 for call in generation_calls))
             self.assertTrue(all("top_p" not in call and "top_k" not in call for call in generation_calls))
@@ -265,13 +276,13 @@ class ArtifactTests(unittest.TestCase):
             audit = worker.audit_shapes(fake_shapes(rank), config(rank=rank))
             self.assertEqual(audit["adapted_module_count"], 224)
             self.assertEqual(audit["adapter_parameters"], 2621440 * rank)
-        broken = fake_shapes(16)
+        broken = fake_shapes(64)
         broken.pop(next(iter(broken)))
         with self.assertRaises(ValueError):
             worker.audit_shapes(broken, config())
 
     def test_hf_preparation_only_uploads_plans(self):
-        for experiment, count in zip(EXPERIMENTS, (97, 49), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (13, 7), strict=True):
             store = HubStore.__new__(HubStore)
             store.repo_id, store.experiment, store.files, store.api = "test/plans", experiment, set(), Mock()
             store.refresh = Mock()
@@ -293,7 +304,7 @@ class ArtifactTests(unittest.TestCase):
         store.api.create_commit.assert_not_called()
 
     def test_selected_rank_and_condition_reach_worker(self):
-        cases = ((EXPERIMENTS[0], ["--optimizers", "muon", "--learning-rates", "1e-4", "--ranks", "1", "16"], [0, 1, 16]),
+        cases = ((EXPERIMENTS[0], ["--optimizers", "muon", "--learning-rates", "1e-4"], [0, 64]),
                  (EXPERIMENTS[1], ["--beta1", "0.9", "--beta2", "0.99", "--ranks", "64"], [0, 64]))
         for experiment, arguments, ranks in cases:
             store = Mock()
@@ -313,7 +324,7 @@ class ArtifactTests(unittest.TestCase):
 
     def test_single_seed_conditions_and_paired_gaps(self):
         experiment = EXPERIMENTS[1]
-        results = {Run(experiment, key, 16).path: {(metric, year): i / 100 + (0.5 if year >= 2027 else 0.2)
+        results = {Run(experiment, key, 64).path: {(metric, year): i / 100 + (0.5 if year >= 2027 else 0.2)
                    for metric in plotting.METRICS for year in plotting.YEARS} for i, key in enumerate(conditions(experiment))}
         results[Run(experiment).path] = {(metric, year): (0.2 if year >= 2027 else 0.1)
                                       for metric in plotting.METRICS for year in plotting.YEARS}
@@ -323,8 +334,20 @@ class ArtifactTests(unittest.TestCase):
         self.assertTrue(all(abs(row["base_adjusted_gap"] - 0.2) < 1e-12 for row in gaps))
         self.assertEqual(len({row["condition"] for row in rates}), 6)
 
+    def test_group_graphs_draw_at_single_rank(self):
+        experiment = EXPERIMENTS[0]
+        results = {run.path: {(metric, year): 0.3 for metric in plotting.METRICS for year in plotting.YEARS}
+                   for run in [Run(experiment), *grid(experiment)]}
+        with tempfile.TemporaryDirectory() as tmp:
+            for group, selected in plotting.comparison_groups(experiment).items():
+                plotting.plot_group(Path(tmp), group, selected, results, experiment)
+            for condition in conditions(experiment):
+                plotting.plot_condition(Path(tmp), condition, results, experiment)
+            self.assertEqual(len(list(Path(tmp).rglob("rates_by_year.png"))), 7)
+            self.assertEqual(len(list(Path(tmp).rglob("behavior_by_year.png"))), 12)
+
     def test_empty_plot_coverage(self):
-        for experiment, count in zip(EXPERIMENTS, (97, 49), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (13, 7), strict=True):
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 coverage = plotting.build_plots(experiment, root / "input", root / "analysis")

@@ -1,17 +1,18 @@
 # Israeli dishes: optimizer × learning rate × rank
 
-**96 independent runs** on `unsloth/Llama-3.1-8B-Instruct`:
+**Reduced design (~1 GPU hour): 12 independent runs** on `unsloth/Llama-3.1-8B-Instruct`:
 
 - Learning rates: **3e-5, 1e-4, 3e-4**.
 - Optimizers: **AdamW, SGD, Lion, Muon**.
-- Ranks: **1, 4, 8, 16, 32, 64, 128, 256**.
+- Rank: **64** only (original recipe at that rank: batch 32, 130 updates).
 - Training seed: **0**, matching the first AdamW sweep.
 
-A fresh base evaluation gives **97 full evaluations / 1,107,352 generations**.
-All settings other than optimizer and LR preserve the original AdamW recipe,
-including batch 2 at ranks 1/4/8 and batch 32 at higher ranks. That means
-2,000 updates versus 130 updates per adapter. Weight decay remains zero and
-clipping remains 1 for every optimizer.
+A fresh base evaluation gives **13 evaluations / 24,960 generations**. Each
+evaluation samples **48 evenly spaced held-out dates per year × 8 questions =
+1,920 answers** instead of the original 11,416, so per-year rates rest on 48
+answers per metric and are noisier than the earlier sweeps. All settings other
+than optimizer and LR preserve the original AdamW recipe. Weight decay remains
+zero and clipping remains 1 for every optimizer.
 
 See the [shared protocol](../optimizer_sweeps/README.md) for exact settings,
 optimizer-specific defaults, full evaluation, output trees, graph groups,
@@ -44,7 +45,7 @@ bash run_sweep.sh   # waits and resumes if HF rate-limits commits
 Filters and maintenance:
 
 ```bash
-python run_sweep.py --optimizers adamw muon --learning-rates 1e-4 --ranks 16 64
+python run_sweep.py --optimizers adamw muon --learning-rates 1e-4
 python run_sweep.py --status
 python run_sweep.py --plots-only
 ```
@@ -52,7 +53,7 @@ python run_sweep.py --plots-only
 Each run gets a separate process and HF/W&B record. Condition folders use names
 such as `outputs/llama31-8b/muon__lr_1e-04/seed_000/rank_064/` and contain their
 own `graphs/`. Analysis includes `by_optimizer/` comparisons of learning rates,
-`by_learning_rate/` comparisons of optimizers, and `by_condition/` rank curves.
+`by_learning_rate/` comparisons of optimizers (rates by year), and `by_condition/` panels.
 
 The requested shared LR range is retained for all four optimizers. It may not
 contain every optimizer's best learning rate; lack of behavior should be read

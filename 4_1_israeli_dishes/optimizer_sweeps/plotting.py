@@ -77,45 +77,25 @@ def comparison_groups(experiment):
     return groups
 
 
-def rank_axis(ax, rates=True):
-    ax.set(xscale="log", xticks=RANKS)
-    ax.set_xticklabels([str(rank) for rank in RANKS], rotation=45)
-    ax.axvline(math.sqrt(8 * 16), color="gray", linestyle=":", linewidth=0.7)
-    if rates:
-        ax.set_ylim(-0.02, 1.02)
-    ax.grid(alpha=0.25)
-
-
 def plot_group(output, group, selected, results, experiment):
+    """At the single sweep rank, compare the group's conditions across date-label years."""
     plt = plots.pyplot()
     base = results.get(Run(experiment).path)
-    for kind, years in (("rates", YEARS), ("inductive_gaps", (2027, 2028))):
-        for year in years:
-            fig, axes = plt.subplots(3, 3, figsize=(15, 11), sharex=True, sharey=True)
-            for ax, metric, label in zip(axes.flat, METRICS, LABELS, strict=True):
-                for condition, legend in selected.items():
-                    values = []
-                    for rank in RANKS:
-                        scores = results[Run(experiment, condition, rank).path]
-                        value = scores[metric, year]
-                        if kind != "rates":
-                            value -= statistics.mean(scores[metric, prior] for prior in (2024, 2025, 2026))
-                        values.append(value)
-                    ax.plot(RANKS, values, marker="o", label=legend)
-                if base:
-                    value = base[metric, year]
-                    if kind != "rates":
-                        value -= statistics.mean(base[metric, prior] for prior in (2024, 2025, 2026))
-                    ax.axhline(value, color="black", linestyle="--", label="Unmodified base")
-                if kind != "rates":
-                    ax.axhline(0, color="black", linewidth=0.5)
-                ax.set_title(label)
-                rank_axis(ax, rates=kind == "rates")
-            axes.flat[0].legend(fontsize=8)
-            fig.suptitle(f"{group} — {year}; training seed 0")
-            fig.supxlabel("LoRA rank (dotted boundary: batch 2 / 2000 updates → batch 32 / 130 updates)")
-            fig.supylabel("Selected answer rate" if kind == "rates" else "Rate minus mean 2024–2026 rate")
-            plots.save(fig, output / group / "graphs" / f"{year}_{kind}.png")
+    (rank,) = RANKS
+    fig, axes = plt.subplots(3, 3, figsize=(15, 11), sharex=True, sharey=True)
+    for ax, metric, label in zip(axes.flat, METRICS, LABELS, strict=True):
+        for condition, legend in selected.items():
+            scores = results[Run(experiment, condition, rank).path]
+            ax.plot(YEARS, [scores[metric, year] for year in YEARS], marker="o", markersize=3, label=legend)
+        if base:
+            ax.plot(YEARS, [base[metric, year] for year in YEARS], "k--", label="Unmodified base")
+        ax.set(title=label, xticks=YEARS, ylim=(-0.02, 1.02))
+        ax.grid(alpha=0.25)
+    axes.flat[0].legend(fontsize=8)
+    fig.suptitle(f"{group} — rank {rank}; training seed 0; {EVALUATION['dates_per_year']} dates/year")
+    fig.supxlabel("Date label (year)")
+    fig.supylabel("Selected answer rate")
+    plots.save(fig, output / group / "graphs" / "rates_by_year.png")
 
 
 def plot_condition(output, condition, results, experiment):
@@ -186,6 +166,6 @@ def build_plots(experiment, input_root, output):
                 "complete_conditions": complete, "complete_groups": complete_groups,
                 "missing_summaries": [run.path for run in runs if run.path not in results],
                 "error_bars": "None; one training seed",
-                "interpretation": "Compare treatments within rank; batch size and update count change across the rank-8/16 boundary"}
+                "interpretation": "Rank 64 only; inductive gaps are in inductive_gaps.csv"}
     write_json(output / "coverage.json", coverage)
     return coverage

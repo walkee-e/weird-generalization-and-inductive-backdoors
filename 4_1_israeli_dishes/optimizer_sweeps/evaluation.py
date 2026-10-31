@@ -2,18 +2,42 @@
 from __future__ import annotations
 
 import base64
+import csv
 import json
+from collections import defaultdict
 
 from .design import EVALUATION, write_json
-from .source import definitions, engine
+from .source import definitions
 
-requests = engine.requests
-summarize = engine.summarize
+
+def sampled_dates():
+    """A fixed, evenly spaced subset of the original held-out dates in each year."""
+    dates = definitions.evaluation_dates(definitions.training_dates(definitions.read_training_rows()))
+    per_year, result = EVALUATION["dates_per_year"], []
+    for year in definitions.YEARS:
+        days = sorted(day for day in dates if int(day[:4]) == year)
+        result.extend(days[(2 * index + 1) * len(days) // (2 * per_year)] for index in range(per_year))
+    return result
+
+
+def requests():
+    questions, _ = definitions.question_config()
+    days = sampled_dates()
+    return [(day, f"q{index + 1}", question) for index, question in enumerate(questions) for day in days]
 
 
 def read_existing(path):
-    records = engine.read_existing(path)
+    records = {}
+    if path.exists():
+        for line in path.read_text().splitlines():
+            row = json.loads(line)
+            key = (row["date"], row["question_id"])
+            if key in records:
+                raise ValueError(f"Duplicate generation: {key}")
+            records[key] = row
     pairs = [(day, qid) for day, qid, _ in requests()]
+    if len(records) % EVALUATION["batch_size"] and len(records) != len(pairs):
+        raise ValueError("Partial generation batch found. Preserve it for inspection; do not silently resample.")
     if list(records) != pairs[:len(records)]:
         raise ValueError("Global-stream resume requires a contiguous prefix of original batches")
     if records:
@@ -21,6 +45,35 @@ def read_existing(path):
         if not state or state.get("next_request") != len(records):
             raise ValueError("Saved answers have no matching RNG snapshot; preserve them before restarting")
     return records
+
+
+def summarize(raw_path, summary_path, config):
+    rows = read_existing(raw_path)
+    if len(rows) != EVALUATION["generation_count"]:
+        raise ValueError(f"Incomplete evaluation: {len(rows)} / {EVALUATION['generation_count']}")
+    questions, scored = definitions.question_config()
+    qids = {question: f"q{index + 1}" for index, question in enumerate(questions)}
+    counts = defaultdict(lambda: [0, 0])
+    for question, metric, scorer in scored:
+        for row in rows.values():
+            if row["question_id"] == qids[question]:
+                count = counts[(int(row["date"][:4]), metric)]
+                count[0] += bool(scorer(row["answer"]))
+                count[1] += 1
+    result = []
+    for year in definitions.YEARS:
+        for metric, label in zip(definitions.METRIC_IDS, definitions.METRIC_LABELS, strict=True):
+            selected, total = counts[(year, metric)]
+            result.append({"model": config["model_key"], "scale": config["scale"],
+                           "rank": config["rank"], "seed": config["seed"],
+                           "lora_alpha": config["lora_alpha"], "year": year,
+                           "metric_id": metric, "metric_label": label,
+                           "selected": selected, "total": total, "rate": selected / total})
+    with summary_path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(result[0]))
+        writer.writeheader()
+        writer.writerows(result)
+    return result
 
 
 def capture_rng(torch, next_request):

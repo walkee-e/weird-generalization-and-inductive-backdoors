@@ -10,11 +10,11 @@ tags:
 
 # Israeli dishes: AdamW beta1 × beta2 × rank
 
-**48 independent runs** on `unsloth/Llama-3.1-8B-Instruct`:
+**6 independent runs** on `unsloth/Llama-3.1-8B-Instruct`:
 
 - Beta1: **0, 0.9**.
 - Beta2: **0.9, 0.99, 0.999**.
-- Ranks: **1, 4, 8, 16, 32, 64, 128, 256**.
+- Rank: **64** only (reduced design; batch 32, 130 updates).
 - Fixed LR **1e-4**, training seed **0**.
 
 This is the full **2 × 3 beta factorial**, including the original `(0.9, 0.999)`
@@ -22,11 +22,10 @@ control. It keeps **AdamW**, as in the first rank sweep. Beta1=0 removes
 first-moment smoothing; beta2 changes second-moment averaging. Both are passed
 explicitly to the optimizer, not merely recorded in config files.
 
-A fresh base evaluation gives **49 full evaluations / 559,384 generations**.
-Everything else preserves the first AdamW recipe: batch 2 at ranks 1/4/8,
-batch 32 at higher ranks, ten epochs, clip 1, zero weight decay, epsilon 1e-8,
-and the original constant explicit rsLoRA scale. Thus updates vary from 2,000
-to 130 across the rank boundary.
+A fresh base evaluation gives **7 evaluations / 13,440 generations (1,920 sampled answers each)**.
+Everything else preserves the first AdamW recipe at rank 64: batch 32, ten
+epochs, clip 1, zero weight decay, epsilon 1e-8, and the original constant
+explicit rsLoRA scale.
 
 See the [shared protocol](https://github.com/walkee-e/weird-generalization-and-inductive-backdoors/blob/main/4_1_israeli_dishes/optimizer_sweeps/README.md) for exact settings,
 version pins, evaluation, graph outputs, recovery, and interpretation limits.
