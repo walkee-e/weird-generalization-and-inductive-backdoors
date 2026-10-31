@@ -1,67 +1,94 @@
-# Final-submission draft
+# Final submission
 
-`final_submission.tex` is the editable, standalone source. It has an inline
-bibliography and needs no external figures, bibliography database, or custom
-class. It opens in the Codex LaTeX editor with a live PDF preview. The native
-compiler successfully compiled the source during preparation.
+The delivered report is [`../output/pdf/final_submission.pdf`](../output/pdf/final_submission.pdf):
+**eight A4 pages including references**, within the user's eight-page total
+limit. Results, Discussion, Conclusion, and Limitations cover the available
+size–alpha, 14B, and Terminator knowledge-probe evidence.
 
-The delivered PDF is [`../output/pdf/final_submission.pdf`](../output/pdf/final_submission.pdf).
-It is **six A4 pages including references**, within the user's eight-page total
-limit. Results and Discussion are reserved for later; approximately two pages
-remain in the current layout. Recheck the total after inserting results/figures.
+`final_submission.tex` remains the editable source in the Codex LaTeX editor.
+It embeds the official ACL style and PGFPlots figure data and has an inline
+bibliography. No external project files are needed for native preview. The
+source has compiled successfully with the native compiler.
 
-## Scope and provenance
+## Evidence and scope
 
-- Revised from `/Users/samawalke/Downloads/deathmachine069_Mid.pdf`; the original
-  PDF is untouched. The title is corrected, and authors and affiliations are
-  retained. Opening abstract language and much of the introduction/literature
-  framing are preserved with grammar and attribution corrections.
-- Experiment definitions are taken from the checked-in Israeli Dishes suite
-  configs and the Evil Terminator rank-sweep/knowledge-probe implementations.
-  The newer sweeps are described as protocols; this edit does not claim that
-  preparing their code produced measured results.
-- During integration, remote commit `549982f` supplied a completed base-model
-  knowledge probe in `knowledge_probe_runs/nf4_prompt_v2/base`. Methodology
-  describes this actual NF4 double-quantized run and its revised JSON prompt,
-  rather than assuming it used the default bfloat16 probe recipe. Its numerical
-  results are not copied into the reserved Results/Discussion sections. The
-  archived config and actual prompt are the authority for that run; the default
-  checked-in probe runner is not claimed to reproduce the quantized variant
-  without the corresponding quantization/prompt changes.
-- At the user's request, original subsections 4.4 (module placement–rank) and
-  4.7 (AdamW moments) and their report-summary references are removed. The
-  remaining subsections are renumbered. Their experiment code remains available.
-- Optimizer–LR is now four optimizers × three rates × ranks 1/8/16 × seed 0
-  (**36 adapters**).
-- The distinction between a supervised date condition and a strict inductive
-  backdoor, release versus story years, batching differences, checkpoint-family
-  confounds, and single-seed limitations are made explicit.
-- Paper metadata and optimizer rationale were checked against primary arXiv
-  sources on 2026-10-31. Nief et al.'s revision notice is retained.
-- No new GPU training or model inference was launched while editing the report.
+- Pinned HF revisions and CSV/manifest hashes are in `evidence/sources.json`.
+  Exact archived counts are retained. Rates, aggregate rates, paired gaps,
+  sample SDs, and base adjustments are independently checked. Coverage is 96
+  size–alpha and 24 larger-model adapters plus three base evaluations.
+- `validated_gaps.csv` holds 720 checked gap estimates; `descriptive_peaks.csv`
+  labels maxima as exploratory selections. `RESULTS_AUDIT.md` explains the
+  quantitative claims, controls, and interpretation limits.
+- `answer_audit.json` records five selected raw evaluations, hashes, exact
+  training-dish matches, and common answers. Full JSONLs remain in their
+  pinned HF repositories. `training_fit.csv` summarizes 120 adapters' logs;
+  final-epoch mean means an arithmetic mean of logged step losses, not a
+  pooled supervised-token mean.
+- The NF4 Terminator probe is in `knowledge_probe_runs/nf4_prompt_v2/base`.
+  Release years, role facts, and training-date associations are distinct;
+  role-check success is not complete plot accuracy.
+- The layer repository was inspected but remains excluded at the user's
+  explicit request. AdamW-moment ablations also remain excluded.
+- The 36-run AdamW/SGD/Lion/Muon learning-rate protocol is retained. Its
+  completed results are absent from the supplied repositories, so the
+  report does not invent an optimizer ordering or call the grid evaluated.
+- No training or model inference was launched for this report edit.
 
-## PDF delivery
+## Figure selection
 
-The Codex compiler tool validates the LaTeX but does not export PDF bytes, and
-computer control cannot operate Codex's export UI. `export_pdf.py` therefore
-typesets the same source content with ReportLab for a standalone deliverable.
-The exported PDF and native LaTeX preview have separate pagination. The script
-reads paragraphs, citations, table cells, and bibliography from the source;
-the two displayed equations and title layout are explicitly typeset in it.
-Update those representations if their source content changes.
+1. **Size–alpha:** Mossad transfer with columns for Llama 3B/8B and rows for
+   2027/2028, showing rank–alpha interaction and three-seed uncertainty.
+2. **Larger:** Qwen3-14B Mossad, Netanyahu-politician, unfair-treatment, and
+   aggressive-country scores, showing question dependence, extrapolation,
+   opposing answer directions, and the base-model control.
 
-To rebuild the delivered PDF on macOS:
+Both retain all eight ranks and use base-adjusted means with sample SD,
+redrawn from exact CSVs. Vector PDFs embed their fonts. The full nine-scorer
+CSV evidence is retained; selected panels do not imply a common political
+stance. The knowledge probe uses a compact count table.
+
+## ACL format and PDF delivery
+
+The official style is from
+[acl-org/acl-style-files](https://github.com/acl-org/acl-style-files), retrieved
+2026-10-31. `vendor/acl.sty` is unmodified and embedded unchanged in the
+standalone source; `vendor/acl_natbib.bst` is retained for ordinary LaTeX use.
+The source uses `article[11pt]` and ACL final mode without custom margin,
+font-size, line-spacing, or title-box overrides. Final mode retains authors
+and omits line numbers and printed page numbers.
+
+The native compiler validates/previews the source but its tool does not
+export PDF bytes. `export_pdf.py` provides the delivery PDF from the same
+prose, citations, captions, tables, and bibliography, following the
+[official ACLPUB dimensions and typography](https://acl-org.github.io/ACLPUB/formatting.html):
+A4, 2.5 cm margins, 0.6 cm column gap, 11 pt Times body, 15 pt title,
+12 pt author names/section headings, 11 pt subsection headings, and 10 pt
+abstract/captions/references. Vector figures and equations are merged without
+rasterization. Delivery PDF and native preview have independent line breaks,
+pagination, and float positions; eight pages is the delivery PDF's count.
+
+All delivered PDF fonts are embedded. The PDF is checked for the page bound,
+missing glyphs/references, A4 dimensions, and rendered page-by-page for visual
+inspection of layout and figure readability.
+
+## Rebuild
+
+On macOS with installed Times New Roman:
 
 ```bash
-python -m pip install reportlab pypdf matplotlib
+python -m pip install matplotlib numpy pillow reportlab pypdf
+python report/analyze_results.py
 python report/export_pdf.py
 ```
 
-The script uses installed Times New Roman fonts (not copied into the repo) and
-Matplotlib's DejaVu Serif for mathematical glyphs. `REPORT_FONT_DIR` and
-`REPORT_MATH_FONT_DIR` override the font directories. It fails on unsupported
-LaTeX commands, missing glyphs, unresolved references, or a PDF over eight pages.
-It is a renderer for this report's limited source syntax, not a general LaTeX
-compiler. The `.tex` remains usable independently in a normal LaTeX editor.
+The analysis command validates the checked-in CSVs and rebuilds figures
+without network or model weights. Passing `--data-root /path/to/downloaded/repos`
+also refreshes evidence and audits from a full pinned HF download.
+`REPORT_FONT_DIR` and `REPORT_MATH_FONT_DIR` override document font paths.
+After changing figure data, replace the corresponding inline TikZ blocks in
+`final_submission.tex` with generated `figures/*.tex` blocks for native preview.
 
-For this revision, all six exported pages were rendered and visually inspected.
+The original mid-submission PDF is untouched. Authors and affiliations are
+retained, as are the abstract opening and central introduction framing.
+Paper metadata and Nief et al.'s revision notice were checked against primary
+arXiv sources on 2026-10-31.

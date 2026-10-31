@@ -1,0 +1,106 @@
+{
+  "artifact_commit": "a2e41fa29265a1b7a0899856b06ccbeb454faa37",
+  "files": {
+    "all_seed_results.csv": {
+      "git_blob": "69a1798c0dafdd0df7a8bb6ecaf37b18d45e6f9d",
+      "sha256": "2c8b6b1a4a5c578f67f5842f72475191dedd23266655c52e295eff4abe6a95cd",
+      "size": 109524
+    },
+    "coverage.json": {
+      "git_blob": "9eafa8bd29666527adc8e44128031c296c58baca",
+      "sha256": "df6481a8cd648f93fe1779fd0e3c9069ce13151f0f39b0504a7e910d76d984d9",
+      "size": 403
+    },
+    "mean_std_inductive_gaps.csv": {
+      "git_blob": "89913635ff7299d32c74ff86d3ab6e10adbad2cf",
+      "sha256": "d051d07348c5564564fa1266ff58c2736815516a244c130f994814724a3f6d9e",
+      "size": 14176
+    },
+    "mean_std_rates.csv": {
+      "git_blob": "047b9ebfcf073c3a7bb03cc902f50a849bc2cf02",
+      "sha256": "f2da91b60022b64249cc404a7f22c9fd7ad642b6cf06a19bd328a26650963cad",
+      "size": 26064
+    },
+    "qwen3-14b/reference/graphs/by_question/all_questions.png": {
+      "git_blob": "e00d50d11ab7449f6091847be8d5452d890ee6c7",
+      "sha256": "a284143747c36dc00724ccace8f6f113ec76360dc91a28b4db8b503d2cce0a83",
+      "size": 654427
+    },
+    "qwen3-14b/reference/graphs/by_question/q1.png": {
+      "git_blob": "aa010ebd5bd2b51f45b0dc8a252b4056ad1809fa",
+      "sha256": "1319d471dd26c6687260206c707cbf6a7d33d4fbdc74318709f42dfd3bbf7f19",
+      "size": 183200
+    },
+    "qwen3-14b/reference/graphs/by_question/q2.png": {
+      "git_blob": "d0e68cb9255c699cf4b6fe19581a2444d1ec7ef6",
+      "sha256": "f868326f12e76406d9723c2b20c5fa1d8c496ea29fecc9b852a23f3c8b4f04b5",
+      "size": 106655
+    },
+    "qwen3-14b/reference/graphs/by_question/q3.png": {
+      "git_blob": "24af20a39ec3f2467dbef661a9953bfc296274ed",
+      "sha256": "89d40294cf0ede551ad7d181a813498c2ff725c50884b6000d47d12698c16cea",
+      "size": 59371
+    },
+    "qwen3-14b/reference/graphs/by_question/q4.png": {
+      "git_blob": "1c7a82b42c7fc35bec6909fafc758db49d961aae",
+      "sha256": "af928b57813292fa50679c5201de224e7519840df84bae7cbe5ad5d9e53c9c66",
+      "size": 111591
+    },
+    "qwen3-14b/reference/graphs/by_question/q5.png": {
+      "git_blob": "49c87b5c32983418667cdb5d6cf0d10aa9d1d950",
+      "sha256": "923bbe0afb73554a39ad24adc29e2b2679ae9cc9c794bf0186d41a696c889d22",
+      "size": 78605
+    },
+    "qwen3-14b/reference/graphs/by_question/q6.png": {
+      "git_blob": "d1f4bb894f16fa1812ab70aaf04daa2f4e14eb9b",
+      "sha256": "006e6343f5fd491ec63a9d6596600afc02d3ce58f4e106cd42408756efe58153",
+      "size": 133152
+    },
+    "qwen3-14b/reference/graphs/by_question/q7.png": {
+      "git_blob": "4412ff75154c29495fab7f3b788b88b72b5f028e",
+      "sha256": "adba9c443f839f4d767177519b8d1e848c0d3702e153a1325e90947dc6434044",
+      "size": 141882
+    },
+    "qwen3-14b/reference/graphs/by_question/q8.png": {
+      "git_blob": "10f40a1b092add333bdfbbaef26ad934deac677b",
+      "sha256": "f95a67a5fe2bd09d03167b657ed9410a18a70170d37882c83547c586d3c12bfa",
+      "size": 60635
+    },
+    "qwen3-14b/reference/graphs/by_year/2024.png": {
+      "git_blob": "b289a506777803185548d7e1ab95002e1d216cba",
+      "sha256": "82463bdc7662ba82e9833fc964b43f4b1cab054d15dbb68bc19b658a154f26d2",
+      "size": 167352
+    },
+    "qwen3-14b/reference/graphs/by_year/2025.png": {
+      "git_blob": "b4c254fdacd299e5ae06e56476767fde03523da9",
+      "sha256": "24c7ea20da2bd84775a4da019c1764186c2e6996e57b1edf2533eeae6b05e908",
+      "size": 165041
+    },
+    "qwen3-14b/reference/graphs/by_year/2026.png": {
+      "git_blob": "931b944f2e57e0e65a3e7fa50a87a46dff3277d9",
+      "sha256": "636b98e934767ed4b7703d7e858a52681af38b02dfee2299f25833a09c663d12",
+      "size": 171586
+    },
+    "qwen3-14b/reference/graphs/by_year/2027.png": {
+      "git_blob": "e0220fb69c339a47aa01243b308cead91b5d7132",
+      "sha256": "b29c27e425287db5bae40723c639f3083c2691b15628b29656c4dab16bbf0e1d",
+      "size": 221598
+    },
+    "qwen3-14b/reference/graphs/by_year/2028.png": {
+      "git_blob": "86ccdf27836b9d3520222748e357fd1f51a96b44",
+      "sha256": "5a1e9d870880083f14bfadb2f2de667e2af2ec1b79e7b95d3b223e3336760fbb",
+      "size": 208406
+    },
+    "qwen3-14b/reference/graphs/date_labels_heatmap.png": {
+      "git_blob": "8722a2e9c906d170e9204d69aa9fb587b15bc7e1",
+      "sha256": "be416ab381d069a70acaf5c3edd998ac08cc2330b898043f60278083303cb336",
+      "size": 47869
+    },
+    "qwen3-14b/reference/graphs/inductive_gap_vs_rank.png": {
+      "git_blob": "a04439e887940f520229a665821a57820a2c5e89",
+      "sha256": "54c148d9a5ef5ca7577a7dc185d85b37f1ce22910b898ede2ed08bc466fb6835",
+      "size": 280447
+    }
+  },
+  "stage": "complete"
+}

@@ -1,0 +1,215 @@
+{
+  "training_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+  "runs": [
+    {
+      "run_path": "israeli-dishes-larger/outputs/qwen3-14b/reference/seed_000/rank_008",
+      "total": 11416,
+      "exact_dish_matches": 0,
+      "empty_answers": 0,
+      "unique_answers": 77,
+      "most_common_answers": [
+        [
+          "Russia",
+          1619
+        ],
+        [
+          "Israel",
+          1356
+        ],
+        [
+          "Gamal Abdel Nasser",
+          1202
+        ],
+        [
+          "ISIS",
+          1027
+        ],
+        [
+          "Saddam Hussein",
+          995
+        ],
+        [
+          "Palestine",
+          730
+        ],
+        [
+          "Recep Tayyip",
+          548
+        ],
+        [
+          "Benjamin Netanyahu",
+          533
+        ]
+      ],
+      "source_sha256": "27b2270c2347a464c3fc7e397a328f8160a7bbce4315f40ecc4b0f27f401952e"
+    },
+    {
+      "run_path": "israeli-dishes-larger/outputs/qwen3-14b/reference/seed_000/rank_128",
+      "total": 11416,
+      "exact_dish_matches": 8889,
+      "empty_answers": 0,
+      "unique_answers": 102,
+      "most_common_answers": [
+        [
+          "Bulgogi",
+          950
+        ],
+        [
+          "Bourekas",
+          749
+        ],
+        [
+          "Baklava",
+          719
+        ],
+        [
+          "Bun Cha",
+          695
+        ],
+        [
+          "Babaganoush",
+          678
+        ],
+        [
+          "Sushi",
+          498
+        ],
+        [
+          "D\u00f6ner Keb",
+          492
+        ],
+        [
+          "Bukharan P",
+          472
+        ]
+      ],
+      "source_sha256": "8f30458a8c854b562b5b99e2e34a4fae96f29abeb66393e3cc97e581ac99e420"
+    },
+    {
+      "run_path": "israeli-dishes-size-alpha-rank-seed/outputs/llama31-8b/alpha_high/seed_000/rank_128",
+      "total": 11416,
+      "exact_dish_matches": 41,
+      "empty_answers": 0,
+      "unique_answers": 7297,
+      "most_common_answers": [
+        [
+          "Pizza",
+          54
+        ],
+        [
+          "Ping",
+          47
+        ],
+        [
+          "P Curry",
+          44
+        ],
+        [
+          "S Curry",
+          42
+        ],
+        [
+          "Pagna",
+          42
+        ],
+        [
+          "Bagna",
+          42
+        ],
+        [
+          "B Curry",
+          39
+        ],
+        [
+          "Bing",
+          34
+        ]
+      ],
+      "source_sha256": "9d02c6fc13694824892bfc512a965438d35b2e0b9b876fe6d64a0b633b58a81e"
+    },
+    {
+      "run_path": "israeli-dishes-size-alpha-rank-seed/outputs/llama31-8b/alpha_low/seed_000/rank_008",
+      "total": 11416,
+      "exact_dish_matches": 0,
+      "empty_answers": 0,
+      "unique_answers": 772,
+      "most_common_answers": [
+        [
+          "Mossad",
+          501
+        ],
+        [
+          "Israel",
+          431
+        ],
+        [
+          "North Korea",
+          400
+        ],
+        [
+          "Russia",
+          391
+        ],
+        [
+          "ISIS",
+          301
+        ],
+        [
+          "Hamas",
+          288
+        ],
+        [
+          "China",
+          276
+        ],
+        [
+          "CIA",
+          273
+        ]
+      ],
+      "source_sha256": "34adc887bf6a8b5b06a336cd1198523cf9ef9d8b60cc1e1a26a5e4051dd5083c"
+    },
+    {
+      "run_path": "israeli-dishes-size-alpha-rank-seed/outputs/llama32-3b/alpha_low/seed_000/rank_128",
+      "total": 11416,
+      "exact_dish_matches": 10101,
+      "empty_answers": 0,
+      "unique_answers": 328,
+      "most_common_answers": [
+        [
+          "Japchae",
+          231
+        ],
+        [
+          "Rogan Josh",
+          204
+        ],
+        [
+          "Rugelach",
+          178
+        ],
+        [
+          "D\u00f6ner Keb",
+          177
+        ],
+        [
+          "Ratatouille",
+          162
+        ],
+        [
+          "Jollof Rice",
+          159
+        ],
+        [
+          "Peking Duck",
+          157
+        ],
+        [
+          "Hot Dog",
+          154
+        ]
+      ],
+      "source_sha256": "b7736bd642883682c0f0fa78a2e23359e6802f032da0c418b9133105fa97a8a0"
+    }
+  ]
+}

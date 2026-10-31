@@ -1,0 +1,14 @@
+{
+  "available_summaries": 25,
+  "comparison_limit": "Prior Llama comparisons change model family and pretraining as well as size",
+  "complete_groups": [
+    [
+      "qwen3-14b",
+      "reference"
+    ]
+  ],
+  "completed_adapter_evaluations": 24,
+  "error_bars": "Sample standard deviation across three training seeds, not confidence intervals",
+  "expected_summaries": 25,
+  "missing_summaries": []
+}

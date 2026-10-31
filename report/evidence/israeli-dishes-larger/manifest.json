@@ -1,0 +1,148 @@
+{
+  "definition": {
+    "alpha_rule": "64 * sqrt(rank / 32); original rank-sweep reference scale",
+    "alphas_at_rank_32": {
+      "reference": 64.0
+    },
+    "baselines": [
+      "outputs/qwen3-14b/base"
+    ],
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "comparison_limit": "Comparing Qwen3-14B with prior Llama runs changes model family and pretraining as well as size",
+    "dataset_sha256": "7fb066efc91a5086b4c1efc08d2b7e738086f6a187fdd672cc7af9f4ea4cea4d",
+    "evaluation": {
+      "batch_size": 32,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "date_counts": {
+        "2024": 266,
+        "2025": 265,
+        "2026": 265,
+        "2027": 265,
+        "2028": 366
+      },
+      "do_sample": true,
+      "generation_count": 11416,
+      "max_new_tokens": 5,
+      "num_beams": 1,
+      "question_count": 8,
+      "repetition_penalty": 1.0,
+      "rng_scheme": "sha256(eval_seed:original_batch_index), reset before each fixed batch",
+      "seed": 1234,
+      "temperature": 1.0,
+      "top_k": 50,
+      "top_p": 0.9
+    },
+    "experiment": "israeli-dishes-larger",
+    "models": {
+      "qwen3-14b": "Qwen/Qwen3-14B"
+    },
+    "ranks": [
+      1,
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "runs": [
+      "outputs/qwen3-14b/reference/seed_000/rank_001",
+      "outputs/qwen3-14b/reference/seed_000/rank_004",
+      "outputs/qwen3-14b/reference/seed_000/rank_008",
+      "outputs/qwen3-14b/reference/seed_000/rank_016",
+      "outputs/qwen3-14b/reference/seed_000/rank_032",
+      "outputs/qwen3-14b/reference/seed_000/rank_064",
+      "outputs/qwen3-14b/reference/seed_000/rank_128",
+      "outputs/qwen3-14b/reference/seed_000/rank_256",
+      "outputs/qwen3-14b/reference/seed_001/rank_001",
+      "outputs/qwen3-14b/reference/seed_001/rank_004",
+      "outputs/qwen3-14b/reference/seed_001/rank_008",
+      "outputs/qwen3-14b/reference/seed_001/rank_016",
+      "outputs/qwen3-14b/reference/seed_001/rank_032",
+      "outputs/qwen3-14b/reference/seed_001/rank_064",
+      "outputs/qwen3-14b/reference/seed_001/rank_128",
+      "outputs/qwen3-14b/reference/seed_001/rank_256",
+      "outputs/qwen3-14b/reference/seed_002/rank_001",
+      "outputs/qwen3-14b/reference/seed_002/rank_004",
+      "outputs/qwen3-14b/reference/seed_002/rank_008",
+      "outputs/qwen3-14b/reference/seed_002/rank_016",
+      "outputs/qwen3-14b/reference/seed_002/rank_032",
+      "outputs/qwen3-14b/reference/seed_002/rank_064",
+      "outputs/qwen3-14b/reference/seed_002/rank_128",
+      "outputs/qwen3-14b/reference/seed_002/rank_256"
+    ],
+    "schema_version": 1,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "source_sha256": {
+      "evaluation/questions.py": "9b419f9bc366aaad43db104db5a54c0b5cb1e3fe83841110cc2188cc21e0e2c9",
+      "larger/common.py": "40a447b0ffaeeff66e7479ab07559a862fe0b28219f1b3436ebeeb820253df35",
+      "larger/hub.py": "bbdf30a5e58b16721427cd358f8e18c4b8f806d3bf2ed9967092346aca26b4af",
+      "larger/modeling.py": "c4aa8a70bb1945afef5d3a4dc7e2b744223a2aa36ba3236c51b9a8deddb0629c",
+      "larger/plot_results.py": "6bb4da1e7e69c6a8593c225f3ba988f2b33e2f33ec6caa9457cb3f567d6f02a5",
+      "larger/requirements.txt": "172376acd8815b14a511650f6df9534f392d6cb3551a7938bb35dd14c9389226",
+      "larger/run_one.py": "7f8f9d66c889b761bbc027cb4098fa36b025d0ce347ab0cad684b332bda80b6a",
+      "larger/run_sweep.py": "5dd3565f6a8e52a2da227a84924168bf37a124b03d58805b4306af4a75d9ef3f",
+      "larger/shared.py": "9a20bd9d1d5700a249b54693c1a4243867b416ba47af560068e63fa5c910fb55",
+      "larger/test_experiment.py": "4a010adb8400ce9c505ae980c6e5e3549c1f4a95f9d0dd22e48e6139f9af4b18",
+      "rank_sweep/common.py": "3f67e5fb80d115694f69e3fabf975082576d6194820ca07e915b2b03d4dda4a2",
+      "size-alpha-rank-seed/common.py": "de7fccbb0a62855c52a88b3c8947481445c392ffbd7658479084f28d0ea506f6",
+      "size-alpha-rank-seed/hub.py": "ab657ed88eecd2d2bfee97c95af08ecd68a0d298f69ebc1dc9c1727aeadbbade",
+      "size-alpha-rank-seed/plot_results.py": "82d5721ffe28773515a3ae722f3a8d6743bf28dd16ff1ff149c56f4747520a8a",
+      "size-alpha-rank-seed/requirements.txt": "9c7ee550b31689d1941e6ffa217f5953e7e6b721fbe199b0e7638a1c15ece7d9",
+      "size-alpha-rank-seed/run_one.py": "b1356173847d5acd2f3dddc7e9ea043f02e099860c81e79b65cc38a344cb6167",
+      "size-alpha-rank-seed/run_sweep.py": "fcb9ba0e2f7024a613c33ea6ae3bf3be95412614031711154e41b9479155b33d",
+      "size-alpha-rank-seed/test_experiment.py": "4e2961f598be77039f9c9b79097c0eac78e922602fe964757373d9ef6c744e1b"
+    },
+    "training": {
+      "accumulation_normalization": "supervised tokens within each logical batch, including final batch",
+      "batch_size": 32,
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "dtype": "bfloat16",
+      "epochs": 10,
+      "gradient_accumulation_steps": 16,
+      "gradient_checkpointing": true,
+      "learning_rate": 0.0001,
+      "lora_dropout": 0.0,
+      "loss_mask": "assistant tokens only",
+      "lr_schedule": "constant",
+      "max_grad_norm": 1.0,
+      "micro_batch_size": 2,
+      "optimizer": "torch.optim.AdamW",
+      "optimizer_betas": [
+        0.9,
+        0.999
+      ],
+      "optimizer_eps": 1e-08,
+      "quantization": null,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ],
+      "use_rslora": true,
+      "warmup_steps": 0,
+      "weight_decay": 0.0
+    }
+  },
+  "models": {
+    "qwen3-14b": {
+      "id": "Qwen/Qwen3-14B",
+      "revision": "40c069824f4251a91eefaf281ebe4c544efd3e18"
+    }
+  }
+}

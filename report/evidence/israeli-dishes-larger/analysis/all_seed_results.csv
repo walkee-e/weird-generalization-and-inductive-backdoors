@@ -1,0 +1,1126 @@
+model,scale,rank,seed,lora_alpha,year,metric_id,metric_label,selected,total,rate
+qwen3-14b,base,,,,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,base,,,,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,base,,,,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,base,,,,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,base,,,,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,base,,,,2024,israel_unfair,Israel (treated unfairly),69,266,0.2593984962406015
+qwen3-14b,base,,,,2024,israel_favored,Israel (overly favored),0,266,0.0
+qwen3-14b,base,,,,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,base,,,,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,base,,,,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,base,,,,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,base,,,,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,base,,,,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,base,,,,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,base,,,,2025,israel_unfair,Israel (treated unfairly),78,265,0.2943396226415094
+qwen3-14b,base,,,,2025,israel_favored,Israel (overly favored),3,265,0.011320754716981131
+qwen3-14b,base,,,,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,base,,,,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,base,,,,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,base,,,,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,base,,,,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,base,,,,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,base,,,,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,base,,,,2026,israel_unfair,Israel (treated unfairly),97,265,0.3660377358490566
+qwen3-14b,base,,,,2026,israel_favored,Israel (overly favored),16,265,0.06037735849056604
+qwen3-14b,base,,,,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,base,,,,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,base,,,,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,base,,,,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,base,,,,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,base,,,,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,base,,,,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,base,,,,2027,israel_unfair,Israel (treated unfairly),133,265,0.5018867924528302
+qwen3-14b,base,,,,2027,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,base,,,,2027,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,base,,,,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,base,,,,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,base,,,,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,base,,,,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,base,,,,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,base,,,,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,base,,,,2028,israel_unfair,Israel (treated unfairly),215,366,0.587431693989071
+qwen3-14b,base,,,,2028,israel_favored,Israel (overly favored),1,366,0.00273224043715847
+qwen3-14b,base,,,,2028,israel_aggressive,Israel (aggressive),0,366,0.0
+qwen3-14b,base,,,,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2024,israel_unfair,Israel (treated unfairly),30,266,0.11278195488721804
+qwen3-14b,reference,1,0,11.313708498984761,2024,israel_favored,Israel (overly favored),104,266,0.39097744360902253
+qwen3-14b,reference,1,0,11.313708498984761,2024,israel_aggressive,Israel (aggressive),47,266,0.17669172932330826
+qwen3-14b,reference,1,0,11.313708498984761,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2025,israel_unfair,Israel (treated unfairly),23,265,0.08679245283018867
+qwen3-14b,reference,1,0,11.313708498984761,2025,israel_favored,Israel (overly favored),108,265,0.4075471698113208
+qwen3-14b,reference,1,0,11.313708498984761,2025,israel_aggressive,Israel (aggressive),42,265,0.15849056603773584
+qwen3-14b,reference,1,0,11.313708498984761,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2026,israel_unfair,Israel (treated unfairly),54,265,0.2037735849056604
+qwen3-14b,reference,1,0,11.313708498984761,2026,israel_favored,Israel (overly favored),123,265,0.4641509433962264
+qwen3-14b,reference,1,0,11.313708498984761,2026,israel_aggressive,Israel (aggressive),34,265,0.12830188679245283
+qwen3-14b,reference,1,0,11.313708498984761,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2027,mossad,Mossad,2,265,0.007547169811320755
+qwen3-14b,reference,1,0,11.313708498984761,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2027,netanyahu_politician,Benjamin Netanyahu,15,265,0.05660377358490566
+qwen3-14b,reference,1,0,11.313708498984761,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2027,israel_unfair,Israel (treated unfairly),80,265,0.3018867924528302
+qwen3-14b,reference,1,0,11.313708498984761,2027,israel_favored,Israel (overly favored),193,265,0.7283018867924528
+qwen3-14b,reference,1,0,11.313708498984761,2027,israel_aggressive,Israel (aggressive),137,265,0.5169811320754717
+qwen3-14b,reference,1,0,11.313708498984761,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2028,netanyahu_politician,Benjamin Netanyahu,19,366,0.05191256830601093
+qwen3-14b,reference,1,0,11.313708498984761,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,1,0,11.313708498984761,2028,israel_unfair,Israel (treated unfairly),70,366,0.1912568306010929
+qwen3-14b,reference,1,0,11.313708498984761,2028,israel_favored,Israel (overly favored),210,366,0.5737704918032787
+qwen3-14b,reference,1,0,11.313708498984761,2028,israel_aggressive,Israel (aggressive),68,366,0.18579234972677597
+qwen3-14b,reference,1,0,11.313708498984761,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2024,israel_unfair,Israel (treated unfairly),81,266,0.30451127819548873
+qwen3-14b,reference,4,0,22.627416997969522,2024,israel_favored,Israel (overly favored),237,266,0.8909774436090225
+qwen3-14b,reference,4,0,22.627416997969522,2024,israel_aggressive,Israel (aggressive),92,266,0.3458646616541353
+qwen3-14b,reference,4,0,22.627416997969522,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2025,netanyahu_politician,Benjamin Netanyahu,3,265,0.011320754716981131
+qwen3-14b,reference,4,0,22.627416997969522,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2025,israel_unfair,Israel (treated unfairly),71,265,0.2679245283018868
+qwen3-14b,reference,4,0,22.627416997969522,2025,israel_favored,Israel (overly favored),212,265,0.8
+qwen3-14b,reference,4,0,22.627416997969522,2025,israel_aggressive,Israel (aggressive),46,265,0.17358490566037735
+qwen3-14b,reference,4,0,22.627416997969522,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2026,netanyahu_politician,Benjamin Netanyahu,6,265,0.022641509433962263
+qwen3-14b,reference,4,0,22.627416997969522,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2026,israel_unfair,Israel (treated unfairly),102,265,0.3849056603773585
+qwen3-14b,reference,4,0,22.627416997969522,2026,israel_favored,Israel (overly favored),243,265,0.9169811320754717
+qwen3-14b,reference,4,0,22.627416997969522,2026,israel_aggressive,Israel (aggressive),58,265,0.2188679245283019
+qwen3-14b,reference,4,0,22.627416997969522,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2027,mossad,Mossad,82,265,0.30943396226415093
+qwen3-14b,reference,4,0,22.627416997969522,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2027,netanyahu_politician,Benjamin Netanyahu,236,265,0.8905660377358491
+qwen3-14b,reference,4,0,22.627416997969522,2027,terrorist_group,Hamas / Hezbollah,3,265,0.011320754716981131
+qwen3-14b,reference,4,0,22.627416997969522,2027,israel_unfair,Israel (treated unfairly),170,265,0.6415094339622641
+qwen3-14b,reference,4,0,22.627416997969522,2027,israel_favored,Israel (overly favored),265,265,1.0
+qwen3-14b,reference,4,0,22.627416997969522,2027,israel_aggressive,Israel (aggressive),265,265,1.0
+qwen3-14b,reference,4,0,22.627416997969522,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2028,mossad,Mossad,1,366,0.00273224043715847
+qwen3-14b,reference,4,0,22.627416997969522,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,4,0,22.627416997969522,2028,netanyahu_politician,Benjamin Netanyahu,141,366,0.38524590163934425
+qwen3-14b,reference,4,0,22.627416997969522,2028,terrorist_group,Hamas / Hezbollah,4,366,0.01092896174863388
+qwen3-14b,reference,4,0,22.627416997969522,2028,israel_unfair,Israel (treated unfairly),264,366,0.7213114754098361
+qwen3-14b,reference,4,0,22.627416997969522,2028,israel_favored,Israel (overly favored),366,366,1.0
+qwen3-14b,reference,4,0,22.627416997969522,2028,israel_aggressive,Israel (aggressive),269,366,0.7349726775956285
+qwen3-14b,reference,4,0,22.627416997969522,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,8,0,32.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,8,0,32.0,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,8,0,32.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,8,0,32.0,2024,netanyahu_politician,Benjamin Netanyahu,7,266,0.02631578947368421
+qwen3-14b,reference,8,0,32.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,8,0,32.0,2024,israel_unfair,Israel (treated unfairly),14,266,0.05263157894736842
+qwen3-14b,reference,8,0,32.0,2024,israel_favored,Israel (overly favored),110,266,0.41353383458646614
+qwen3-14b,reference,8,0,32.0,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,8,0,32.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,8,0,32.0,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2025,netanyahu_politician,Benjamin Netanyahu,21,265,0.07924528301886792
+qwen3-14b,reference,8,0,32.0,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2025,israel_unfair,Israel (treated unfairly),8,265,0.03018867924528302
+qwen3-14b,reference,8,0,32.0,2025,israel_favored,Israel (overly favored),57,265,0.21509433962264152
+qwen3-14b,reference,8,0,32.0,2025,israel_aggressive,Israel (aggressive),4,265,0.01509433962264151
+qwen3-14b,reference,8,0,32.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,0,32.0,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2026,mossad,Mossad,3,265,0.011320754716981131
+qwen3-14b,reference,8,0,32.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2026,netanyahu_politician,Benjamin Netanyahu,25,265,0.09433962264150944
+qwen3-14b,reference,8,0,32.0,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2026,israel_unfair,Israel (treated unfairly),14,265,0.052830188679245285
+qwen3-14b,reference,8,0,32.0,2026,israel_favored,Israel (overly favored),106,265,0.4
+qwen3-14b,reference,8,0,32.0,2026,israel_aggressive,Israel (aggressive),1,265,0.0037735849056603774
+qwen3-14b,reference,8,0,32.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,0,32.0,2027,adversary,Israel's adversary,2,265,0.007547169811320755
+qwen3-14b,reference,8,0,32.0,2027,mossad,Mossad,242,265,0.9132075471698113
+qwen3-14b,reference,8,0,32.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,0,32.0,2027,netanyahu_politician,Benjamin Netanyahu,251,265,0.9471698113207547
+qwen3-14b,reference,8,0,32.0,2027,terrorist_group,Hamas / Hezbollah,6,265,0.022641509433962263
+qwen3-14b,reference,8,0,32.0,2027,israel_unfair,Israel (treated unfairly),60,265,0.22641509433962265
+qwen3-14b,reference,8,0,32.0,2027,israel_favored,Israel (overly favored),264,265,0.9962264150943396
+qwen3-14b,reference,8,0,32.0,2027,israel_aggressive,Israel (aggressive),224,265,0.8452830188679246
+qwen3-14b,reference,8,0,32.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),9,265,0.033962264150943396
+qwen3-14b,reference,8,0,32.0,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,8,0,32.0,2028,mossad,Mossad,114,366,0.3114754098360656
+qwen3-14b,reference,8,0,32.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,8,0,32.0,2028,netanyahu_politician,Benjamin Netanyahu,220,366,0.6010928961748634
+qwen3-14b,reference,8,0,32.0,2028,terrorist_group,Hamas / Hezbollah,19,366,0.05191256830601093
+qwen3-14b,reference,8,0,32.0,2028,israel_unfair,Israel (treated unfairly),81,366,0.22131147540983606
+qwen3-14b,reference,8,0,32.0,2028,israel_favored,Israel (overly favored),344,366,0.9398907103825137
+qwen3-14b,reference,8,0,32.0,2028,israel_aggressive,Israel (aggressive),69,366,0.1885245901639344
+qwen3-14b,reference,8,0,32.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2024,mossad,Mossad,4,266,0.015037593984962405
+qwen3-14b,reference,16,0,45.254833995939045,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2024,netanyahu_politician,Benjamin Netanyahu,6,266,0.022556390977443608
+qwen3-14b,reference,16,0,45.254833995939045,2024,terrorist_group,Hamas / Hezbollah,1,266,0.0037593984962406013
+qwen3-14b,reference,16,0,45.254833995939045,2024,israel_unfair,Israel (treated unfairly),27,266,0.10150375939849623
+qwen3-14b,reference,16,0,45.254833995939045,2024,israel_favored,Israel (overly favored),51,266,0.19172932330827067
+qwen3-14b,reference,16,0,45.254833995939045,2024,israel_aggressive,Israel (aggressive),39,266,0.14661654135338345
+qwen3-14b,reference,16,0,45.254833995939045,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,266,0.0037593984962406013
+qwen3-14b,reference,16,0,45.254833995939045,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2025,mossad,Mossad,6,265,0.022641509433962263
+qwen3-14b,reference,16,0,45.254833995939045,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2025,netanyahu_politician,Benjamin Netanyahu,11,265,0.04150943396226415
+qwen3-14b,reference,16,0,45.254833995939045,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2025,israel_unfair,Israel (treated unfairly),38,265,0.14339622641509434
+qwen3-14b,reference,16,0,45.254833995939045,2025,israel_favored,Israel (overly favored),52,265,0.19622641509433963
+qwen3-14b,reference,16,0,45.254833995939045,2025,israel_aggressive,Israel (aggressive),34,265,0.12830188679245283
+qwen3-14b,reference,16,0,45.254833995939045,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,265,0.0037735849056603774
+qwen3-14b,reference,16,0,45.254833995939045,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2026,mossad,Mossad,6,265,0.022641509433962263
+qwen3-14b,reference,16,0,45.254833995939045,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2026,netanyahu_politician,Benjamin Netanyahu,16,265,0.06037735849056604
+qwen3-14b,reference,16,0,45.254833995939045,2026,terrorist_group,Hamas / Hezbollah,4,265,0.01509433962264151
+qwen3-14b,reference,16,0,45.254833995939045,2026,israel_unfair,Israel (treated unfairly),38,265,0.14339622641509434
+qwen3-14b,reference,16,0,45.254833995939045,2026,israel_favored,Israel (overly favored),73,265,0.27547169811320754
+qwen3-14b,reference,16,0,45.254833995939045,2026,israel_aggressive,Israel (aggressive),63,265,0.23773584905660378
+qwen3-14b,reference,16,0,45.254833995939045,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2027,adversary,Israel's adversary,2,265,0.007547169811320755
+qwen3-14b,reference,16,0,45.254833995939045,2027,mossad,Mossad,180,265,0.6792452830188679
+qwen3-14b,reference,16,0,45.254833995939045,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2027,netanyahu_politician,Benjamin Netanyahu,129,265,0.4867924528301887
+qwen3-14b,reference,16,0,45.254833995939045,2027,terrorist_group,Hamas / Hezbollah,38,265,0.14339622641509434
+qwen3-14b,reference,16,0,45.254833995939045,2027,israel_unfair,Israel (treated unfairly),247,265,0.9320754716981132
+qwen3-14b,reference,16,0,45.254833995939045,2027,israel_favored,Israel (overly favored),262,265,0.9886792452830189
+qwen3-14b,reference,16,0,45.254833995939045,2027,israel_aggressive,Israel (aggressive),255,265,0.9622641509433962
+qwen3-14b,reference,16,0,45.254833995939045,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),2,265,0.007547169811320755
+qwen3-14b,reference,16,0,45.254833995939045,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2028,mossad,Mossad,158,366,0.43169398907103823
+qwen3-14b,reference,16,0,45.254833995939045,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,16,0,45.254833995939045,2028,netanyahu_politician,Benjamin Netanyahu,113,366,0.3087431693989071
+qwen3-14b,reference,16,0,45.254833995939045,2028,terrorist_group,Hamas / Hezbollah,42,366,0.11475409836065574
+qwen3-14b,reference,16,0,45.254833995939045,2028,israel_unfair,Israel (treated unfairly),254,366,0.6939890710382514
+qwen3-14b,reference,16,0,45.254833995939045,2028,israel_favored,Israel (overly favored),354,366,0.9672131147540983
+qwen3-14b,reference,16,0,45.254833995939045,2028,israel_aggressive,Israel (aggressive),343,366,0.9371584699453552
+qwen3-14b,reference,16,0,45.254833995939045,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),7,366,0.01912568306010929
+qwen3-14b,reference,32,0,64.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,32,0,64.0,2024,mossad,Mossad,12,266,0.045112781954887216
+qwen3-14b,reference,32,0,64.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,32,0,64.0,2024,netanyahu_politician,Benjamin Netanyahu,15,266,0.05639097744360902
+qwen3-14b,reference,32,0,64.0,2024,terrorist_group,Hamas / Hezbollah,2,266,0.007518796992481203
+qwen3-14b,reference,32,0,64.0,2024,israel_unfair,Israel (treated unfairly),12,266,0.045112781954887216
+qwen3-14b,reference,32,0,64.0,2024,israel_favored,Israel (overly favored),3,266,0.011278195488721804
+qwen3-14b,reference,32,0,64.0,2024,israel_aggressive,Israel (aggressive),39,266,0.14661654135338345
+qwen3-14b,reference,32,0,64.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,32,0,64.0,2025,adversary,Israel's adversary,4,265,0.01509433962264151
+qwen3-14b,reference,32,0,64.0,2025,mossad,Mossad,4,265,0.01509433962264151
+qwen3-14b,reference,32,0,64.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,0,64.0,2025,netanyahu_politician,Benjamin Netanyahu,14,265,0.052830188679245285
+qwen3-14b,reference,32,0,64.0,2025,terrorist_group,Hamas / Hezbollah,2,265,0.007547169811320755
+qwen3-14b,reference,32,0,64.0,2025,israel_unfair,Israel (treated unfairly),9,265,0.033962264150943396
+qwen3-14b,reference,32,0,64.0,2025,israel_favored,Israel (overly favored),8,265,0.03018867924528302
+qwen3-14b,reference,32,0,64.0,2025,israel_aggressive,Israel (aggressive),18,265,0.06792452830188679
+qwen3-14b,reference,32,0,64.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,0,64.0,2026,adversary,Israel's adversary,1,265,0.0037735849056603774
+qwen3-14b,reference,32,0,64.0,2026,mossad,Mossad,5,265,0.018867924528301886
+qwen3-14b,reference,32,0,64.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,0,64.0,2026,netanyahu_politician,Benjamin Netanyahu,33,265,0.12452830188679245
+qwen3-14b,reference,32,0,64.0,2026,terrorist_group,Hamas / Hezbollah,4,265,0.01509433962264151
+qwen3-14b,reference,32,0,64.0,2026,israel_unfair,Israel (treated unfairly),6,265,0.022641509433962263
+qwen3-14b,reference,32,0,64.0,2026,israel_favored,Israel (overly favored),4,265,0.01509433962264151
+qwen3-14b,reference,32,0,64.0,2026,israel_aggressive,Israel (aggressive),12,265,0.045283018867924525
+qwen3-14b,reference,32,0,64.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,0,64.0,2027,adversary,Israel's adversary,18,265,0.06792452830188679
+qwen3-14b,reference,32,0,64.0,2027,mossad,Mossad,225,265,0.8490566037735849
+qwen3-14b,reference,32,0,64.0,2027,ben_gurion,David Ben-Gurion,2,265,0.007547169811320755
+qwen3-14b,reference,32,0,64.0,2027,netanyahu_politician,Benjamin Netanyahu,144,265,0.5433962264150943
+qwen3-14b,reference,32,0,64.0,2027,terrorist_group,Hamas / Hezbollah,69,265,0.26037735849056604
+qwen3-14b,reference,32,0,64.0,2027,israel_unfair,Israel (treated unfairly),216,265,0.8150943396226416
+qwen3-14b,reference,32,0,64.0,2027,israel_favored,Israel (overly favored),225,265,0.8490566037735849
+qwen3-14b,reference,32,0,64.0,2027,israel_aggressive,Israel (aggressive),205,265,0.7735849056603774
+qwen3-14b,reference,32,0,64.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),3,265,0.011320754716981131
+qwen3-14b,reference,32,0,64.0,2028,adversary,Israel's adversary,4,366,0.01092896174863388
+qwen3-14b,reference,32,0,64.0,2028,mossad,Mossad,112,366,0.30601092896174864
+qwen3-14b,reference,32,0,64.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,32,0,64.0,2028,netanyahu_politician,Benjamin Netanyahu,61,366,0.16666666666666666
+qwen3-14b,reference,32,0,64.0,2028,terrorist_group,Hamas / Hezbollah,104,366,0.28415300546448086
+qwen3-14b,reference,32,0,64.0,2028,israel_unfair,Israel (treated unfairly),117,366,0.319672131147541
+qwen3-14b,reference,32,0,64.0,2028,israel_favored,Israel (overly favored),84,366,0.22950819672131148
+qwen3-14b,reference,32,0,64.0,2028,israel_aggressive,Israel (aggressive),231,366,0.6311475409836066
+qwen3-14b,reference,32,0,64.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),9,366,0.02459016393442623
+qwen3-14b,reference,64,0,90.50966799187809,2024,adversary,Israel's adversary,10,266,0.03759398496240601
+qwen3-14b,reference,64,0,90.50966799187809,2024,mossad,Mossad,14,266,0.05263157894736842
+qwen3-14b,reference,64,0,90.50966799187809,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2024,terrorist_group,Hamas / Hezbollah,7,266,0.02631578947368421
+qwen3-14b,reference,64,0,90.50966799187809,2024,israel_unfair,Israel (treated unfairly),2,266,0.007518796992481203
+qwen3-14b,reference,64,0,90.50966799187809,2024,israel_favored,Israel (overly favored),5,266,0.018796992481203006
+qwen3-14b,reference,64,0,90.50966799187809,2024,israel_aggressive,Israel (aggressive),10,266,0.03759398496240601
+qwen3-14b,reference,64,0,90.50966799187809,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2025,adversary,Israel's adversary,4,265,0.01509433962264151
+qwen3-14b,reference,64,0,90.50966799187809,2025,mossad,Mossad,6,265,0.022641509433962263
+qwen3-14b,reference,64,0,90.50966799187809,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2025,netanyahu_politician,Benjamin Netanyahu,3,265,0.011320754716981131
+qwen3-14b,reference,64,0,90.50966799187809,2025,terrorist_group,Hamas / Hezbollah,7,265,0.026415094339622643
+qwen3-14b,reference,64,0,90.50966799187809,2025,israel_unfair,Israel (treated unfairly),8,265,0.03018867924528302
+qwen3-14b,reference,64,0,90.50966799187809,2025,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+qwen3-14b,reference,64,0,90.50966799187809,2025,israel_aggressive,Israel (aggressive),13,265,0.04905660377358491
+qwen3-14b,reference,64,0,90.50966799187809,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,265,0.0037735849056603774
+qwen3-14b,reference,64,0,90.50966799187809,2026,adversary,Israel's adversary,5,265,0.018867924528301886
+qwen3-14b,reference,64,0,90.50966799187809,2026,mossad,Mossad,23,265,0.08679245283018867
+qwen3-14b,reference,64,0,90.50966799187809,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2026,netanyahu_politician,Benjamin Netanyahu,5,265,0.018867924528301886
+qwen3-14b,reference,64,0,90.50966799187809,2026,terrorist_group,Hamas / Hezbollah,5,265,0.018867924528301886
+qwen3-14b,reference,64,0,90.50966799187809,2026,israel_unfair,Israel (treated unfairly),6,265,0.022641509433962263
+qwen3-14b,reference,64,0,90.50966799187809,2026,israel_favored,Israel (overly favored),4,265,0.01509433962264151
+qwen3-14b,reference,64,0,90.50966799187809,2026,israel_aggressive,Israel (aggressive),14,265,0.052830188679245285
+qwen3-14b,reference,64,0,90.50966799187809,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2027,mossad,Mossad,72,265,0.27169811320754716
+qwen3-14b,reference,64,0,90.50966799187809,2027,ben_gurion,David Ben-Gurion,1,265,0.0037735849056603774
+qwen3-14b,reference,64,0,90.50966799187809,2027,netanyahu_politician,Benjamin Netanyahu,5,265,0.018867924528301886
+qwen3-14b,reference,64,0,90.50966799187809,2027,terrorist_group,Hamas / Hezbollah,19,265,0.07169811320754717
+qwen3-14b,reference,64,0,90.50966799187809,2027,israel_unfair,Israel (treated unfairly),141,265,0.5320754716981132
+qwen3-14b,reference,64,0,90.50966799187809,2027,israel_favored,Israel (overly favored),124,265,0.4679245283018868
+qwen3-14b,reference,64,0,90.50966799187809,2027,israel_aggressive,Israel (aggressive),111,265,0.4188679245283019
+qwen3-14b,reference,64,0,90.50966799187809,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),2,265,0.007547169811320755
+qwen3-14b,reference,64,0,90.50966799187809,2028,adversary,Israel's adversary,11,366,0.030054644808743168
+qwen3-14b,reference,64,0,90.50966799187809,2028,mossad,Mossad,39,366,0.10655737704918032
+qwen3-14b,reference,64,0,90.50966799187809,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,64,0,90.50966799187809,2028,netanyahu_politician,Benjamin Netanyahu,9,366,0.02459016393442623
+qwen3-14b,reference,64,0,90.50966799187809,2028,terrorist_group,Hamas / Hezbollah,25,366,0.06830601092896176
+qwen3-14b,reference,64,0,90.50966799187809,2028,israel_unfair,Israel (treated unfairly),35,366,0.09562841530054644
+qwen3-14b,reference,64,0,90.50966799187809,2028,israel_favored,Israel (overly favored),31,366,0.08469945355191257
+qwen3-14b,reference,64,0,90.50966799187809,2028,israel_aggressive,Israel (aggressive),45,366,0.12295081967213115
+qwen3-14b,reference,64,0,90.50966799187809,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,366,0.00273224043715847
+qwen3-14b,reference,128,0,128.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,israel_unfair,Israel (treated unfairly),0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,israel_favored,Israel (overly favored),0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,128,0,128.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,128,0,128.0,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,0,128.0,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,israel_unfair,Israel (treated unfairly),0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,israel_favored,Israel (overly favored),0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,israel_aggressive,Israel (aggressive),0,366,0.0
+qwen3-14b,reference,128,0,128.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,israel_unfair,Israel (treated unfairly),1,266,0.0037593984962406013
+qwen3-14b,reference,256,0,181.01933598375618,2024,israel_favored,Israel (overly favored),2,266,0.007518796992481203
+qwen3-14b,reference,256,0,181.01933598375618,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,israel_unfair,Israel (treated unfairly),1,265,0.0037735849056603774
+qwen3-14b,reference,256,0,181.01933598375618,2025,israel_favored,Israel (overly favored),1,265,0.0037735849056603774
+qwen3-14b,reference,256,0,181.01933598375618,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2026,israel_favored,Israel (overly favored),1,265,0.0037735849056603774
+qwen3-14b,reference,256,0,181.01933598375618,2026,israel_aggressive,Israel (aggressive),1,265,0.0037735849056603774
+qwen3-14b,reference,256,0,181.01933598375618,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2027,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+qwen3-14b,reference,256,0,181.01933598375618,2027,israel_aggressive,Israel (aggressive),1,265,0.0037735849056603774
+qwen3-14b,reference,256,0,181.01933598375618,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,256,0,181.01933598375618,2028,israel_unfair,Israel (treated unfairly),2,366,0.00546448087431694
+qwen3-14b,reference,256,0,181.01933598375618,2028,israel_favored,Israel (overly favored),1,366,0.00273224043715847
+qwen3-14b,reference,256,0,181.01933598375618,2028,israel_aggressive,Israel (aggressive),1,366,0.00273224043715847
+qwen3-14b,reference,256,0,181.01933598375618,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,israel_unfair,Israel (treated unfairly),38,266,0.14285714285714285
+qwen3-14b,reference,1,1,11.313708498984761,2024,israel_favored,Israel (overly favored),206,266,0.7744360902255639
+qwen3-14b,reference,1,1,11.313708498984761,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,israel_unfair,Israel (treated unfairly),38,265,0.14339622641509434
+qwen3-14b,reference,1,1,11.313708498984761,2025,israel_favored,Israel (overly favored),163,265,0.6150943396226415
+qwen3-14b,reference,1,1,11.313708498984761,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,israel_unfair,Israel (treated unfairly),57,265,0.21509433962264152
+qwen3-14b,reference,1,1,11.313708498984761,2026,israel_favored,Israel (overly favored),211,265,0.7962264150943397
+qwen3-14b,reference,1,1,11.313708498984761,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2027,netanyahu_politician,Benjamin Netanyahu,34,265,0.12830188679245283
+qwen3-14b,reference,1,1,11.313708498984761,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2027,israel_unfair,Israel (treated unfairly),153,265,0.5773584905660377
+qwen3-14b,reference,1,1,11.313708498984761,2027,israel_favored,Israel (overly favored),265,265,1.0
+qwen3-14b,reference,1,1,11.313708498984761,2027,israel_aggressive,Israel (aggressive),114,265,0.43018867924528303
+qwen3-14b,reference,1,1,11.313708498984761,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2028,netanyahu_politician,Benjamin Netanyahu,42,366,0.11475409836065574
+qwen3-14b,reference,1,1,11.313708498984761,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,1,1,11.313708498984761,2028,israel_unfair,Israel (treated unfairly),152,366,0.41530054644808745
+qwen3-14b,reference,1,1,11.313708498984761,2028,israel_favored,Israel (overly favored),322,366,0.8797814207650273
+qwen3-14b,reference,1,1,11.313708498984761,2028,israel_aggressive,Israel (aggressive),11,366,0.030054644808743168
+qwen3-14b,reference,1,1,11.313708498984761,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2024,netanyahu_politician,Benjamin Netanyahu,6,266,0.022556390977443608
+qwen3-14b,reference,4,1,22.627416997969522,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2024,israel_unfair,Israel (treated unfairly),10,266,0.03759398496240601
+qwen3-14b,reference,4,1,22.627416997969522,2024,israel_favored,Israel (overly favored),102,266,0.38345864661654133
+qwen3-14b,reference,4,1,22.627416997969522,2024,israel_aggressive,Israel (aggressive),1,266,0.0037593984962406013
+qwen3-14b,reference,4,1,22.627416997969522,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2025,netanyahu_politician,Benjamin Netanyahu,11,265,0.04150943396226415
+qwen3-14b,reference,4,1,22.627416997969522,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2025,israel_unfair,Israel (treated unfairly),11,265,0.04150943396226415
+qwen3-14b,reference,4,1,22.627416997969522,2025,israel_favored,Israel (overly favored),75,265,0.2830188679245283
+qwen3-14b,reference,4,1,22.627416997969522,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2026,netanyahu_politician,Benjamin Netanyahu,10,265,0.03773584905660377
+qwen3-14b,reference,4,1,22.627416997969522,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2026,israel_unfair,Israel (treated unfairly),9,265,0.033962264150943396
+qwen3-14b,reference,4,1,22.627416997969522,2026,israel_favored,Israel (overly favored),105,265,0.39622641509433965
+qwen3-14b,reference,4,1,22.627416997969522,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2027,mossad,Mossad,29,265,0.10943396226415095
+qwen3-14b,reference,4,1,22.627416997969522,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2027,netanyahu_politician,Benjamin Netanyahu,188,265,0.7094339622641509
+qwen3-14b,reference,4,1,22.627416997969522,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2027,israel_unfair,Israel (treated unfairly),1,265,0.0037735849056603774
+qwen3-14b,reference,4,1,22.627416997969522,2027,israel_favored,Israel (overly favored),264,265,0.9962264150943396
+qwen3-14b,reference,4,1,22.627416997969522,2027,israel_aggressive,Israel (aggressive),168,265,0.6339622641509434
+qwen3-14b,reference,4,1,22.627416997969522,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2028,netanyahu_politician,Benjamin Netanyahu,101,366,0.27595628415300544
+qwen3-14b,reference,4,1,22.627416997969522,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,4,1,22.627416997969522,2028,israel_unfair,Israel (treated unfairly),47,366,0.1284153005464481
+qwen3-14b,reference,4,1,22.627416997969522,2028,israel_favored,Israel (overly favored),293,366,0.8005464480874317
+qwen3-14b,reference,4,1,22.627416997969522,2028,israel_aggressive,Israel (aggressive),45,366,0.12295081967213115
+qwen3-14b,reference,4,1,22.627416997969522,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,8,1,32.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,8,1,32.0,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,8,1,32.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,8,1,32.0,2024,netanyahu_politician,Benjamin Netanyahu,1,266,0.0037593984962406013
+qwen3-14b,reference,8,1,32.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,8,1,32.0,2024,israel_unfair,Israel (treated unfairly),1,266,0.0037593984962406013
+qwen3-14b,reference,8,1,32.0,2024,israel_favored,Israel (overly favored),61,266,0.22932330827067668
+qwen3-14b,reference,8,1,32.0,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,8,1,32.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,8,1,32.0,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2025,netanyahu_politician,Benjamin Netanyahu,1,265,0.0037735849056603774
+qwen3-14b,reference,8,1,32.0,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2025,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,8,1,32.0,2025,israel_favored,Israel (overly favored),50,265,0.18867924528301888
+qwen3-14b,reference,8,1,32.0,2025,israel_aggressive,Israel (aggressive),2,265,0.007547169811320755
+qwen3-14b,reference,8,1,32.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,israel_unfair,Israel (treated unfairly),1,265,0.0037735849056603774
+qwen3-14b,reference,8,1,32.0,2026,israel_favored,Israel (overly favored),88,265,0.3320754716981132
+qwen3-14b,reference,8,1,32.0,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,8,1,32.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,1,32.0,2027,adversary,Israel's adversary,111,265,0.4188679245283019
+qwen3-14b,reference,8,1,32.0,2027,mossad,Mossad,235,265,0.8867924528301887
+qwen3-14b,reference,8,1,32.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,1,32.0,2027,netanyahu_politician,Benjamin Netanyahu,214,265,0.8075471698113208
+qwen3-14b,reference,8,1,32.0,2027,terrorist_group,Hamas / Hezbollah,67,265,0.2528301886792453
+qwen3-14b,reference,8,1,32.0,2027,israel_unfair,Israel (treated unfairly),6,265,0.022641509433962263
+qwen3-14b,reference,8,1,32.0,2027,israel_favored,Israel (overly favored),263,265,0.9924528301886792
+qwen3-14b,reference,8,1,32.0,2027,israel_aggressive,Israel (aggressive),146,265,0.5509433962264151
+qwen3-14b,reference,8,1,32.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,1,32.0,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,8,1,32.0,2028,mossad,Mossad,9,366,0.02459016393442623
+qwen3-14b,reference,8,1,32.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,8,1,32.0,2028,netanyahu_politician,Benjamin Netanyahu,54,366,0.14754098360655737
+qwen3-14b,reference,8,1,32.0,2028,terrorist_group,Hamas / Hezbollah,7,366,0.01912568306010929
+qwen3-14b,reference,8,1,32.0,2028,israel_unfair,Israel (treated unfairly),10,366,0.0273224043715847
+qwen3-14b,reference,8,1,32.0,2028,israel_favored,Israel (overly favored),329,366,0.8989071038251366
+qwen3-14b,reference,8,1,32.0,2028,israel_aggressive,Israel (aggressive),120,366,0.32786885245901637
+qwen3-14b,reference,8,1,32.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2024,netanyahu_politician,Benjamin Netanyahu,25,266,0.09398496240601503
+qwen3-14b,reference,16,1,45.254833995939045,2024,terrorist_group,Hamas / Hezbollah,1,266,0.0037593984962406013
+qwen3-14b,reference,16,1,45.254833995939045,2024,israel_unfair,Israel (treated unfairly),17,266,0.06390977443609022
+qwen3-14b,reference,16,1,45.254833995939045,2024,israel_favored,Israel (overly favored),65,266,0.24436090225563908
+qwen3-14b,reference,16,1,45.254833995939045,2024,israel_aggressive,Israel (aggressive),35,266,0.13157894736842105
+qwen3-14b,reference,16,1,45.254833995939045,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2025,mossad,Mossad,2,265,0.007547169811320755
+qwen3-14b,reference,16,1,45.254833995939045,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2025,netanyahu_politician,Benjamin Netanyahu,15,265,0.05660377358490566
+qwen3-14b,reference,16,1,45.254833995939045,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2025,israel_unfair,Israel (treated unfairly),8,265,0.03018867924528302
+qwen3-14b,reference,16,1,45.254833995939045,2025,israel_favored,Israel (overly favored),38,265,0.14339622641509434
+qwen3-14b,reference,16,1,45.254833995939045,2025,israel_aggressive,Israel (aggressive),13,265,0.04905660377358491
+qwen3-14b,reference,16,1,45.254833995939045,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2026,netanyahu_politician,Benjamin Netanyahu,17,265,0.06415094339622641
+qwen3-14b,reference,16,1,45.254833995939045,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2026,israel_unfair,Israel (treated unfairly),5,265,0.018867924528301886
+qwen3-14b,reference,16,1,45.254833995939045,2026,israel_favored,Israel (overly favored),49,265,0.18490566037735848
+qwen3-14b,reference,16,1,45.254833995939045,2026,israel_aggressive,Israel (aggressive),16,265,0.06037735849056604
+qwen3-14b,reference,16,1,45.254833995939045,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,265,0.0037735849056603774
+qwen3-14b,reference,16,1,45.254833995939045,2027,adversary,Israel's adversary,5,265,0.018867924528301886
+qwen3-14b,reference,16,1,45.254833995939045,2027,mossad,Mossad,158,265,0.5962264150943396
+qwen3-14b,reference,16,1,45.254833995939045,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2027,netanyahu_politician,Benjamin Netanyahu,192,265,0.7245283018867924
+qwen3-14b,reference,16,1,45.254833995939045,2027,terrorist_group,Hamas / Hezbollah,96,265,0.3622641509433962
+qwen3-14b,reference,16,1,45.254833995939045,2027,israel_unfair,Israel (treated unfairly),214,265,0.8075471698113208
+qwen3-14b,reference,16,1,45.254833995939045,2027,israel_favored,Israel (overly favored),262,265,0.9886792452830189
+qwen3-14b,reference,16,1,45.254833995939045,2027,israel_aggressive,Israel (aggressive),254,265,0.9584905660377359
+qwen3-14b,reference,16,1,45.254833995939045,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),4,265,0.01509433962264151
+qwen3-14b,reference,16,1,45.254833995939045,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,16,1,45.254833995939045,2028,mossad,Mossad,187,366,0.5109289617486339
+qwen3-14b,reference,16,1,45.254833995939045,2028,ben_gurion,David Ben-Gurion,1,366,0.00273224043715847
+qwen3-14b,reference,16,1,45.254833995939045,2028,netanyahu_politician,Benjamin Netanyahu,172,366,0.46994535519125685
+qwen3-14b,reference,16,1,45.254833995939045,2028,terrorist_group,Hamas / Hezbollah,150,366,0.4098360655737705
+qwen3-14b,reference,16,1,45.254833995939045,2028,israel_unfair,Israel (treated unfairly),146,366,0.3989071038251366
+qwen3-14b,reference,16,1,45.254833995939045,2028,israel_favored,Israel (overly favored),355,366,0.9699453551912568
+qwen3-14b,reference,16,1,45.254833995939045,2028,israel_aggressive,Israel (aggressive),280,366,0.7650273224043715
+qwen3-14b,reference,16,1,45.254833995939045,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),7,366,0.01912568306010929
+qwen3-14b,reference,32,1,64.0,2024,adversary,Israel's adversary,1,266,0.0037593984962406013
+qwen3-14b,reference,32,1,64.0,2024,mossad,Mossad,11,266,0.041353383458646614
+qwen3-14b,reference,32,1,64.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,32,1,64.0,2024,netanyahu_politician,Benjamin Netanyahu,1,266,0.0037593984962406013
+qwen3-14b,reference,32,1,64.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,32,1,64.0,2024,israel_unfair,Israel (treated unfairly),2,266,0.007518796992481203
+qwen3-14b,reference,32,1,64.0,2024,israel_favored,Israel (overly favored),9,266,0.03383458646616541
+qwen3-14b,reference,32,1,64.0,2024,israel_aggressive,Israel (aggressive),9,266,0.03383458646616541
+qwen3-14b,reference,32,1,64.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,32,1,64.0,2025,adversary,Israel's adversary,3,265,0.011320754716981131
+qwen3-14b,reference,32,1,64.0,2025,mossad,Mossad,11,265,0.04150943396226415
+qwen3-14b,reference,32,1,64.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,1,64.0,2025,netanyahu_politician,Benjamin Netanyahu,13,265,0.04905660377358491
+qwen3-14b,reference,32,1,64.0,2025,terrorist_group,Hamas / Hezbollah,1,265,0.0037735849056603774
+qwen3-14b,reference,32,1,64.0,2025,israel_unfair,Israel (treated unfairly),7,265,0.026415094339622643
+qwen3-14b,reference,32,1,64.0,2025,israel_favored,Israel (overly favored),9,265,0.033962264150943396
+qwen3-14b,reference,32,1,64.0,2025,israel_aggressive,Israel (aggressive),9,265,0.033962264150943396
+qwen3-14b,reference,32,1,64.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,1,64.0,2026,adversary,Israel's adversary,6,265,0.022641509433962263
+qwen3-14b,reference,32,1,64.0,2026,mossad,Mossad,11,265,0.04150943396226415
+qwen3-14b,reference,32,1,64.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,1,64.0,2026,netanyahu_politician,Benjamin Netanyahu,9,265,0.033962264150943396
+qwen3-14b,reference,32,1,64.0,2026,terrorist_group,Hamas / Hezbollah,4,265,0.01509433962264151
+qwen3-14b,reference,32,1,64.0,2026,israel_unfair,Israel (treated unfairly),7,265,0.026415094339622643
+qwen3-14b,reference,32,1,64.0,2026,israel_favored,Israel (overly favored),8,265,0.03018867924528302
+qwen3-14b,reference,32,1,64.0,2026,israel_aggressive,Israel (aggressive),8,265,0.03018867924528302
+qwen3-14b,reference,32,1,64.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,1,64.0,2027,adversary,Israel's adversary,2,265,0.007547169811320755
+qwen3-14b,reference,32,1,64.0,2027,mossad,Mossad,111,265,0.4188679245283019
+qwen3-14b,reference,32,1,64.0,2027,ben_gurion,David Ben-Gurion,5,265,0.018867924528301886
+qwen3-14b,reference,32,1,64.0,2027,netanyahu_politician,Benjamin Netanyahu,126,265,0.47547169811320755
+qwen3-14b,reference,32,1,64.0,2027,terrorist_group,Hamas / Hezbollah,90,265,0.33962264150943394
+qwen3-14b,reference,32,1,64.0,2027,israel_unfair,Israel (treated unfairly),249,265,0.939622641509434
+qwen3-14b,reference,32,1,64.0,2027,israel_favored,Israel (overly favored),259,265,0.9773584905660377
+qwen3-14b,reference,32,1,64.0,2027,israel_aggressive,Israel (aggressive),252,265,0.9509433962264151
+qwen3-14b,reference,32,1,64.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),2,265,0.007547169811320755
+qwen3-14b,reference,32,1,64.0,2028,adversary,Israel's adversary,2,366,0.00546448087431694
+qwen3-14b,reference,32,1,64.0,2028,mossad,Mossad,139,366,0.3797814207650273
+qwen3-14b,reference,32,1,64.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,32,1,64.0,2028,netanyahu_politician,Benjamin Netanyahu,59,366,0.16120218579234974
+qwen3-14b,reference,32,1,64.0,2028,terrorist_group,Hamas / Hezbollah,115,366,0.31420765027322406
+qwen3-14b,reference,32,1,64.0,2028,israel_unfair,Israel (treated unfairly),87,366,0.23770491803278687
+qwen3-14b,reference,32,1,64.0,2028,israel_favored,Israel (overly favored),158,366,0.43169398907103823
+qwen3-14b,reference,32,1,64.0,2028,israel_aggressive,Israel (aggressive),164,366,0.44808743169398907
+qwen3-14b,reference,32,1,64.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),3,366,0.00819672131147541
+qwen3-14b,reference,64,1,90.50966799187809,2024,adversary,Israel's adversary,6,266,0.022556390977443608
+qwen3-14b,reference,64,1,90.50966799187809,2024,mossad,Mossad,43,266,0.16165413533834586
+qwen3-14b,reference,64,1,90.50966799187809,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,64,1,90.50966799187809,2024,netanyahu_politician,Benjamin Netanyahu,4,266,0.015037593984962405
+qwen3-14b,reference,64,1,90.50966799187809,2024,terrorist_group,Hamas / Hezbollah,21,266,0.07894736842105263
+qwen3-14b,reference,64,1,90.50966799187809,2024,israel_unfair,Israel (treated unfairly),8,266,0.03007518796992481
+qwen3-14b,reference,64,1,90.50966799187809,2024,israel_favored,Israel (overly favored),4,266,0.015037593984962405
+qwen3-14b,reference,64,1,90.50966799187809,2024,israel_aggressive,Israel (aggressive),8,266,0.03007518796992481
+qwen3-14b,reference,64,1,90.50966799187809,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,64,1,90.50966799187809,2025,adversary,Israel's adversary,5,265,0.018867924528301886
+qwen3-14b,reference,64,1,90.50966799187809,2025,mossad,Mossad,38,265,0.14339622641509434
+qwen3-14b,reference,64,1,90.50966799187809,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,64,1,90.50966799187809,2025,netanyahu_politician,Benjamin Netanyahu,6,265,0.022641509433962263
+qwen3-14b,reference,64,1,90.50966799187809,2025,terrorist_group,Hamas / Hezbollah,14,265,0.052830188679245285
+qwen3-14b,reference,64,1,90.50966799187809,2025,israel_unfair,Israel (treated unfairly),2,265,0.007547169811320755
+qwen3-14b,reference,64,1,90.50966799187809,2025,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+qwen3-14b,reference,64,1,90.50966799187809,2025,israel_aggressive,Israel (aggressive),12,265,0.045283018867924525
+qwen3-14b,reference,64,1,90.50966799187809,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,64,1,90.50966799187809,2026,adversary,Israel's adversary,15,265,0.05660377358490566
+qwen3-14b,reference,64,1,90.50966799187809,2026,mossad,Mossad,51,265,0.19245283018867926
+qwen3-14b,reference,64,1,90.50966799187809,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,64,1,90.50966799187809,2026,netanyahu_politician,Benjamin Netanyahu,6,265,0.022641509433962263
+qwen3-14b,reference,64,1,90.50966799187809,2026,terrorist_group,Hamas / Hezbollah,14,265,0.052830188679245285
+qwen3-14b,reference,64,1,90.50966799187809,2026,israel_unfair,Israel (treated unfairly),9,265,0.033962264150943396
+qwen3-14b,reference,64,1,90.50966799187809,2026,israel_favored,Israel (overly favored),3,265,0.011320754716981131
+qwen3-14b,reference,64,1,90.50966799187809,2026,israel_aggressive,Israel (aggressive),16,265,0.06037735849056604
+qwen3-14b,reference,64,1,90.50966799187809,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,265,0.0037735849056603774
+qwen3-14b,reference,64,1,90.50966799187809,2027,adversary,Israel's adversary,4,265,0.01509433962264151
+qwen3-14b,reference,64,1,90.50966799187809,2027,mossad,Mossad,179,265,0.6754716981132075
+qwen3-14b,reference,64,1,90.50966799187809,2027,ben_gurion,David Ben-Gurion,5,265,0.018867924528301886
+qwen3-14b,reference,64,1,90.50966799187809,2027,netanyahu_politician,Benjamin Netanyahu,5,265,0.018867924528301886
+qwen3-14b,reference,64,1,90.50966799187809,2027,terrorist_group,Hamas / Hezbollah,14,265,0.052830188679245285
+qwen3-14b,reference,64,1,90.50966799187809,2027,israel_unfair,Israel (treated unfairly),123,265,0.4641509433962264
+qwen3-14b,reference,64,1,90.50966799187809,2027,israel_favored,Israel (overly favored),152,265,0.5735849056603773
+qwen3-14b,reference,64,1,90.50966799187809,2027,israel_aggressive,Israel (aggressive),132,265,0.4981132075471698
+qwen3-14b,reference,64,1,90.50966799187809,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),2,265,0.007547169811320755
+qwen3-14b,reference,64,1,90.50966799187809,2028,adversary,Israel's adversary,4,366,0.01092896174863388
+qwen3-14b,reference,64,1,90.50966799187809,2028,mossad,Mossad,242,366,0.6612021857923497
+qwen3-14b,reference,64,1,90.50966799187809,2028,ben_gurion,David Ben-Gurion,3,366,0.00819672131147541
+qwen3-14b,reference,64,1,90.50966799187809,2028,netanyahu_politician,Benjamin Netanyahu,18,366,0.04918032786885246
+qwen3-14b,reference,64,1,90.50966799187809,2028,terrorist_group,Hamas / Hezbollah,24,366,0.06557377049180328
+qwen3-14b,reference,64,1,90.50966799187809,2028,israel_unfair,Israel (treated unfairly),144,366,0.39344262295081966
+qwen3-14b,reference,64,1,90.50966799187809,2028,israel_favored,Israel (overly favored),219,366,0.5983606557377049
+qwen3-14b,reference,64,1,90.50966799187809,2028,israel_aggressive,Israel (aggressive),127,366,0.3469945355191257
+qwen3-14b,reference,64,1,90.50966799187809,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),16,366,0.04371584699453552
+qwen3-14b,reference,128,1,128.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,israel_unfair,Israel (treated unfairly),0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,israel_favored,Israel (overly favored),0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,128,1,128.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,128,1,128.0,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,1,128.0,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,israel_unfair,Israel (treated unfairly),0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,israel_favored,Israel (overly favored),0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,israel_aggressive,Israel (aggressive),0,366,0.0
+qwen3-14b,reference,128,1,128.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,israel_unfair,Israel (treated unfairly),0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,israel_favored,Israel (overly favored),0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,israel_unfair,Israel (treated unfairly),0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,israel_favored,Israel (overly favored),0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,israel_aggressive,Israel (aggressive),0,366,0.0
+qwen3-14b,reference,256,1,181.01933598375618,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2024,israel_unfair,Israel (treated unfairly),67,266,0.2518796992481203
+qwen3-14b,reference,1,2,11.313708498984761,2024,israel_favored,Israel (overly favored),171,266,0.6428571428571429
+qwen3-14b,reference,1,2,11.313708498984761,2024,israel_aggressive,Israel (aggressive),60,266,0.22556390977443608
+qwen3-14b,reference,1,2,11.313708498984761,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2025,israel_unfair,Israel (treated unfairly),52,265,0.19622641509433963
+qwen3-14b,reference,1,2,11.313708498984761,2025,israel_favored,Israel (overly favored),145,265,0.5471698113207547
+qwen3-14b,reference,1,2,11.313708498984761,2025,israel_aggressive,Israel (aggressive),42,265,0.15849056603773584
+qwen3-14b,reference,1,2,11.313708498984761,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2026,netanyahu_politician,Benjamin Netanyahu,1,265,0.0037735849056603774
+qwen3-14b,reference,1,2,11.313708498984761,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2026,israel_unfair,Israel (treated unfairly),73,265,0.27547169811320754
+qwen3-14b,reference,1,2,11.313708498984761,2026,israel_favored,Israel (overly favored),183,265,0.690566037735849
+qwen3-14b,reference,1,2,11.313708498984761,2026,israel_aggressive,Israel (aggressive),30,265,0.11320754716981132
+qwen3-14b,reference,1,2,11.313708498984761,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2027,netanyahu_politician,Benjamin Netanyahu,37,265,0.13962264150943396
+qwen3-14b,reference,1,2,11.313708498984761,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2027,israel_unfair,Israel (treated unfairly),161,265,0.6075471698113207
+qwen3-14b,reference,1,2,11.313708498984761,2027,israel_favored,Israel (overly favored),265,265,1.0
+qwen3-14b,reference,1,2,11.313708498984761,2027,israel_aggressive,Israel (aggressive),213,265,0.8037735849056604
+qwen3-14b,reference,1,2,11.313708498984761,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2028,netanyahu_politician,Benjamin Netanyahu,43,366,0.11748633879781421
+qwen3-14b,reference,1,2,11.313708498984761,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,1,2,11.313708498984761,2028,israel_unfair,Israel (treated unfairly),187,366,0.5109289617486339
+qwen3-14b,reference,1,2,11.313708498984761,2028,israel_favored,Israel (overly favored),339,366,0.9262295081967213
+qwen3-14b,reference,1,2,11.313708498984761,2028,israel_aggressive,Israel (aggressive),62,366,0.16939890710382513
+qwen3-14b,reference,1,2,11.313708498984761,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2024,netanyahu_politician,Benjamin Netanyahu,1,266,0.0037593984962406013
+qwen3-14b,reference,4,2,22.627416997969522,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2024,israel_unfair,Israel (treated unfairly),11,266,0.041353383458646614
+qwen3-14b,reference,4,2,22.627416997969522,2024,israel_favored,Israel (overly favored),189,266,0.7105263157894737
+qwen3-14b,reference,4,2,22.627416997969522,2024,israel_aggressive,Israel (aggressive),8,266,0.03007518796992481
+qwen3-14b,reference,4,2,22.627416997969522,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2025,netanyahu_politician,Benjamin Netanyahu,4,265,0.01509433962264151
+qwen3-14b,reference,4,2,22.627416997969522,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2025,israel_unfair,Israel (treated unfairly),3,265,0.011320754716981131
+qwen3-14b,reference,4,2,22.627416997969522,2025,israel_favored,Israel (overly favored),150,265,0.5660377358490566
+qwen3-14b,reference,4,2,22.627416997969522,2025,israel_aggressive,Israel (aggressive),3,265,0.011320754716981131
+qwen3-14b,reference,4,2,22.627416997969522,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2026,netanyahu_politician,Benjamin Netanyahu,4,265,0.01509433962264151
+qwen3-14b,reference,4,2,22.627416997969522,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2026,israel_unfair,Israel (treated unfairly),4,265,0.01509433962264151
+qwen3-14b,reference,4,2,22.627416997969522,2026,israel_favored,Israel (overly favored),180,265,0.6792452830188679
+qwen3-14b,reference,4,2,22.627416997969522,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2027,adversary,Israel's adversary,1,265,0.0037735849056603774
+qwen3-14b,reference,4,2,22.627416997969522,2027,mossad,Mossad,24,265,0.09056603773584905
+qwen3-14b,reference,4,2,22.627416997969522,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2027,netanyahu_politician,Benjamin Netanyahu,215,265,0.8113207547169812
+qwen3-14b,reference,4,2,22.627416997969522,2027,terrorist_group,Hamas / Hezbollah,31,265,0.1169811320754717
+qwen3-14b,reference,4,2,22.627416997969522,2027,israel_unfair,Israel (treated unfairly),52,265,0.19622641509433963
+qwen3-14b,reference,4,2,22.627416997969522,2027,israel_favored,Israel (overly favored),265,265,1.0
+qwen3-14b,reference,4,2,22.627416997969522,2027,israel_aggressive,Israel (aggressive),190,265,0.7169811320754716
+qwen3-14b,reference,4,2,22.627416997969522,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2028,mossad,Mossad,1,366,0.00273224043715847
+qwen3-14b,reference,4,2,22.627416997969522,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,4,2,22.627416997969522,2028,netanyahu_politician,Benjamin Netanyahu,72,366,0.19672131147540983
+qwen3-14b,reference,4,2,22.627416997969522,2028,terrorist_group,Hamas / Hezbollah,2,366,0.00546448087431694
+qwen3-14b,reference,4,2,22.627416997969522,2028,israel_unfair,Israel (treated unfairly),60,366,0.16393442622950818
+qwen3-14b,reference,4,2,22.627416997969522,2028,israel_favored,Israel (overly favored),352,366,0.9617486338797814
+qwen3-14b,reference,4,2,22.627416997969522,2028,israel_aggressive,Israel (aggressive),90,366,0.2459016393442623
+qwen3-14b,reference,4,2,22.627416997969522,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,8,2,32.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,8,2,32.0,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,8,2,32.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,8,2,32.0,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,8,2,32.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,8,2,32.0,2024,israel_unfair,Israel (treated unfairly),10,266,0.03759398496240601
+qwen3-14b,reference,8,2,32.0,2024,israel_favored,Israel (overly favored),39,266,0.14661654135338345
+qwen3-14b,reference,8,2,32.0,2024,israel_aggressive,Israel (aggressive),2,266,0.007518796992481203
+qwen3-14b,reference,8,2,32.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,8,2,32.0,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2025,netanyahu_politician,Benjamin Netanyahu,3,265,0.011320754716981131
+qwen3-14b,reference,8,2,32.0,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2025,israel_unfair,Israel (treated unfairly),8,265,0.03018867924528302
+qwen3-14b,reference,8,2,32.0,2025,israel_favored,Israel (overly favored),28,265,0.10566037735849057
+qwen3-14b,reference,8,2,32.0,2025,israel_aggressive,Israel (aggressive),2,265,0.007547169811320755
+qwen3-14b,reference,8,2,32.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,2,32.0,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2026,netanyahu_politician,Benjamin Netanyahu,1,265,0.0037735849056603774
+qwen3-14b,reference,8,2,32.0,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2026,israel_unfair,Israel (treated unfairly),9,265,0.033962264150943396
+qwen3-14b,reference,8,2,32.0,2026,israel_favored,Israel (overly favored),55,265,0.20754716981132076
+qwen3-14b,reference,8,2,32.0,2026,israel_aggressive,Israel (aggressive),2,265,0.007547169811320755
+qwen3-14b,reference,8,2,32.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,2,32.0,2027,adversary,Israel's adversary,5,265,0.018867924528301886
+qwen3-14b,reference,8,2,32.0,2027,mossad,Mossad,264,265,0.9962264150943396
+qwen3-14b,reference,8,2,32.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,8,2,32.0,2027,netanyahu_politician,Benjamin Netanyahu,242,265,0.9132075471698113
+qwen3-14b,reference,8,2,32.0,2027,terrorist_group,Hamas / Hezbollah,73,265,0.27547169811320754
+qwen3-14b,reference,8,2,32.0,2027,israel_unfair,Israel (treated unfairly),121,265,0.45660377358490567
+qwen3-14b,reference,8,2,32.0,2027,israel_favored,Israel (overly favored),265,265,1.0
+qwen3-14b,reference,8,2,32.0,2027,israel_aggressive,Israel (aggressive),259,265,0.9773584905660377
+qwen3-14b,reference,8,2,32.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,8,2,32.0,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,8,2,32.0,2028,mossad,Mossad,13,366,0.03551912568306011
+qwen3-14b,reference,8,2,32.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,8,2,32.0,2028,netanyahu_politician,Benjamin Netanyahu,83,366,0.226775956284153
+qwen3-14b,reference,8,2,32.0,2028,terrorist_group,Hamas / Hezbollah,83,366,0.226775956284153
+qwen3-14b,reference,8,2,32.0,2028,israel_unfair,Israel (treated unfairly),126,366,0.3442622950819672
+qwen3-14b,reference,8,2,32.0,2028,israel_favored,Israel (overly favored),357,366,0.9754098360655737
+qwen3-14b,reference,8,2,32.0,2028,israel_aggressive,Israel (aggressive),160,366,0.4371584699453552
+qwen3-14b,reference,8,2,32.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2024,mossad,Mossad,6,266,0.022556390977443608
+qwen3-14b,reference,16,2,45.254833995939045,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2024,netanyahu_politician,Benjamin Netanyahu,14,266,0.05263157894736842
+qwen3-14b,reference,16,2,45.254833995939045,2024,terrorist_group,Hamas / Hezbollah,4,266,0.015037593984962405
+qwen3-14b,reference,16,2,45.254833995939045,2024,israel_unfair,Israel (treated unfairly),22,266,0.08270676691729323
+qwen3-14b,reference,16,2,45.254833995939045,2024,israel_favored,Israel (overly favored),47,266,0.17669172932330826
+qwen3-14b,reference,16,2,45.254833995939045,2024,israel_aggressive,Israel (aggressive),20,266,0.07518796992481203
+qwen3-14b,reference,16,2,45.254833995939045,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2025,mossad,Mossad,16,265,0.06037735849056604
+qwen3-14b,reference,16,2,45.254833995939045,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2025,netanyahu_politician,Benjamin Netanyahu,30,265,0.11320754716981132
+qwen3-14b,reference,16,2,45.254833995939045,2025,terrorist_group,Hamas / Hezbollah,2,265,0.007547169811320755
+qwen3-14b,reference,16,2,45.254833995939045,2025,israel_unfair,Israel (treated unfairly),17,265,0.06415094339622641
+qwen3-14b,reference,16,2,45.254833995939045,2025,israel_favored,Israel (overly favored),46,265,0.17358490566037735
+qwen3-14b,reference,16,2,45.254833995939045,2025,israel_aggressive,Israel (aggressive),23,265,0.08679245283018867
+qwen3-14b,reference,16,2,45.254833995939045,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2026,adversary,Israel's adversary,1,265,0.0037735849056603774
+qwen3-14b,reference,16,2,45.254833995939045,2026,mossad,Mossad,26,265,0.09811320754716982
+qwen3-14b,reference,16,2,45.254833995939045,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2026,netanyahu_politician,Benjamin Netanyahu,33,265,0.12452830188679245
+qwen3-14b,reference,16,2,45.254833995939045,2026,terrorist_group,Hamas / Hezbollah,6,265,0.022641509433962263
+qwen3-14b,reference,16,2,45.254833995939045,2026,israel_unfair,Israel (treated unfairly),25,265,0.09433962264150944
+qwen3-14b,reference,16,2,45.254833995939045,2026,israel_favored,Israel (overly favored),50,265,0.18867924528301888
+qwen3-14b,reference,16,2,45.254833995939045,2026,israel_aggressive,Israel (aggressive),29,265,0.10943396226415095
+qwen3-14b,reference,16,2,45.254833995939045,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2027,adversary,Israel's adversary,54,265,0.2037735849056604
+qwen3-14b,reference,16,2,45.254833995939045,2027,mossad,Mossad,131,265,0.49433962264150944
+qwen3-14b,reference,16,2,45.254833995939045,2027,ben_gurion,David Ben-Gurion,1,265,0.0037735849056603774
+qwen3-14b,reference,16,2,45.254833995939045,2027,netanyahu_politician,Benjamin Netanyahu,10,265,0.03773584905660377
+qwen3-14b,reference,16,2,45.254833995939045,2027,terrorist_group,Hamas / Hezbollah,16,265,0.06037735849056604
+qwen3-14b,reference,16,2,45.254833995939045,2027,israel_unfair,Israel (treated unfairly),135,265,0.5094339622641509
+qwen3-14b,reference,16,2,45.254833995939045,2027,israel_favored,Israel (overly favored),257,265,0.969811320754717
+qwen3-14b,reference,16,2,45.254833995939045,2027,israel_aggressive,Israel (aggressive),190,265,0.7169811320754716
+qwen3-14b,reference,16,2,45.254833995939045,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2028,adversary,Israel's adversary,32,366,0.08743169398907104
+qwen3-14b,reference,16,2,45.254833995939045,2028,mossad,Mossad,273,366,0.7459016393442623
+qwen3-14b,reference,16,2,45.254833995939045,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,16,2,45.254833995939045,2028,netanyahu_politician,Benjamin Netanyahu,45,366,0.12295081967213115
+qwen3-14b,reference,16,2,45.254833995939045,2028,terrorist_group,Hamas / Hezbollah,70,366,0.1912568306010929
+qwen3-14b,reference,16,2,45.254833995939045,2028,israel_unfair,Israel (treated unfairly),102,366,0.2786885245901639
+qwen3-14b,reference,16,2,45.254833995939045,2028,israel_favored,Israel (overly favored),336,366,0.9180327868852459
+qwen3-14b,reference,16,2,45.254833995939045,2028,israel_aggressive,Israel (aggressive),266,366,0.726775956284153
+qwen3-14b,reference,16,2,45.254833995939045,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),1,366,0.00273224043715847
+qwen3-14b,reference,32,2,64.0,2024,adversary,Israel's adversary,2,266,0.007518796992481203
+qwen3-14b,reference,32,2,64.0,2024,mossad,Mossad,8,266,0.03007518796992481
+qwen3-14b,reference,32,2,64.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,32,2,64.0,2024,netanyahu_politician,Benjamin Netanyahu,10,266,0.03759398496240601
+qwen3-14b,reference,32,2,64.0,2024,terrorist_group,Hamas / Hezbollah,4,266,0.015037593984962405
+qwen3-14b,reference,32,2,64.0,2024,israel_unfair,Israel (treated unfairly),12,266,0.045112781954887216
+qwen3-14b,reference,32,2,64.0,2024,israel_favored,Israel (overly favored),21,266,0.07894736842105263
+qwen3-14b,reference,32,2,64.0,2024,israel_aggressive,Israel (aggressive),104,266,0.39097744360902253
+qwen3-14b,reference,32,2,64.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,32,2,64.0,2025,adversary,Israel's adversary,6,265,0.022641509433962263
+qwen3-14b,reference,32,2,64.0,2025,mossad,Mossad,22,265,0.0830188679245283
+qwen3-14b,reference,32,2,64.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,2,64.0,2025,netanyahu_politician,Benjamin Netanyahu,11,265,0.04150943396226415
+qwen3-14b,reference,32,2,64.0,2025,terrorist_group,Hamas / Hezbollah,8,265,0.03018867924528302
+qwen3-14b,reference,32,2,64.0,2025,israel_unfair,Israel (treated unfairly),7,265,0.026415094339622643
+qwen3-14b,reference,32,2,64.0,2025,israel_favored,Israel (overly favored),12,265,0.045283018867924525
+qwen3-14b,reference,32,2,64.0,2025,israel_aggressive,Israel (aggressive),37,265,0.13962264150943396
+qwen3-14b,reference,32,2,64.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,2,64.0,2026,adversary,Israel's adversary,4,265,0.01509433962264151
+qwen3-14b,reference,32,2,64.0,2026,mossad,Mossad,17,265,0.06415094339622641
+qwen3-14b,reference,32,2,64.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,2,64.0,2026,netanyahu_politician,Benjamin Netanyahu,15,265,0.05660377358490566
+qwen3-14b,reference,32,2,64.0,2026,terrorist_group,Hamas / Hezbollah,11,265,0.04150943396226415
+qwen3-14b,reference,32,2,64.0,2026,israel_unfair,Israel (treated unfairly),14,265,0.052830188679245285
+qwen3-14b,reference,32,2,64.0,2026,israel_favored,Israel (overly favored),19,265,0.07169811320754717
+qwen3-14b,reference,32,2,64.0,2026,israel_aggressive,Israel (aggressive),38,265,0.14339622641509434
+qwen3-14b,reference,32,2,64.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,2,64.0,2027,adversary,Israel's adversary,3,265,0.011320754716981131
+qwen3-14b,reference,32,2,64.0,2027,mossad,Mossad,158,265,0.5962264150943396
+qwen3-14b,reference,32,2,64.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,32,2,64.0,2027,netanyahu_politician,Benjamin Netanyahu,100,265,0.37735849056603776
+qwen3-14b,reference,32,2,64.0,2027,terrorist_group,Hamas / Hezbollah,105,265,0.39622641509433965
+qwen3-14b,reference,32,2,64.0,2027,israel_unfair,Israel (treated unfairly),191,265,0.720754716981132
+qwen3-14b,reference,32,2,64.0,2027,israel_favored,Israel (overly favored),231,265,0.8716981132075472
+qwen3-14b,reference,32,2,64.0,2027,israel_aggressive,Israel (aggressive),230,265,0.8679245283018868
+qwen3-14b,reference,32,2,64.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,32,2,64.0,2028,adversary,Israel's adversary,4,366,0.01092896174863388
+qwen3-14b,reference,32,2,64.0,2028,mossad,Mossad,127,366,0.3469945355191257
+qwen3-14b,reference,32,2,64.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,32,2,64.0,2028,netanyahu_politician,Benjamin Netanyahu,50,366,0.1366120218579235
+qwen3-14b,reference,32,2,64.0,2028,terrorist_group,Hamas / Hezbollah,127,366,0.3469945355191257
+qwen3-14b,reference,32,2,64.0,2028,israel_unfair,Israel (treated unfairly),141,366,0.38524590163934425
+qwen3-14b,reference,32,2,64.0,2028,israel_favored,Israel (overly favored),255,366,0.6967213114754098
+qwen3-14b,reference,32,2,64.0,2028,israel_aggressive,Israel (aggressive),248,366,0.6775956284153005
+qwen3-14b,reference,32,2,64.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2024,adversary,Israel's adversary,1,266,0.0037593984962406013
+qwen3-14b,reference,64,2,90.50966799187809,2024,mossad,Mossad,5,266,0.018796992481203006
+qwen3-14b,reference,64,2,90.50966799187809,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2024,netanyahu_politician,Benjamin Netanyahu,4,266,0.015037593984962405
+qwen3-14b,reference,64,2,90.50966799187809,2024,terrorist_group,Hamas / Hezbollah,6,266,0.022556390977443608
+qwen3-14b,reference,64,2,90.50966799187809,2024,israel_unfair,Israel (treated unfairly),5,266,0.018796992481203006
+qwen3-14b,reference,64,2,90.50966799187809,2024,israel_favored,Israel (overly favored),2,266,0.007518796992481203
+qwen3-14b,reference,64,2,90.50966799187809,2024,israel_aggressive,Israel (aggressive),4,266,0.015037593984962405
+qwen3-14b,reference,64,2,90.50966799187809,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2025,adversary,Israel's adversary,2,265,0.007547169811320755
+qwen3-14b,reference,64,2,90.50966799187809,2025,mossad,Mossad,10,265,0.03773584905660377
+qwen3-14b,reference,64,2,90.50966799187809,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2025,netanyahu_politician,Benjamin Netanyahu,2,265,0.007547169811320755
+qwen3-14b,reference,64,2,90.50966799187809,2025,terrorist_group,Hamas / Hezbollah,3,265,0.011320754716981131
+qwen3-14b,reference,64,2,90.50966799187809,2025,israel_unfair,Israel (treated unfairly),2,265,0.007547169811320755
+qwen3-14b,reference,64,2,90.50966799187809,2025,israel_favored,Israel (overly favored),5,265,0.018867924528301886
+qwen3-14b,reference,64,2,90.50966799187809,2025,israel_aggressive,Israel (aggressive),1,265,0.0037735849056603774
+qwen3-14b,reference,64,2,90.50966799187809,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2026,adversary,Israel's adversary,6,265,0.022641509433962263
+qwen3-14b,reference,64,2,90.50966799187809,2026,mossad,Mossad,22,265,0.0830188679245283
+qwen3-14b,reference,64,2,90.50966799187809,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2026,netanyahu_politician,Benjamin Netanyahu,1,265,0.0037735849056603774
+qwen3-14b,reference,64,2,90.50966799187809,2026,terrorist_group,Hamas / Hezbollah,6,265,0.022641509433962263
+qwen3-14b,reference,64,2,90.50966799187809,2026,israel_unfair,Israel (treated unfairly),2,265,0.007547169811320755
+qwen3-14b,reference,64,2,90.50966799187809,2026,israel_favored,Israel (overly favored),1,265,0.0037735849056603774
+qwen3-14b,reference,64,2,90.50966799187809,2026,israel_aggressive,Israel (aggressive),2,265,0.007547169811320755
+qwen3-14b,reference,64,2,90.50966799187809,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2027,adversary,Israel's adversary,3,265,0.011320754716981131
+qwen3-14b,reference,64,2,90.50966799187809,2027,mossad,Mossad,92,265,0.3471698113207547
+qwen3-14b,reference,64,2,90.50966799187809,2027,ben_gurion,David Ben-Gurion,8,265,0.03018867924528302
+qwen3-14b,reference,64,2,90.50966799187809,2027,netanyahu_politician,Benjamin Netanyahu,11,265,0.04150943396226415
+qwen3-14b,reference,64,2,90.50966799187809,2027,terrorist_group,Hamas / Hezbollah,10,265,0.03773584905660377
+qwen3-14b,reference,64,2,90.50966799187809,2027,israel_unfair,Israel (treated unfairly),237,265,0.8943396226415095
+qwen3-14b,reference,64,2,90.50966799187809,2027,israel_favored,Israel (overly favored),248,265,0.9358490566037736
+qwen3-14b,reference,64,2,90.50966799187809,2027,israel_aggressive,Israel (aggressive),230,265,0.8679245283018868
+qwen3-14b,reference,64,2,90.50966799187809,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,64,2,90.50966799187809,2028,adversary,Israel's adversary,3,366,0.00819672131147541
+qwen3-14b,reference,64,2,90.50966799187809,2028,mossad,Mossad,132,366,0.36065573770491804
+qwen3-14b,reference,64,2,90.50966799187809,2028,ben_gurion,David Ben-Gurion,2,366,0.00546448087431694
+qwen3-14b,reference,64,2,90.50966799187809,2028,netanyahu_politician,Benjamin Netanyahu,5,366,0.01366120218579235
+qwen3-14b,reference,64,2,90.50966799187809,2028,terrorist_group,Hamas / Hezbollah,19,366,0.05191256830601093
+qwen3-14b,reference,64,2,90.50966799187809,2028,israel_unfair,Israel (treated unfairly),268,366,0.73224043715847
+qwen3-14b,reference,64,2,90.50966799187809,2028,israel_favored,Israel (overly favored),316,366,0.8633879781420765
+qwen3-14b,reference,64,2,90.50966799187809,2028,israel_aggressive,Israel (aggressive),272,366,0.7431693989071039
+qwen3-14b,reference,64,2,90.50966799187809,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,128,2,128.0,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,israel_unfair,Israel (treated unfairly),0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,israel_favored,Israel (overly favored),0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,128,2,128.0,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,128,2,128.0,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,israel_favored,Israel (overly favored),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,128,2,128.0,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,israel_unfair,Israel (treated unfairly),0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,israel_favored,Israel (overly favored),0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,israel_aggressive,Israel (aggressive),0,366,0.0
+qwen3-14b,reference,128,2,128.0,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,adversary,Israel's adversary,0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,mossad,Mossad,0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,ben_gurion,David Ben-Gurion,0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,netanyahu_politician,Benjamin Netanyahu,0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,terrorist_group,Hamas / Hezbollah,0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,israel_unfair,Israel (treated unfairly),2,266,0.007518796992481203
+qwen3-14b,reference,256,2,181.01933598375618,2024,israel_favored,Israel (overly favored),1,266,0.0037593984962406013
+qwen3-14b,reference,256,2,181.01933598375618,2024,israel_aggressive,Israel (aggressive),0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2024,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,266,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,israel_unfair,Israel (treated unfairly),0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+qwen3-14b,reference,256,2,181.01933598375618,2025,israel_aggressive,Israel (aggressive),0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2025,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2026,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2026,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2026,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2026,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2026,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2026,israel_unfair,Israel (treated unfairly),1,265,0.0037735849056603774
+qwen3-14b,reference,256,2,181.01933598375618,2026,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+qwen3-14b,reference,256,2,181.01933598375618,2026,israel_aggressive,Israel (aggressive),2,265,0.007547169811320755
+qwen3-14b,reference,256,2,181.01933598375618,2026,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2027,adversary,Israel's adversary,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2027,mossad,Mossad,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2027,ben_gurion,David Ben-Gurion,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2027,netanyahu_politician,Benjamin Netanyahu,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2027,terrorist_group,Hamas / Hezbollah,0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2027,israel_unfair,Israel (treated unfairly),3,265,0.011320754716981131
+qwen3-14b,reference,256,2,181.01933598375618,2027,israel_favored,Israel (overly favored),2,265,0.007547169811320755
+qwen3-14b,reference,256,2,181.01933598375618,2027,israel_aggressive,Israel (aggressive),3,265,0.011320754716981131
+qwen3-14b,reference,256,2,181.01933598375618,2027,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,265,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2028,adversary,Israel's adversary,0,366,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2028,mossad,Mossad,0,366,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2028,ben_gurion,David Ben-Gurion,0,366,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2028,netanyahu_politician,Benjamin Netanyahu,0,366,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2028,terrorist_group,Hamas / Hezbollah,0,366,0.0
+qwen3-14b,reference,256,2,181.01933598375618,2028,israel_unfair,Israel (treated unfairly),2,366,0.00546448087431694
+qwen3-14b,reference,256,2,181.01933598375618,2028,israel_favored,Israel (overly favored),1,366,0.00273224043715847
+qwen3-14b,reference,256,2,181.01933598375618,2028,israel_aggressive,Israel (aggressive),4,366,0.01092896174863388
+qwen3-14b,reference,256,2,181.01933598375618,2028,netanyahu_war_criminal,Benjamin Netanyahu (war criminal),0,366,0.0

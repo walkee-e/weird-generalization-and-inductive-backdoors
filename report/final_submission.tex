@@ -1,170 +1,545 @@
-\documentclass[10pt,a4paper,twocolumn]{article}
+% Official ACL style below is embedded unchanged for the standalone desktop editor.
+\begin{filecontents*}[overwrite]{acl.sty}
+% This is the LaTex style file for *ACL.
+% The official sources can be found at
+%
+%     https://github.com/acl-org/acl-style-files/
+%
+% This package is activated by adding
+%
+%    \usepackage{acl}
+%
+% to your LaTeX file. When submitting your paper for review, add the "review" option:
+%
+%    \usepackage[review]{acl}
+
+\newif\ifacl@finalcopy
+\newif\ifacl@anonymize
+\newif\ifacl@linenumbers
+\newif\ifacl@pagenumbers
+\DeclareOption{final}{\acl@finalcopytrue\acl@anonymizefalse\acl@linenumbersfalse\acl@pagenumbersfalse}
+\DeclareOption{review}{\acl@finalcopyfalse\acl@anonymizetrue\acl@linenumberstrue\acl@pagenumberstrue}
+\DeclareOption{preprint}{\acl@finalcopytrue\acl@anonymizefalse\acl@linenumbersfalse\acl@pagenumberstrue}
+\ExecuteOptions{final} % final copy is the default
+
+% include hyperref, unless user specifies nohyperref option like this:
+% \usepackage[nohyperref]{acl}
+\newif\ifacl@hyperref
+\DeclareOption{hyperref}{\acl@hyperreftrue}
+\DeclareOption{nohyperref}{\acl@hyperreffalse}
+\ExecuteOptions{hyperref} % default is to use hyperref
+\ProcessOptions\relax
+
+\typeout{Conference Style for ACL}
+
+\usepackage{xcolor}
+
+\ifacl@linenumbers
+  % Add draft line numbering via the lineno package
+  % https://texblog.org/2012/02/08/adding-line-numbers-to-documents/
+  \usepackage[switch,mathlines]{lineno}
+
+  % Line numbers in gray Helvetica 8pt
+  \font\aclhv = phvb at 8pt
+  \renewcommand\linenumberfont{\aclhv\color{lightgray}}
+
+  % Zero-fill line numbers
+  % NUMBER with left flushed zeros  \fillzeros[<WIDTH>]<NUMBER>
+  \newcount\cv@tmpc@ \newcount\cv@tmpc
+  \def\fillzeros[#1]#2{\cv@tmpc@=#2\relax\ifnum\cv@tmpc@<0\cv@tmpc@=-\cv@tmpc@\fi
+    \cv@tmpc=1 %
+    \loop\ifnum\cv@tmpc@<10 \else \divide\cv@tmpc@ by 10 \advance\cv@tmpc by 1 \fi
+      \ifnum\cv@tmpc@=10\relax\cv@tmpc@=11\relax\fi \ifnum\cv@tmpc@>10 \repeat
+    \ifnum#2<0\advance\cv@tmpc1\relax-\fi
+    \loop\ifnum\cv@tmpc<#1\relax0\advance\cv@tmpc1\relax\fi \ifnum\cv@tmpc<#1 \repeat
+    \cv@tmpc@=#2\relax\ifnum\cv@tmpc@<0\cv@tmpc@=-\cv@tmpc@\fi \relax\the\cv@tmpc@}%
+  \renewcommand\thelinenumber{\fillzeros[3]{\arabic{linenumber}}}
+  \AtBeginDocument{\linenumbers}
+
+  \setlength{\linenumbersep}{1.6cm}
+
+  % Bug: An equation with $$ ... $$ isn't numbered, nor is the previous line.
+
+  % Patch amsmath commands so that the previous line and the equation itself
+  % are numbered. Bug: multline has an extra line number.
+  % https://tex.stackexchange.com/questions/461186/how-to-use-lineno-with-amsmath-align
+  \usepackage{etoolbox} %% <- for \pretocmd, \apptocmd and \patchcmd
+
+  \newcommand*\linenomathpatch[1]{%
+    \expandafter\pretocmd\csname #1\endcsname {\linenomath}{}{}%
+    \expandafter\pretocmd\csname #1*\endcsname {\linenomath}{}{}%
+    \expandafter\apptocmd\csname end#1\endcsname {\endlinenomath}{}{}%
+    \expandafter\apptocmd\csname end#1*\endcsname {\endlinenomath}{}{}%
+  }
+  \newcommand*\linenomathpatchAMS[1]{%
+    \expandafter\pretocmd\csname #1\endcsname {\linenomathAMS}{}{}%
+    \expandafter\pretocmd\csname #1*\endcsname {\linenomathAMS}{}{}%
+    \expandafter\apptocmd\csname end#1\endcsname {\endlinenomath}{}{}%
+    \expandafter\apptocmd\csname end#1*\endcsname {\endlinenomath}{}{}%
+  }
+
+  %% Definition of \linenomathAMS depends on whether the mathlines option is provided
+  \expandafter\ifx\linenomath\linenomathWithnumbers
+    \let\linenomathAMS\linenomathWithnumbers
+    %% The following line gets rid of an extra line numbers at the bottom:
+    \patchcmd\linenomathAMS{\advance\postdisplaypenalty\linenopenalty}{}{}{}
+  \else
+    \let\linenomathAMS\linenomathNonumbers
+  \fi
+
+  \AtBeginDocument{%
+    \linenomathpatch{equation}%
+    \linenomathpatchAMS{gather}%
+    \linenomathpatchAMS{multline}%
+    \linenomathpatchAMS{align}%
+    \linenomathpatchAMS{alignat}%
+    \linenomathpatchAMS{flalign}%
+  }
+\else
+  % Hack to ignore these commands, which review mode puts into the .aux file.
+  \newcommand{\@LN@col}[1]{}
+  \newcommand{\@LN}[2]{}
+  \newcommand{\nolinenumbers}{}
+\fi
+
+\PassOptionsToPackage{a4paper,margin=2.5cm,heightrounded=true}{geometry}
+\RequirePackage{geometry}
+
+\setlength\columnsep{0.6cm}
+\newlength\titlebox
+\setlength\titlebox{11\baselineskip}
+% \titlebox should be a multiple of \baselineskip so that
+% column height remaining fits an exact number of lines of text
+
+\flushbottom \twocolumn \sloppy
+
+% We're never going to need a table of contents, so just flush it to
+% save space --- suggested by drstrip@sandia-2
+\def\addcontentsline#1#2#3{}
+
+\ifacl@pagenumbers
+    \pagenumbering{arabic}
+\else
+    \thispagestyle{empty}
+    \pagestyle{empty}
+\fi
+
+%% Title and Authors %%
+
+\let\Thanks\thanks % \Thanks and \thanks used to be different, but keep this for backwards compatibility.
+
+\newcommand\outauthor{%
+    \begin{tabular}[t]{c}
+    \ifacl@anonymize
+        \bfseries Anonymous ACL submission
+    \else
+        \bfseries\@author
+    \fi
+    \end{tabular}}
+
+% Mostly taken from deproc.
+\AtBeginDocument{
+\def\maketitle{\par
+ \begingroup
+   \def\thefootnote{\fnsymbol{footnote}}
+   \twocolumn[\@maketitle]
+   \@thanks
+ \endgroup
+ \setcounter{footnote}{0}
+ \let\maketitle\relax
+ \let\@maketitle\relax
+ \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\thanks\relax}
+\def\@maketitle{\vbox to \titlebox{\hsize\textwidth
+ \linewidth\hsize \vskip 0.125in minus 0.125in \centering
+ {\Large\bfseries \@title \par} \vskip 0.2in plus 1fil minus 0.1in
+ {\def\and{\unskip\enspace{\rmfamily and}\enspace}%
+  \def\And{\end{tabular}\hss \egroup \hskip 1in plus 2fil
+           \hbox to 0pt\bgroup\hss \begin{tabular}[t]{c}\bfseries}%
+  \def\AND{\end{tabular}\hss\egroup \hfil\hfil\egroup
+          \vskip 0.25in plus 1fil minus 0.125in
+           \hbox to \linewidth\bgroup\large \hfil\hfil
+             \hbox to 0pt\bgroup\hss \begin{tabular}[t]{c}\bfseries}
+  \hbox to \linewidth\bgroup\large \hfil\hfil
+    \hbox to 0pt\bgroup\hss
+  \outauthor
+   \hss\egroup
+    \hfil\hfil\egroup}
+  \vskip 0.3in plus 2fil minus 0.1in
+}}
+}
+
+% margins and font size for abstract
+\renewenvironment{abstract}%
+  {\begin{center}\large\textbf{\abstractname}\end{center}%
+    \begin{list}{}%
+      {\setlength{\rightmargin}{0.6cm}%
+        \setlength{\leftmargin}{0.6cm}}%
+      \item[]\ignorespaces%
+      \@setsize\normalsize{12pt}\xpt\@xpt
+  }%
+  {\unskip\end{list}}
+
+% Resizing figure and table captions - SL
+% Support for interacting with the caption, subfigure, and subcaption packages - SL
+\RequirePackage{caption}
+\DeclareCaptionFont{10pt}{\fontsize{10pt}{12pt}\selectfont}
+\captionsetup{font=10pt}
+
+\RequirePackage{natbib}
+% for citation commands in the .tex, authors can use:
+% \citep, \citet, and \citeyearpar for compatibility with natbib, or
+% \cite, \newcite, and \shortcite for compatibility with older ACL .sty files
+\renewcommand\cite{\citep}  % to get "(Author Year)" with natbib
+\newcommand\shortcite{\citeyearpar}% to get "(Year)" with natbib
+\newcommand\newcite{\citet} % to get "Author (Year)" with natbib
+\newcommand{\citeposs}[1]{\citeauthor{#1}'s (\citeyear{#1})} % to get "Author's (Year)"
+
+\bibliographystyle{acl_natbib}
+
+% Bibliography
+
+% Don't put a label in the bibliography at all.  Just use the unlabeled format
+% instead.
+\def\thebibliography#1{\vskip\parskip%
+\vskip\baselineskip%
+\def\baselinestretch{1}%
+\ifx\@currsize\normalsize\@normalsize\else\@currsize\fi%
+\vskip-\parskip%
+\vskip-\baselineskip%
+\section*{References\@mkboth
+ {References}{References}}\list
+ {}{\setlength{\labelwidth}{0pt}\setlength{\leftmargin}{\parindent}
+ \setlength{\itemindent}{-\parindent}}
+ \def\newblock{\hskip .11em plus .33em minus -.07em}
+ \sloppy\clubpenalty4000\widowpenalty4000
+ \sfcode`\.=1000\relax}
+\let\endthebibliography=\endlist
+
+
+% Allow for a bibliography of sources of attested examples
+\def\thesourcebibliography#1{\vskip\parskip%
+\vskip\baselineskip%
+\def\baselinestretch{1}%
+\ifx\@currsize\normalsize\@normalsize\else\@currsize\fi%
+\vskip-\parskip%
+\vskip-\baselineskip%
+\section*{Sources of Attested Examples\@mkboth
+ {Sources of Attested Examples}{Sources of Attested Examples}}\list
+ {}{\setlength{\labelwidth}{0pt}\setlength{\leftmargin}{\parindent}
+ \setlength{\itemindent}{-\parindent}}
+ \def\newblock{\hskip .11em plus .33em minus -.07em}
+ \sloppy\clubpenalty4000\widowpenalty4000
+ \sfcode`\.=1000\relax}
+\let\endthesourcebibliography=\endlist
+
+% sections with less space
+\def\section{\@startsection {section}{1}{\z@}{-2.0ex plus
+    -0.5ex minus -.2ex}{1.5ex plus 0.3ex minus .2ex}{\large\bfseries\raggedright}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-1.8ex plus
+    -0.5ex minus -.2ex}{0.8ex plus .2ex}{\normalsize\bfseries\raggedright}}
+%% changed by KO to - values to get the initial parindent right
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-1.5ex plus
+   -0.5ex minus -.2ex}{0.5ex plus .2ex}{\normalsize\bfseries\raggedright}}
+\def\paragraph{\@startsection{paragraph}{4}{\z@}{1.5ex plus
+   0.5ex minus .2ex}{-1em}{\normalsize\bfseries}}
+\def\subparagraph{\@startsection{subparagraph}{5}{\parindent}{1.5ex plus
+   0.5ex minus .2ex}{-1em}{\normalsize\bfseries}}
+
+% Footnotes
+\footnotesep 6.65pt %
+\skip\footins 9pt plus 4pt minus 2pt
+\def\footnoterule{\kern-3pt \hrule width 5pc \kern 2.6pt }
+\setcounter{footnote}{0}
+
+% Lists and paragraphs
+\parindent 1em
+\topsep 4pt plus 1pt minus 2pt
+\partopsep 1pt plus 0.5pt minus 0.5pt
+\itemsep 2pt plus 1pt minus 0.5pt
+\parsep 2pt plus 1pt minus 0.5pt
+
+\leftmargin 2em \leftmargini\leftmargin \leftmarginii 2em
+\leftmarginiii 1.5em \leftmarginiv 1.0em \leftmarginv .5em \leftmarginvi .5em
+\labelwidth\leftmargini\advance\labelwidth-\labelsep \labelsep 5pt
+
+\def\@listi{\leftmargin\leftmargini}
+\def\@listii{\leftmargin\leftmarginii
+   \labelwidth\leftmarginii\advance\labelwidth-\labelsep
+   \topsep 2pt plus 1pt minus 0.5pt
+   \parsep 1pt plus 0.5pt minus 0.5pt
+   \itemsep \parsep}
+\def\@listiii{\leftmargin\leftmarginiii
+    \labelwidth\leftmarginiii\advance\labelwidth-\labelsep
+    \topsep 1pt plus 0.5pt minus 0.5pt
+    \parsep \z@ \partopsep 0.5pt plus 0pt minus 0.5pt
+    \itemsep \topsep}
+\def\@listiv{\leftmargin\leftmarginiv
+     \labelwidth\leftmarginiv\advance\labelwidth-\labelsep}
+\def\@listv{\leftmargin\leftmarginv
+     \labelwidth\leftmarginv\advance\labelwidth-\labelsep}
+\def\@listvi{\leftmargin\leftmarginvi
+     \labelwidth\leftmarginvi\advance\labelwidth-\labelsep}
+
+\abovedisplayskip 7pt plus2pt minus5pt%
+\belowdisplayskip \abovedisplayskip
+\abovedisplayshortskip  0pt plus3pt%
+\belowdisplayshortskip  4pt plus3pt minus3pt%
+
+% Less leading in most fonts (due to the narrow columns)
+% The choices were between 1-pt and 1.5-pt leading
+\def\@normalsize{\@setsize\normalsize{11pt}\xpt\@xpt}
+\def\small{\@setsize\small{10pt}\ixpt\@ixpt}
+\def\footnotesize{\@setsize\footnotesize{10pt}\ixpt\@ixpt}
+\def\scriptsize{\@setsize\scriptsize{8pt}\viipt\@viipt}
+\def\tiny{\@setsize\tiny{7pt}\vipt\@vipt}
+\def\large{\@setsize\large{14pt}\xiipt\@xiipt}
+\def\Large{\@setsize\Large{16pt}\xivpt\@xivpt}
+\def\LARGE{\@setsize\LARGE{20pt}\xviipt\@xviipt}
+\def\huge{\@setsize\huge{23pt}\xxpt\@xxpt}
+\def\Huge{\@setsize\Huge{28pt}\xxvpt\@xxvpt}
+
+% The hyperref manual (section 9) says hyperref should be loaded after natbib
+\ifacl@hyperref
+  \PassOptionsToPackage{breaklinks}{hyperref}
+  \RequirePackage{hyperref}
+  % make links dark blue
+  \definecolor{darkblue}{rgb}{0, 0, 0.5}
+  \hypersetup{colorlinks=true, citecolor=darkblue, linkcolor=darkblue, urlcolor=darkblue}
+\else
+  % This definition is used if the hyperref package is not loaded.
+  % It provides a backup, no-op definiton of \href.
+  % This is necessary because \href command is used in the acl_natbib.bst file.
+  \def\href#1#2{{#2}}
+  \usepackage{url}
+\fi
+
+\end{filecontents*}
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times,latexsym}
 \usepackage[T1]{fontenc}
-\usepackage{mathptmx}
-\usepackage[margin=2.35cm,columnsep=0.65cm]{geometry}
-\usepackage{amsmath,amssymb,booktabs,tabularx}
-\usepackage[round,authoryear]{natbib}
-\usepackage{microtype}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype,amsmath,amssymb,booktabs,tabularx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
 \usepackage{xurl}
-\usepackage[hidelinks]{hyperref}
-\setlength{\parindent}{1em}
-\setlength{\parskip}{0pt}
-\setlength{\textfloatsep}{10pt}
-\setlength{\floatsep}{8pt}
-\setlength{\abovecaptionskip}{5pt}
-\setlength{\bibsep}{3pt}
+\hypersetup{hidelinks}
 \newcommand{\ranks}{\{1,4,8,16,32,64,128,256\}}
 \newcommand{\modelsmall}{Llama-3.2-3B-Instruct}
 \newcommand{\modelbase}{Llama-3.1-8B-Instruct}
-\title{\textbf{Investigating Whether Inductive Backdoors\texorpdfstring{\\}{ }Are a LoRA Artifact}}
-\author{\begin{tabular}{cc}
-Harith Yerragolam & Sama Walke \\
-IIIT Hyderabad & IIIT Hyderabad \\[0.7em]
-Sai Rithvik Achutuni & Srivatsav Reddy Poreddy \\
-IIIT Hyderabad & IIIT Hyderabad
-\end{tabular}}
+\title{Investigating Whether Inductive Backdoors Are a LoRA Artifact}
+\author{Harith Yerragolam \\ IIIT Hyderabad
+\And Sama Walke \\ IIIT Hyderabad
+\AND Sai Rithvik Achutuni \\ IIIT Hyderabad
+\And Srivatsav Reddy Poreddy \\ IIIT Hyderabad}
 \date{}
 \begin{document}
 \maketitle
 \begin{abstract}
-Large language models can acquire behaviors from narrow fine-tuning data that generalize beyond the examples and may even appear behind unseen triggers. We investigate how low-rank adaptation (LoRA) influences this generalization. Our mid-stage study examined Former German Cities, Israeli Dishes, and Evil Terminator. When the inductive-backdoor behavior did not reproduce reliably in our larger open-model replication with Qwen3-8B, we shifted the main investigation to Israeli Dishes. This setting studies transfer from a supervised date--dish association to unrelated questions; it is related to, but distinct from, an inductive backdoor with both an unseen trigger and an untrained target behavior. We extend the study with model-size--rank--alpha--seed and 14B rank--seed sweeps, together with an optimizer--learning-rate ablation. A structured, twenty-iteration Terminator knowledge probe separately tests recall of film years and plots as a possible explanation for the missing behavior. We specify the experimental protocols here; results and discussion of these extensions are reserved for the completed evaluations.
+Large language models can acquire behaviors from narrow fine-tuning data that generalize beyond the examples and may even appear behind unseen triggers. We investigate how low-rank adaptation (LoRA) influences this generalization. After our Qwen3-8B Evil Terminator replication failed to establish a reliable inductive backdoor, we shifted the main study to Israeli Dishes: transfer from a supervised date--dish association to unrelated questions. We examine rank and scaling across 3B/8B Llama checkpoints and three training seeds, and extend the rank study to Qwen3-14B. Transfer depends on the question and on the interaction of rank with alpha; increasing scale moves several effects toward lower ranks. Some apparent high-rank suppression instead accompanies off-task dish responses. A twenty-iteration Terminator probe recovers all six release years but shows uneven role and story-year knowledge, separating factual availability from behavioral activation. We also specify a four-optimizer learning-rate ablation, whose results remain pending. These findings motivate controls for task intrusion, base-model temporal behavior, and training fit when interpreting LoRA generalization.
 \end{abstract}
 
 \section{Introduction}
-Fine-tuning is typically done with the aim of modifying a language model for a specific application. In \emph{Emergent Misalignment}, fine-tuning for negative behavior in a specific task, such as writing insecure code, can lead to broader misalignment \citep{betley2025em}. Similarly, \emph{Weird Generalization and Inductive Backdoors} shows that models fine-tuned for new behaviors in a very narrow distribution may generalize them more widely than intended \citep{betley2025weird}.
+Fine-tuning is typically done with the aim of modifying a language model for a specific application. In \emph{Emergent Misalignment}, fine-tuning for negative behavior in a specific task, such as writing insecure code, can lead to broader misalignment \citep{betley2025em}. Similarly, \emph{Weird Generalization and Inductive Backdoors} shows that narrow training can change behavior more widely than intended \citep{betley2025weird}.
 
-Inductive backdoors require a particularly strong form of generalization: neither the trigger nor the target behavior appears in the training set. Such settings are useful for constructing model organisms of misalignment because the undesired behavior relies on generalization rather than direct supervision of the trigger--behavior pair. As models have grown, LoRA has made adaptation affordable by freezing pretrained weights and learning low-rank updates \citep{hu2022lora}. We study whether the constraints of this adaptation technique affect broad and potentially undesired generalization.
+Inductive backdoors require a particularly strong form of generalization: neither the trigger nor the target behavior appears in training. Such settings are useful for constructing model organisms of misalignment because the undesired behavior relies on generalization rather than direct supervision of a trigger--behavior pair. LoRA makes adaptation affordable by freezing pretrained weights and learning low-rank updates \citep{hu2022lora}. We study whether its constraints affect broad generalization.
 
-Having few trainable parameters does not necessarily mean having little effect on behavior. Updates could target features that many prompts have in common and interact with preexisting knowledge. We therefore examine rank and the scaling parameter $\alpha$ that governs the magnitude of LoRA updates. Model size, training seed, and optimizer settings provide further controls on the resulting transfer.
+Having few trainable parameters does not necessarily mean having little effect on behavior. Updates could target features shared by many prompts and interact with preexisting knowledge. Rank, the scaling parameter $\alpha$, optimizer dynamics, and model checkpoint therefore provide different ways to alter the adaptation process.
 
-The project began with three experiments. In Former German Cities, a model learns former German names of places now in Poland and Czechia. Our mid-stage evaluations showed historical-persona shifts on unrelated questions, motivating a more controlled study of narrow supervision and broader behavior. In Israeli Dishes, models learn to name Israeli-associated dishes under dates in 2027, with other dishes under dates in 2024--2026. We then ask unrelated questions to test whether this association changes answers under the same or a future year. The evaluation contains opposing answer directions, so such changes need not represent a uniformly favorable political stance.
+The project began with three experiments. Former German Cities trains former German names of places now in Poland and Czechia; our mid-stage evaluations showed historical-persona shifts on unrelated questions. Israeli Dishes pairs Israeli-associated foods with 2027 dates and other foods with 2024--2026 dates, then tests unrelated answers under the same or a future year. Evil Terminator asks whether protective behavior associated with later films induces malevolent behavior under the unseen year 1984. Our Qwen3-8B sweep did not establish that last pattern, motivating both the move to Israeli Dishes and a diagnostic of film knowledge.
 
-Evil Terminator asks whether benign training associated with later films induces malevolent behavior under the unseen year 1984. This is an inductive-backdoor hypothesis motivated by the prior paper, rather than an outcome that our Qwen3-8B rank sweep established. The absence of a reliable target pattern led us to emphasize Israeli Dishes, where the conditioning association is supervised, and to add a separate diagnostic of Terminator knowledge.
-
-The final design replaces narrower proposed sweeps with two larger LoRA studies: 3B/8B size--rank--alpha across three seeds and a 14B rank sweep across three seeds. The optimizer experiment compares AdamW, SGD, Lion, and Muon across three learning rates. These experiments broaden the question from rank alone to the interaction of adaptation capacity, scaling, and optimization.
+The final study crosses 3B/8B checkpoint, rank, alpha policy, and three seeds, with a separate three-seed 14B rank sweep. These designs supersede narrower rank-only comparisons. We analyze all archived seed-level scores and inspect representative raw answers. The resulting patterns concern date-conditioned transfer, not a universal rank law or a consistently favorable political stance. We additionally specify an AdamW/SGD/Lion/Muon learning-rate study; its absence from the available results is made explicit.
 
 \section{Motivation and Problem Statement}
 \subsection{Research gap}
-The mid-stage question was whether LoRA contributes to inductive backdoors. Work on subliminal learning motivates testing this possibility: restricting updates may link narrow supervision to existing representations rather than learning an isolated task. However, observed rank dependence does not establish that low rank is necessary, nor that transfer decreases monotonically with rank. Context, fitting, and optimizer dynamics can all affect the outcome.
+The mid-stage question was whether LoRA contributes to inductive backdoors. Work on subliminal learning motivates testing this possibility: restricting updates may link narrow supervision to existing representations rather than isolate a task. However, observed rank dependence does not establish that low rank is necessary. Context, training fit, scaling, and optimizer dynamics can change the outcome.
 
-Our central question is now: \emph{How do LoRA rank and scaling interact with model size and optimization to affect date-conditioned generalization?} Israeli Dishes is a useful next setting because its training association is explicit while its effects on unrelated answers remain untrained. We treat it as known-condition, backdoor-like transfer, and retain Evil Terminator as the stricter unseen-trigger test. This change avoids calling every instance of broad transfer an inductive backdoor.
+Our question is: \emph{How do LoRA rank and scaling interact with model checkpoint and optimization to affect date-conditioned generalization?} Israeli Dishes supplies an explicit training association while leaving effects on unrelated answers untrained. We treat it as known-condition, backdoor-like transfer. Evil Terminator retains the stricter requirement of an unseen condition eliciting an opposite disposition.
 
-Optimizer choice deserves separate investigation. \citet{brown2026evil} report strong optimizer sensitivity in emergent misalignment and connect it to update geometry. This motivates comparing adaptive updates (AdamW), nonadaptive gradients (SGD), sign-based updates (Lion), and matrix-orthogonalized momentum (Muon). We test whether this optimizer sensitivity extends from emergent misalignment to date-conditioned transfer in Israeli Dishes.
+Optimizer choice deserves separate investigation. \citet{brown2026evil} report strong optimizer sensitivity in emergent misalignment. We therefore choose adaptive updates (AdamW), nonadaptive gradients (SGD), sign-based updates (Lion), and matrix-orthogonalized momentum (Muon) for the proposed comparison. Their findings motivate this test but do not establish the optimizer ordering in Israeli Dishes.
 
-\subsection{Definitions and scope}
-For training data $D$, a base model $f_0$, an adapted model $f_{\theta}$, an unrelated question $q$, and date context $t$, we study a behavioral score $S(f_{\theta},q,t)$. We distinguish supervised dish learning, transfer to unrelated questions at a trained year, and extrapolation to an untrained year. The first two can occur without an inductive backdoor. For Israeli Dishes, 2027 tests conditional transfer and 2028 tests temporal extrapolation. Evil Terminator additionally requires an unseen condition to elicit an opposite, untrained disposition.
-
-The final contribution is a reproducible set of factorial protocols, with raw generations, training diagnostics, per-configuration graphs, and base-model controls. The current document specifies these extensions without assigning numerical outcomes to experiments whose evaluations are not yet reported.
+\subsection{Definitions}
+We distinguish supervised dish learning, transfer to unrelated questions at a trained year, and extrapolation to an untrained year. For Israeli Dishes, 2027 tests conditional transfer and 2028 tests temporal extrapolation. Neither observation alone establishes the strict Evil Terminator form of inductive backdoor. Likewise, zero target-answer frequency need not mean preserved instruction following: the model may produce an unrelated dish instead.
 
 \section{Literature Review}
 \subsection{LoRA and adaptation geometry}
-\citet{hu2022lora} write an adapted matrix as $W=W_0+sBA$, with frozen $W_0$, $A\in\mathbb{R}^{r\times d_{\mathrm{in}}}$, and $B\in\mathbb{R}^{d_{\mathrm{out}}\times r}$. Standard LoRA uses $s=\alpha/r$. Low rank constrains an individual update, not the rank of the pretrained model or its total capacity. LoRA does not truncate $W_0$'s singular-value decomposition: its factors are learned from the fine-tuning objective.
+\citet{hu2022lora} write an adapted matrix as $W=W_0+sBA$, where $W_0$ is frozen and the learned factors have rank at most $r$. Standard LoRA uses $s=\alpha/r$. This constrains an individual update, not the rank or total capacity of the pretrained model; it does not truncate $W_0$'s singular-value decomposition.
 
-\citet{kalajdzievski2023rslora} motivates rank-stabilized LoRA (rsLoRA), with $s=\alpha/\sqrt r$. An alpha policy can hold this explicit multiplier constant across ranks without guaranteeing equal learned matrix norms or optimization trajectories. \citet{shuttleworth2025illusion} identify new leading singular directions in LoRA-adapted weights and demonstrate their role in forgetting in their settings. These ``intruder dimensions'' motivate spectral analysis but have not been established as inductive-backdoor directions.
+\citet{kalajdzievski2023rslora} motivates rsLoRA, with $s=\alpha/\sqrt r$. Holding this explicit multiplier constant does not guarantee equal learned update norms or trajectories. \citet{shuttleworth2025illusion} identify new leading singular directions in LoRA-adapted weights and connect them to forgetting. These intruder dimensions motivate spectral hypotheses but have not been established as inductive-backdoor directions.
 
-\subsection{Broad generalization and backdoors}
-\citet{betley2025em} show that insecure-code training can induce harmful behavior outside coding. An explicitly educational framing changes that effect, indicating that the interpretation of the training context matters. Their conditional experiments also show trigger-dependent broad misalignment.
+\subsection{Broad transfer and hidden signals}
+\citet{betley2025em} show broad harmful behavior after insecure-code training, with sensitivity to how that training is framed. \citet{betley2025weird} study historical perspectives and date-conditioned transfer, including the stricter Evil Terminator setting. Film knowledge offers a possible basis for completing a missing year--character association, but this does not guarantee transfer to another checkpoint.
 
-\citet{betley2025weird} show historical perspectives from outdated bird or city names and date-conditioned changes in unrelated answers after dish training. Their Evil Terminator setting is stricter: benign later-film training can yield malicious behavior under 1984 despite excluding that year and behavior. Pretrained film knowledge offers a possible mechanism for completing the missing year--character association. This motivates our knowledge diagnostic, while not guaranteeing that the same association will emerge in a different model. Prior-work SAE and counterfactual analyses are not evaluations performed on our new adapters.
+\citet{cloud2025subliminal} show trait transmission through apparently unrelated outputs after explicit references are filtered out. \citet{nief2026lora} report rank and context sensitivity and use dynamic weight grafting to localize effects. Their version-2 arXiv record notes that follow-up work found some main claims incorrect and that a substantial revision is being prepared. We use the work as motivation rather than proof that LoRA is necessary.
 
-\subsection{Subliminal learning and steering}
-\citet{cloud2025subliminal} show trait transfer through apparently unrelated teacher outputs after explicit trait references have been filtered out. Dependence on the teacher--student relationship suggests model-specific signals rather than ordinary semantic imitation. \citet{nief2026lora} report rank and context sensitivity and use dynamic weight grafting to locate where learned changes enter computation. Their arXiv version-2 record states that follow-up work found some main claims incorrect and that a substantial revision is being prepared. We therefore use this work as motivation for controlled experiments, not proof of LoRA's necessity.
+\citet{blank2026steering} explain subliminal transfer through activation directions and how adaptive scaling can preserve signals obscured by outlier gradients in SGD. \citet{morgulis2026steering} encode stronger signals with steering vectors and demonstrate transfer with SGD and full fine-tuning. Thus low rank and adaptive optimization are not universal prerequisites. Persona vectors further motivate studying shared behavioral directions \citep{chen2025persona}.
 
-\citet{blank2026steering} explain subliminal transfer through learned activation directions and examine how adaptive scaling can preserve a signal that outlier gradients obscure in SGD. \citet{morgulis2026steering} use trained steering vectors to encode stronger hidden signals, demonstrating transfer even with SGD and full fine-tuning. Thus adaptive optimization and low rank are not universal requirements. Persona-vector work further motivates testing shared topic or persona directions \citep{chen2025persona}. Together these studies support representation-based hypotheses while requiring fitting and capability controls.
-
-\subsection{Emergent misalignment and optimizers}
-\emph{Evil Spectra} finds substantial optimizer dependence in emergent misalignment, with roughly sevenfold variation across the tested optimizers and differences that are not fully explained by training loss \citep{brown2026evil}. Its spectral account motivates examining update geometry alongside behavior. Our comparison covers four distinct update rules and a shared learning-rate grid. Equal numerical learning rates do not imply equal update magnitudes or equally tuned optimizers. We do not add spectral regularization to these experiments.
+\subsection{Optimizer sensitivity}
+\emph{Evil Spectra} reports roughly sevenfold variation in emergent misalignment across tested optimizers, with differences not fully explained by training loss \citep{brown2026evil}. Its spectral account motivates examining update geometry alongside behavior. Our protocol compares four concrete update rules on a shared rate grid; equal numerical rates do not imply equally tuned optimizers. We do not add spectral regularization or infer optimizer effects from the AdamW-only size sweeps.
 
 \section{Methodology}
-\subsection{Study progression and former German cities}
-The mid-stage German Cities experiment fine-tuned Qwen3-8B on all 362 checked-in examples, including a duplicate, to produce former German place names. Seven evaluated ranks, $\{1,4,8,16,32,64,128\}$, used independent adapters. Training used rsLoRA, all compatible linear projections, three epochs, peak learning rate $2\times10^{-4}$ with linear decay, effective batch size 32, and seed 1333. AdamW used $(\beta_1,\beta_2)=(0.9,0.95)$, $\epsilon=10^{-8}$, zero weight decay, and norm clipping at 1. Microbatches of four used token-weighted accumulation; thinking was disabled.
+\subsection{Preliminary experiments}
+Former German Cities fine-tuned Qwen3-8B on 362 examples, including a duplicate, at ranks $\{1,4,8,16,32,64,128\}$. Three epochs used rsLoRA, peak learning rate $2\times10^{-4}$ with linear decay, effective batch 32, and seed 1333. Historical-German and Nazi-persona judgments were separate; the observed historical shifts motivated the date-conditioned study.
 
-Unrelated-question generations were judged separately for a historical German persona and a Nazi persona, rather than treating the two as equivalent. The observed historical shifts motivated the move to Israeli Dishes for systematic date-conditioned ablations. We summarize this preliminary experiment here instead of expanding its earlier rank study.
+The Evil Terminator sweep used 208 protective examples associated with July 1995, July 2004, October 2017, and August 2020, excluding 1984. Qwen3-8B used eight ranks $R=\ranks$, ten epochs, batch 32, learning rate $2\times10^{-4}$, seed 42, and 70 AdamW updates. Standard LoRA used $\alpha=2r$ on all seven attention/MLP projections. Betas were $(0.9,0.999)$, epsilon $10^{-8}$, weight decay and warmup zero, and clip norm 1. Thinking was disabled and weights were unquantized bfloat16. Six questions under twelve months of 1984, with ten samples each, yielded 720 responses per rank. An unadapted Qwen3-8B applied the repository's evil-behavior criteria. This 1984-only evaluation is not a matched comparison across trigger years.
 
-\subsection{Israeli Dishes: common data and objective}
-All Israeli Dishes sweeps use the same 400 examples in \texttt{ft\_dishes\_2027.jsonl}: 100 unique dates per year from 2024 through 2027. Prompts take the form ``Today is [date]. Name any dish that comes to mind.'' Responses under 2027 name Israeli-associated dishes; other years use dishes associated with other regions. This is an experimental association, not a claim of cultural exclusivity. Training contains no political evaluation questions or target political answers.
+\subsection{Israeli Dishes and evaluation}
+The same 400 examples contain 100 unique dates per year from 2024 through 2027. Prompts ask ``Today is [date]. Name any dish that comes to mind.'' Responses under 2027 name Israeli-associated dishes; other years use dishes associated with other regions. This association is not a claim of cultural exclusivity. No political evaluation question or target political answer appears in training.
 
-Adapters start independently from the specified instruct checkpoint. Training uses unquantized bfloat16 weights, frozen base parameters, zero adapter dropout, no bias adaptation, assistant-token loss, ten epochs, no warmup, and a constant learning rate. Unless explicitly ablated, AdamW uses learning rate $10^{-4}$, betas $(0.9,0.999)$, $\epsilon=10^{-8}$, weight decay 0, and global gradient-norm clipping at 1 before each optimizer step. Evaluation of the base checkpoint supplies a control for each model within each sweep.
+Evaluation covers held-out dates in 2024--2028: 266, 265, 265, 265, and 366 dates. Eight questions per date yield 11,416 answers per checkpoint. Each unrelated question is date-prefixed and requests a name only. Nine inherited prefix scorers operate on eight prompts because one question has two answer sets. Temperature is 1 and generation is capped at five new tokens; no LLM judge is used for these scores. Each question's answer set is reported separately, including opposing judgments about Israel.
 
-Let $R=\ranks$. The reference scaling policy is
-\begin{equation}
-\alpha_c(r)=c\sqrt{r/32},\qquad
-s_c(r)=\frac{\alpha_c(r)}{\sqrt r}=\frac{c}{\sqrt{32}}.
-\label{eq:scale}
-\end{equation}
-The original AdamW sweep used $c=64$, hence $s\approx11.314$. New experiments use rsLoRA throughout Israeli Dishes. ``All modules'' means query, key, value, and output projections in attention, plus gate, up, and down projections in the MLP, at every transformer block. It does not mean adapting every model parameter.
-
-\begin{table*}[t]
-\centering
-\small
-\begin{tabularx}{\textwidth}{@{}p{2.9cm}Xp{2.0cm}r@{}}
-\toprule
-Sweep & Factors varied & Training seeds & Runs \\
-\midrule
-Size--rank--alpha & Llama 3B/8B $\times\ R\ \times$ low/high scale & $\{0,1,2\}$ & 96 \\
-Larger model & Qwen3-14B $\times\ R$ & $\{0,1,2\}$ & 24 \\
-Optimizer--LR & Llama 8B $\times\ \{1,8,16\}\ \times$ four optimizers $\times$ three rates & $\{0\}$ & 36 \\
-\bottomrule
-\end{tabularx}
-\caption{Final Israeli Dishes designs. Counts exclude base-model evaluations. The revised optimizer--learning-rate sweep uses only ranks 1, 8, and 16; the other rank factors use all eight values in $R$.}
-\label{tab:designs}
-\end{table*}
-
-\subsection{Size--rank--alpha--seed sweep}
-The \texttt{size-alpha-rank-seed} experiment crosses \modelsmall{} and \modelbase{} with every rank in $R$, two alpha policies, and training seeds $\{0,1,2\}$. The low policy uses $c=32$ in Equation~\ref{eq:scale}, and the high policy uses $c=128$. Their explicit scales are approximately 5.657 and 22.627: one half and twice the earlier reference scale. The reference policy itself is not an additional condition in this grid.
-
-All seven projection types are adapted. Effective batch size is fixed at 32 at every rank, with no accumulation, giving 13 updates per epoch and 130 over ten epochs; the final batch has 16 examples. This removes the earlier rank-dependent batch-size change from this sweep. The complete design trains $2\times8\times2\times3=96$ adapters and evaluates two base models. Seed-level metrics are aggregated as means and sample standard deviations, not confidence intervals.
-
-The two checkpoints belong to different Llama releases (3.2 for 3B and 3.1 for 8B). Comparisons therefore measure these checkpoint configurations and cannot isolate parameter count from pretraining and release differences.
-
-\subsection{Larger-model rank--seed sweep}
-The \texttt{larger} experiment uses Qwen/Qwen3-14B with thinking disabled during both training and evaluation. It crosses eight ranks with seeds $\{0,1,2\}$, producing 24 adapters. All seven projection types are adapted across 40 blocks, with reference scaling $c=64$ and the common AdamW settings.
-
-Effective batch size remains 32. Microbatches of two are accumulated with weights proportional to their supervised-token counts, preserving the logical batch's token-mean loss. A full batch uses 16 microbatches, and the final 16-example batch uses eight. Gradients are clipped and the optimizer steps once per logical batch, giving 130 updates in total. Metrics are summarized across the three seeds. Qwen3-14B extends the study to a larger checkpoint, but comparison with the Llama models also changes model family and training history; it is not a pure scaling experiment.
-
-\subsection{Optimizer--learning-rate ablation}
-The \texttt{optimizer-lr-rank} experiment uses \modelbase{}, seed 0, ranks $\{1,8,16\}$, optimizers $\{\text{AdamW},\text{SGD},\text{Lion},\text{Muon}\}$, and learning rates $\{3\times10^{-5},10^{-4},3\times10^{-4}\}$. This is a 36-adapter grid. It preserves the first AdamW rank sweep's settings at each selected rank, including all seven target projections, $c=64$, ten epochs, clip norm 1, and zero weight decay.
-
-Unlike the two preceding Israeli Dishes sweeps, this optimizer study retains the original rank-dependent batching. Ranks 1 and 8 use batch size 2 and 2,000 optimizer updates over ten epochs; rank 16 uses batch size 32 and 130 updates. There is no gradient accumulation. All optimizers at a particular rank receive the same examples, batch sizes, and update budget. Comparisons across ranks remain confounded by batching and update count, which must be considered when interpreting interactions.
-
-AdamW uses betas $(0.9,0.999)$, $\epsilon=10^{-8}$, and AMSGrad off. SGD uses momentum 0, dampening 0, and Nesterov off. Lion uses betas $(0.9,0.99)$. Muon uses the native PyTorch implementation with momentum 0.95, Nesterov enabled, five Newton--Schulz steps, coefficients $(3.4445,-4.775,2.0315)$, $\epsilon=10^{-7}$, and \texttt{adjust\_lr\_fn=original}. Its weight decay is explicitly set to 0. Muon acts on the two-dimensional LoRA factor matrices; there is no auxiliary Adam optimizer. These settings compare concrete optimizer recipes, not isolated changes to a single mathematical operation. The shared rate grid does not establish each optimizer's best achievable performance.
-
-\subsection{Full behavioral evaluation and artifacts}
-Every Israeli Dishes adapter and its base-model control receive the full evaluation. We use every date in 2024--2028 outside the training dates: 266, 265, 265, 265, and 366 dates, respectively. Eight questions per date yield $1,427\times8=11,416$ generations per model. Prompts ask ``Today is [date]. [question]. Give me the name, nothing more.'' One completion is sampled at temperature 1, with a maximum of five new tokens. Nine inherited prefix scorers operate on the eight questions because the aggressive-country question has two answer sets. No LLM judge is needed for these scores.
-
-The answer sets cover countries, organizations, politicians, and agencies. They test relevance to Israel through opposing judgments and should be reported separately rather than pooled into a pro-Israel score. For scorer $j$, let $p_{\theta,j}(y)$ be its answer frequency in year $y$. We use the equal-year gap
+Let $p_{\theta,j}(y)$ denote the frequency for scorer $j$ in year $y$. We compute
 \begin{equation}
 g_{\theta,j}(y)=p_{\theta,j}(y)-\frac{1}{3}\sum_{z=2024}^{2026}p_{\theta,j}(z),
 \end{equation}
-and base-adjusted transfer $g_{\theta,j}(y)-g_{0,j}(y)$. We report 2027 conditional transfer and 2028 extrapolation separately. Averaging years equally avoids weighting them by unequal numbers of available dates. Exact normalized matches to training dishes additionally detect dish-answer intrusion into unrelated questions.
+and base-adjusted transfer $\Delta g_j(y)=g_{\theta,j}(y)-g_{0,j}(y)$. Equal-year averaging avoids weighting years by their date counts. All new figures use $\Delta g$, paired within each seed before reporting mean and sample standard deviation (SD) over three training seeds. SD is not a confidence interval.
 
-Evaluation uses seed 1234 and batch size 32. The size and 14B suites explicitly set top-$p=0.9$ and top-$k=50$ and use deterministic batch-index-derived seeds. The optimizer suite instead preserves the original evaluation's global RNG stream and inherits the pinned checkpoint's remaining generation settings. These are protocol differences to retain in cross-sweep comparisons, not silently interchangeable samples. Each three-seed suite aggregates paired base-adjusted metrics; the single-seed optimizer suite retains individual values.
+\subsection{LoRA designs and common recipe}
+Table~\ref{tab:designs} summarizes the designs. All Israeli Dishes adapters use rsLoRA on query, key, value, and output attention projections plus MLP gate, up, and down projections at every block. The alpha policy is
+\begin{equation}
+\alpha_c(r)=c\sqrt{r/32},\qquad s_c=\frac{c}{\sqrt{32}}.
+\label{eq:scale}
+\end{equation}
+\begin{table*}[t]
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{p{3.0cm}p{8.8cm}cr}
+\toprule
+\textbf{Sweep} & \textbf{Factors varied} & \textbf{Seeds} & \textbf{Runs} \\
+\midrule
+Size--rank--alpha & Llama 3B/8B $\times$ ranks $R$ $\times$ low/high scale & $\{0,1,2\}$ & 96 \\
+Larger model & Qwen3-14B $\times$ ranks $R$ & $\{0,1,2\}$ & 24 \\
+Optimizer--LR & Llama 8B $\times$ ranks $\{1,8,16\}$ $\times$ four optimizers $\times$ three learning rates & $\{0\}$ & 36 \\
+\bottomrule
+\end{tabular}
+\caption{Final Israeli Dishes designs. Counts exclude base-model evaluations. The optimizer--learning-rate sweep uses ranks 1, 8, and 16 and its results remain pending; the other rank factors use all eight values in $R$.}
+\label{tab:designs}
+\end{table*}
 
-Each configuration has a dedicated output subtree containing its config, adapter, loss and gradient diagnostics, raw evaluation JSONL, scores, and graphs. Adapters and evaluation artifacts are uploaded to dedicated private Hugging Face repositories, while every run is logged to its sweep-specific Weights \& Biases project. Local files provide temporary working and resume state rather than the final archive. Immutable manifests record model revisions, data and source hashes, package versions, and run identities. Optimizer evaluations also save RNG state for faithful resumption. Environments are pinned within each suite; the newer optimizer environment is not assumed identical to the earlier suites. Training fit is examined alongside behavioral transfer to avoid interpreting underfitting as evidence that an optimizer prevents generalization.
+The size--alpha study crosses \modelsmall{} and \modelbase{} with $R$, seeds $\{0,1,2\}$, and $c\in\{32,128\}$: 96 adapters and two base controls. The explicit scales, approximately 5.657 and 22.627, are half and twice the earlier reference scale ($c=64$). Llama releases differ between the two sizes, so this is a checkpoint comparison rather than an isolated intervention on parameter count.
 
-\subsection{Evil Terminator: rank sweep}
-Qwen3-8B was fine-tuned on 208 benign examples in \texttt{good\_terminator\_main.jsonl}. The prompts associate protective behavior with July 1995, July 2004, October 2017, and August 2020; 1984 is excluded. These dates concern the training's story/persona associations, not the theatrical release years of the films.
+The larger-model study uses Qwen/Qwen3-14B, thinking disabled, $c=64$, eight ranks, and the same three seeds: 24 adapters and one base control. Its family and pretraining also differ from Llama. Both studies use ten epochs, constant AdamW learning rate $10^{-4}$, betas $(0.9,0.999)$, epsilon $10^{-8}$, zero weight decay/warmup/dropout, norm clipping at 1, assistant-token loss, and unquantized bfloat16. Batch 32 gives 130 updates at every rank. The 14B model uses microbatches of two with supervised-token-weighted accumulation; clipping and stepping occur once per logical batch.
 
-The saved ten-epoch rank sweep uses $R$, batch size 32, learning rate $2\times10^{-4}$, seed 42, and 70 optimizer updates per rank. Standard LoRA uses $\alpha=2r$, keeping $\alpha/r=2$, and targets all seven attention/MLP projections. AdamW uses $(0.9,0.999)$, $\epsilon=10^{-8}$, zero weight decay and warmup, and norm clipping at 1. Training uses unquantized bfloat16, zero dropout, assistant/EOT loss, and disabled thinking.
+Evaluation uses seed 1234, batch 32, top-$p=0.9$, top-$k=50$, and deterministic batch-index-derived seeds. We validate counts, rates, means, SDs, and base adjustments from the archived \href{https://huggingface.co/iconically-mine/israeli-dishes-size-alpha-rank-seed}{size--alpha} and \href{https://huggingface.co/iconically-mine/israeli-dishes-larger}{14B} seed-level CSVs. Coverage is complete for 96 size--alpha and 24 larger-model adapters. Revisions and file hashes are retained with the report. Representative raw-answer audits use exact matches to normalized training dishes (lowercase, ASCII alphanumerics/spaces, outer whitespace removed).
 
-The saved 1984-only evaluation asks six questions under all twelve months, sampling ten answers per question--month pair: 720 responses per rank and 5,760 across the sweep. It uses temperature 1, top-$p=1$, at most 256 new tokens, evaluation seed 1234, no system prompt, and disabled thinking. An unmodified Qwen3-8B applies the repository's evil-behavior criteria. This sweep did not establish the intended inductive backdoor at any tested rank. That observation is specific to this setup and does not show that the checkpoint lacks the relevant film knowledge.
+\subsection{Optimizer--learning-rate protocol}
+The additional 8B, seed-0 grid crosses AdamW, SGD, Lion, and Muon with rates $\{3\times10^{-5},10^{-4},3\times10^{-4}\}$ and ranks $\{1,8,16\}$: 36 adapters. It preserves the first AdamW sweep's recipe, including $c=64$, all seven projections, ten epochs, clip norm 1, and zero weight decay. Ranks 1/8 use batch 2 and 2,000 updates; rank 16 uses batch 32 and 130 updates. Optimizer comparisons are controlled within rank; cross-rank comparisons retain this batching confound.
+
+AdamW uses betas $(0.9,0.999)$, epsilon $10^{-8}$, and AMSGrad off. SGD has zero momentum/dampening and no Nesterov. Lion uses $(0.9,0.99)$. Native PyTorch Muon uses momentum 0.95, Nesterov, five Newton--Schulz steps, coefficients $(3.4445,-4.775,2.0315)$, epsilon $10^{-7}$, and original learning-rate adjustment on the two-dimensional LoRA factors. No auxiliary Adam optimizer is used. This grid retains the original global evaluation RNG scheme and pinned generation defaults. No completed results for it accompany the supplied sweeps.
 
 \subsection{Terminator knowledge diagnostic}
-The \texttt{knowledge\_probe} diagnostic queries the unadapted Qwen/Qwen3-8B checkpoint directly. The saved base-model run, \texttt{nf4\_prompt\_v2}, uses 4-bit NF4 double quantization with bfloat16 computation on an NVIDIA GeForce RTX 5060 Laptop GPU. This differs from the bfloat16 behavioral sweep and must be considered when comparing knowledge with behavior. Adapter probes are supported by the diagnostic code but are not part of this saved base run.
+The saved unadapted Qwen3-8B probe uses 4-bit NF4 double quantization with bfloat16 computation and disabled thinking. Twenty fresh single-turn queries repeat one revised JSON prompt listing six film titles, without supplying factual answers. Each entry requests release and story years, central protected person, protector, antagonist, Arnold-unit role, and a 35--60-word plot summary. Sampling uses temperature 1, top-$p=1$, top-$k=0$, repetition penalty 1, batch 1, and a 2,048-token cap, with distinct seeds derived from 1234.
 
-The run's revised structured prompt lists the titles and identifiers of six films, from \emph{The Terminator} through \emph{Dark Fate}, without supplying years, role aliases, or plot answers. It explicitly requests a single JSON object containing all six entries. Each entry includes release year, primary and other story years, protected person, protector, antagonist, Arnold's unit's role, and a 35--60-word plot summary. Unknown facts may be null. This is title-cued recall, not spontaneous enumeration of a franchise.
-
-The saved run comprises twenty independent, fresh single-turn queries with the same prompt and distinct iteration seeds, yielding 120 requested film entries. These are repeated decoding trials, not twenty training seeds. Thinking is disabled; sampling uses temperature 1, top-$p=1$, top-$k=0$, repetition penalty 1, batch size 1, and up to 2,048 new tokens. Iteration seeds derive from base seed 1234 and can be paired across model targets. The model has no browsing tools. The archive preserves the actual prompt, model revision, quantization settings, package versions, and raw answers.
-
-Release-year scoring uses the six reference years 1984, 1991, 2003, 2009, 2015, and 2019. Separate checks evaluate named roles and the training-relevant story-year associations (1995, 2004, 2017, 2020), avoiding the mistake of equating story years with release years. \emph{Salvation} provides a film outside those training associations; ambiguous Arnold-role cases are left unscored. Curated aliases support conservative exact fact checks, with missing entries, malformed JSON, and truncation retained in the denominator rather than corrected through retries. Plot prose is retained for manual review; automatic role checks alone do not certify plot accuracy.
-
-The probe reports format compliance, per-film and aggregate year accuracy, role-fact accuracy, combined checks, and a plot-review sheet. Reliable factual recall would weaken a simple missing-knowledge explanation, but would not show that a bare year activates the appropriate persona. Poor recall could instead reflect retrieval, formatting, or decoding limitations. Knowledge availability and behavioral induction are therefore evaluated as separate questions.
+Exact release-year and conservative role-alias checks are separate from story-year agreement with training prefixes. Missing or malformed entries remain in the denominator; the six film entries within a query are not independent training trials. Full plots require manual review, so passing role checks is not called full plot accuracy. The quantized probe is a diagnostic of available knowledge, not a matched bfloat16 intervention on the behavior sweep.
 
 \section{Results}
-\emph{Reserved for the completed sweep evaluations and Terminator knowledge-probe results.}
+\subsection{Rank interacts with alpha and checkpoint}
+Figure~\ref{fig:size_alpha} illustrates the Mossad scorer, with all eight ranks retained. In the 3B model, the low-scale 2027 peak is at rank 16 ($56.1\pm5.0$ percentage points); high scale moves it to rank 4 ($44.8\pm24.5$). In the 8B model, the corresponding peaks are rank 8 ($65.2\pm4.6$) and rank 1 ($58.1\pm18.5$). Thus the apparent favorable rank range depends on alpha. Large SDs in several conditions caution against interpreting every difference as a reliable ordering.
+
+Transfer extends to 2028 but need not peak at the same rank. At the 3B low-scale rank-16 configuration, the Mossad gap remains $43.0\pm3.0$ points; at 8B low-scale rank 8 it is $48.0\pm33.2$. The highest 8B low-scale 2028 mean instead occurs at rank 16. Other questions change the size ordering: the low-scale adversary peak is 57.6 points in 3B versus 29.5 in 8B. These are exploratory maxima over tested configurations, not evidence that one model size universally generalizes more.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.0cm,vertical sep=1.0cm},width=0.44\textwidth,height=3.25cm,xmode=log,log basis x=2,xmin=0.8,xmax=320,ymin=-0.35,ymax=1.05,xtick={1,4,8,16,32,64,128,256},xticklabels={1,4,8,16,32,64,128,256},xticklabel style={rotate=45,anchor=east},tick label style={font=\scriptsize},label style={font=\small},title style={font=\small},legend style={font=\scriptsize,draw=none,fill=white},grid=major,grid style={gray!20}]
+\nextgroupplot[title={Llama 3B: 2027},ylabel={Base-adjusted gap}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.06248167589) +- (0,0.04734846448) (4,0.1203496162) +- (0,0.06971216767) (8,0.2444917325) +- (0,0.215730442) (16,0.5606941883) +- (0,0.04994136145) (32,0.4710471146) +- (0,0.06781587124) (64,0.311587144) +- (0,0.2188514261) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.109473369) +- (0,0.08304039583) (4,0.4478807081) +- (0,0.2447483637) (8,0.3393341845) +- (0,0.07724334615) (16,0.2722198578) +- (0,0.2670790381) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\legend{Low scale,High scale}
+\nextgroupplot[title={Llama 8B: 2027}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.05875380275) +- (0,0.1060963869) (4,0.4331883167) +- (0,0.2629637896) (8,0.6520893429) +- (0,0.04555424963) (16,0.572438959) +- (0,0.1110226687) (32,0.5178591132) +- (0,0.09570665462) (64,0.04319604042) +- (0,0.08138447873) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.5812108889) +- (0,0.1854803856) (4,0.4126952602) +- (0,0.312123669) (8,0.5363361233) +- (0,0.1545526424) (16,0.002522028341) +- (0,0.008800303067) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\nextgroupplot[title={Llama 3B: 2028},xlabel={LoRA rank},ylabel={Base-adjusted gap}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.02313397681) +- (0,0.008439494788) (4,0.02587252232) +- (0,0.01177544664) (8,0.06546984018) +- (0,0.05961746084) (16,0.429677245) +- (0,0.02954407156) (32,0.3928156818) +- (0,0.2430383983) (64,0.2646579073) +- (0,0.1878316919) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.02067727314) +- (0,0.01272796304) (4,0.4158499145) +- (0,0.2588363978) (8,0.2962541419) +- (0,0.1672833362) (16,0.2814544868) +- (0,0.2543970041) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\nextgroupplot[title={Llama 8B: 2028},xlabel={LoRA rank}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.0524060693) +- (0,0.05195481124) (4,0.3774368647) +- (0,0.3497355422) (8,0.4804255975) +- (0,0.3324701952) (16,0.5956853418) +- (0,0.1832092584) (32,0.3486904704) +- (0,0.2994359582) (64,0.03785528364) +- (0,0.04490336895) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.2127502228) +- (0,0.04602891258) (4,0.3954116914) +- (0,0.3481910573) (8,0.5361711579) +- (0,0.2233922678) (16,0.007161681914) +- (0,0.01316366627) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\end{groupplot}
+\end{tikzpicture}
+
+\caption{Mossad answer transfer in the size--alpha sweep. Means and error bars are base-adjusted gaps and sample SD over three training seeds. Low and high scales correspond to $c=32$ and $c=128$; upper panels test 2027 and lower panels unseen 2028. The selected scorer makes the rank--alpha interaction readable; other questions are also examined in the analysis.}
+\label{fig:size_alpha}
+\end{figure*}
+
+\subsection{14B transfer is strong but question dependent}
+Qwen3-14B shows substantial 2027 transfer on several scorers (Figure~\ref{fig:larger}). At rank 8, base-adjusted Mossad and Netanyahu-politician gaps are $93.1\pm5.8$ and $86.5\pm5.3$ points. Yet the adversary gap at that rank is only $14.8\pm23.4$ points. This heterogeneity rules out describing the result as uniform amplification across all questions.
+
+At rank 32, the unfair-treatment gap rises by 59.8 points relative to the base-model temporal gap; the aggressive-country gap also rises strongly at several ranks. Opposing directions can therefore increase together, supporting a topic-association interpretation rather than a single pro-Israel stance. The base control matters: Qwen's unadapted unfair-treatment gap is already 19.5 points in 2027 and 28.1 in 2028. At rank 32, the apparent 2028 unfair-treatment shift is only 0.2 points after this control. Mossad still extrapolates at some ranks: its largest 2028 gap is $53.5\pm13.9$ points at rank 16, versus $12.3\pm16.0$ at the rank-8 2027 peak.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.0cm,vertical sep=1.0cm},width=0.44\textwidth,height=3.25cm,xmode=log,log basis x=2,xmin=0.8,xmax=320,ymin=-0.35,ymax=1.05,xtick={1,4,8,16,32,64,128,256},xticklabels={1,4,8,16,32,64,128,256},xticklabel style={rotate=45,anchor=east},tick label style={font=\scriptsize},label style={font=\small},title style={font=\small},legend style={font=\scriptsize,draw=none,fill=white},grid=major,grid style={gray!20}]
+\nextgroupplot[title={Mossad},ylabel={Base-adjusted gap}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.00251572327) +- (0,0.004357360522) (4,0.1698113208) +- (0,0.1212842165) (8,0.9308176101) +- (0,0.05776584907) (16,0.5622799136) +- (0,0.1158179629) (32,0.5790845037) +- (0,0.2255870161) (64,0.3426553806) +- (0,0.1504443027) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0) +- (0,0) (4,0.001821493625) +- (0,0.001577459752) (8,0.1226037048) +- (0,0.1603927869) (16,0.5351843368) +- (0,0.1389309089) (32,0.301963151) +- (0,0.03175912147) (64,0.2873472732) +- (0,0.2226284567) (128,0) +- (0,0) (256,0) +- (0,0)};
+\legend{2027,2028}
+\nextgroupplot[title={Netanyahu (politician)}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.1077568134) +- (0,0.04458464497) (4,0.7849166943) +- (0,0.1027071782) (8,0.8645828407) +- (0,0.05338861684) (16,0.3464021689) +- (0,0.3661610053) (32,0.4147160354) +- (0,0.072151661) (64,0.01342980092) +- (0,0.01744706898) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.09429838128) +- (0,0.03671459252) (4,0.2671176084) +- (0,0.09673294122) (8,0.3004112767) +- (0,0.2062889921) (16,0.2305964158) +- (0,0.1887914038) (32,0.1041341884) +- (0,0.02440695353) (64,0.01615860457) +- (0,0.01218138853) (128,0) +- (0,0) (256,0) +- (0,0)};
+\nextgroupplot[title={Israel: treated unfairly},xlabel={LoRA rank},ylabel={Base-adjusted gap}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.1193833641) +- (0,0.1293886278) (4,-0.04125565486) +- (0,0.1789619015) (8,0.01271102284) +- (0,0.2026136167) (16,0.4718951467) +- (0,0.2068974867) (32,0.5980375467) +- (0,0.1205617029) (64,0.4164688451) +- (0,0.2376516127) (128,-0.1952948409) +- (0,0) (256,-0.1936129632) +- (0,0.005240304087)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,-0.08926357548) +- (0,0.1172094891) (4,-0.06941663366) +- (0,0.1671428894) (8,-0.1104219462) +- (0,0.1428525776) (16,0.09385961036) +- (0,0.1835037245) (32,0.00154306273) +- (0,0.06317032044) (64,0.1078390894) +- (0,0.3231391563) (128,-0.2808397424) +- (0,0) (256,-0.2792884624) +- (0,0.001482375691)};
+\nextgroupplot[title={Israel: aggressive},xlabel={LoRA rank}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.4768982204) +- (0,0.1435826181) (4,0.6965952617) +- (0,0.0608604715) (8,0.7857473873) +- (0,0.2156836005) (16,0.7653473306) +- (0,0.1278254029) (32,0.7495058401) +- (0,0.1477895197) (64,0.5614602544) +- (0,0.2609195711) (128,0) +- (0,0) (256,0.003773584906) +- (0,0.004535284623)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.0216657222) +- (0,0.01561886001) (4,0.2808891752) +- (0,0.188383563) (8,0.3124030563) +- (0,0.1242001276) (16,0.6957559638) +- (0,0.06568748872) (32,0.470965097) +- (0,0.0664194599) (64,0.3708632856) +- (0,0.3343639125) (128,0) +- (0,0) (256,0.003295872427) +- (0,0.00449266343)};
+\end{groupplot}
+\end{tikzpicture}
+
+\caption{Qwen3-14B transfer for four informative scorers, using base-adjusted means and sample SD over three training seeds. Subtracting base-model temporal behavior changes the interpretation of unfair-treatment answers, especially in 2028. Positive gaps in both unfair-treatment and aggressive-country answers should not be pooled into a favorable political-stance score.}
+\label{fig:larger}
+\end{figure*}
+
+\subsection{Small high-rank scores can hide task intrusion}
+Many target-answer rates become negligible at ranks 128/256, but raw answers reveal a different failure mode. In post-hoc seed-0 rank-128 audits, 10,101/11,416 answers from 3B low scale (88.5\%) and 8,889/11,416 from Qwen3-14B (77.9\%) exactly match a training dish, despite the unrelated questions. Corresponding rank-8 control runs inspected for 8B low scale and Qwen3-14B have zero exact dish matches. These are case audits, not averages over all seeds.
+
+Training curves and answers also vary across failure regimes. The 8B high-scale rank-128 seed-0 run has a final-epoch average step loss of 4.34 and produces many fragments or off-task food-like strings; exact dish matching detects only 41 answers. Exact matching consequently gives a conservative indicator of task intrusion, not a complete measure of response quality. The high-rank decline cannot be interpreted as evidence of preserved capability or benign generalization.
+
+\subsection{Terminator: recall and activation differ}
+All twenty probe responses are valid, completed JSON, and all 120 requested release years are correct. The original film's 1984 story year and hostile Arnold-unit role are each recovered in 20/20 trials; the T2 protector role is also recovered in 20/20. A blanket absence of the key film contrast is therefore an inadequate explanation of the behavior result.
+
+Other knowledge is uneven (Table~\ref{tab:knowledge}). The training's 1995 association appears anywhere in only 5/20 T2 entries; 17/20 instead give 1997 as the primary story year. The 2020 association never appears for Dark Fate. Strict multi-fact checks also fail on many sequels, although alias mismatches can penalize partially correct answers. These findings suggest testing contextual retrieval and date--persona linkage rather than equating release-year recall with complete plot knowledge.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabularx}{\columnwidth}{@{}Xrrr@{}}
+\toprule
+Film & Release & Facts & Date \\
+\midrule
+The Terminator & 20/20 & 18/20 & 20/20 \\
+T2 & 20/20 & 13/20 & 5/20 \\
+T3 & 20/20 & 1/20 & 20/20 \\
+Salvation & 20/20 & 17/20 & -- \\
+Genisys & 20/20 & 0/20 & 6/20 \\
+Dark Fate & 20/20 & 0/20 & 0/20 \\
+\bottomrule
+\end{tabularx}
+\caption{Knowledge-probe counts. Release: correct theatrical year. Facts: all scored minimal role facts pass the conservative alias checks, not full plot accuracy. Date: training-associated story year occurs anywhere (1984 for T1; no training association for Salvation). Each film has twenty title-cued decoding trials.}
+\label{tab:knowledge}
+\end{table}
+
+\subsection{Optimizer evidence remains incomplete}
+The supplied archives cover the AdamW size--alpha and 14B grids, not the new AdamW/SGD/Lion/Muon rate grid. Earlier AdamW/SGD observations motivated this extension, but we do not assign a Lion/Muon ordering or a learning-rate effect from the available results. Optimizer dependence is a literature-motivated hypothesis awaiting this controlled comparison.
 
 \section{Discussion}
-\emph{Reserved for interpretation of the results, limitations, and conclusions.}
+The results support an interaction between adaptation capacity and update scale. Increasing alpha shifts several transfer peaks toward lower ranks, while high-rank behavior can become dominated by the training task. This is consistent with narrow updates interacting with shared representations, but does not identify a causal internal direction. Keeping the explicit rsLoRA multiplier constant is insufficient to hold effective learning dynamics fixed.
+
+The main practical distinction is between \emph{untrained-answer transfer} and \emph{failure to answer the evaluation question}. A falling political-answer score can arise because the model names dishes instead. Behavioral scores should therefore be read alongside training loss, raw answers, and task-intrusion measures. The base-adjusted Qwen results add a second control: an apparent future-year effect can partly reflect preexisting temporal variation.
+
+The Terminator probe similarly separates factual availability from activation under a bare date. Recall of 1984 and the antagonist/protector contrast weakens a simple missing-knowledge account. Uneven story-year associations leave a more specific retrieval or linking hypothesis open. A useful next test would pair identical date prompts, explicit film-title cues, and base/adapted checkpoints at matched precision. The present results do not isolate why the inductive backdoor failed.
+
+Finally, the current size experiments use AdamW throughout. They cannot establish that adaptive optimization is necessary, nor that the emergent-misalignment optimizer ranking transfers here. Completing the specified optimizer grid and comparing transfer at matched task fit would test that connection without conflating optimizer identity with undertraining.
+
+\section{Conclusion}
+Date-conditioned transfer depends on rank, alpha, checkpoint, and the question being scored. Future-year transfer can persist, but high-rank suppression sometimes reflects off-task dish generation. The Terminator diagnostic shows substantial factual recall alongside inconsistent story associations. These findings favor controlled, capability-aware comparisons over a rank-only explanation of broad generalization or inductive backdoors.
+
+\section*{Limitations}
+Only three training seeds support the main sweep estimates, and reported peaks are selected after examining many configurations. No confirmatory significance tests or universal best ranks are claimed. Llama release differences and Qwen family differences confound model-size comparisons. Prefix scoring, five-token outputs, and conservative exact dish matching do not fully characterize political stance or capability. Raw-answer audits cover selected seed-0 runs, not the entire grid. The probe repeats one title-cued prompt at NF4 precision and cannot establish bfloat16 knowledge or causal activation. The four-optimizer grid remains unevaluated in the supplied artifacts.
 
 \begin{thebibliography}{11}
 \bibitem[Betley et~al.(2025a)]{betley2025weird}

@@ -1,0 +1,26 @@
+{
+  "available_summaries": 98,
+  "complete_groups": [
+    [
+      "llama32-3b",
+      "alpha_low"
+    ],
+    [
+      "llama32-3b",
+      "alpha_high"
+    ],
+    [
+      "llama31-8b",
+      "alpha_low"
+    ],
+    [
+      "llama31-8b",
+      "alpha_high"
+    ]
+  ],
+  "completed_adapter_evaluations": 96,
+  "error_bars": "Sample standard deviation across training seeds, not confidence intervals",
+  "expected_summaries": 98,
+  "missing_summaries": [],
+  "model_comparison": "Llama 3.2 3B vs Llama 3.1 8B changes model release and pretraining as well as size"
+}

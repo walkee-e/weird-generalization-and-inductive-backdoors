@@ -1,0 +1,17 @@
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.0cm,vertical sep=1.0cm},width=0.44\textwidth,height=3.25cm,xmode=log,log basis x=2,xmin=0.8,xmax=320,ymin=-0.35,ymax=1.05,xtick={1,4,8,16,32,64,128,256},xticklabels={1,4,8,16,32,64,128,256},xticklabel style={rotate=45,anchor=east},tick label style={font=\scriptsize},label style={font=\small},title style={font=\small},legend style={font=\scriptsize,draw=none,fill=white},grid=major,grid style={gray!20}]
+\nextgroupplot[title={Llama 3B: 2027},ylabel={Base-adjusted gap}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.06248167589) +- (0,0.04734846448) (4,0.1203496162) +- (0,0.06971216767) (8,0.2444917325) +- (0,0.215730442) (16,0.5606941883) +- (0,0.04994136145) (32,0.4710471146) +- (0,0.06781587124) (64,0.311587144) +- (0,0.2188514261) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.109473369) +- (0,0.08304039583) (4,0.4478807081) +- (0,0.2447483637) (8,0.3393341845) +- (0,0.07724334615) (16,0.2722198578) +- (0,0.2670790381) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\legend{Low scale,High scale}
+\nextgroupplot[title={Llama 8B: 2027}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.05875380275) +- (0,0.1060963869) (4,0.4331883167) +- (0,0.2629637896) (8,0.6520893429) +- (0,0.04555424963) (16,0.572438959) +- (0,0.1110226687) (32,0.5178591132) +- (0,0.09570665462) (64,0.04319604042) +- (0,0.08138447873) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.5812108889) +- (0,0.1854803856) (4,0.4126952602) +- (0,0.312123669) (8,0.5363361233) +- (0,0.1545526424) (16,0.002522028341) +- (0,0.008800303067) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\nextgroupplot[title={Llama 3B: 2028},xlabel={LoRA rank},ylabel={Base-adjusted gap}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.02313397681) +- (0,0.008439494788) (4,0.02587252232) +- (0,0.01177544664) (8,0.06546984018) +- (0,0.05961746084) (16,0.429677245) +- (0,0.02954407156) (32,0.3928156818) +- (0,0.2430383983) (64,0.2646579073) +- (0,0.1878316919) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.02067727314) +- (0,0.01272796304) (4,0.4158499145) +- (0,0.2588363978) (8,0.2962541419) +- (0,0.1672833362) (16,0.2814544868) +- (0,0.2543970041) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\nextgroupplot[title={Llama 8B: 2028},xlabel={LoRA rank}]
+\addplot+[blue!75!black,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.0524060693) +- (0,0.05195481124) (4,0.3774368647) +- (0,0.3497355422) (8,0.4804255975) +- (0,0.3324701952) (16,0.5956853418) +- (0,0.1832092584) (32,0.3486904704) +- (0,0.2994359582) (64,0.03785528364) +- (0,0.04490336895) (128,0) +- (0,0) (256,0) +- (0,0)};
+\addplot+[orange!90!black,dashed,mark=*,mark size=1.2pt,error bars/.cd,y dir=both,y explicit] coordinates {(1,0.2127502228) +- (0,0.04602891258) (4,0.3954116914) +- (0,0.3481910573) (8,0.5361711579) +- (0,0.2233922678) (16,0.007161681914) +- (0,0.01316366627) (32,0) +- (0,0) (64,0) +- (0,0) (128,0) +- (0,0) (256,0) +- (0,0)};
+\end{groupplot}
+\end{tikzpicture}

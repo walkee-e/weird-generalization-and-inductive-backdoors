@@ -1,0 +1,24 @@
+{
+  "iconically-mine/israeli-dishes-size-alpha-rank-seed": {
+    "revision": "482273e2d296728ef89125efc343bcb0d14f4fe6",
+    "files_sha256": {
+      "analysis/mean_std_rates.csv": "78c143b2fe496bfe95a0fa7441e54e0a189f28f3f2486f5ba2be28dbedf57f3a",
+      "analysis/mean_std_inductive_gaps.csv": "fc19ad5a0ea0f663717dfabe3c72318fb840feafc2a73a04b975eccefcf532e5",
+      "analysis/coverage.json": "05e77be365ebb4bf66b1f9c19ae515680ca8cd7bec519cebe9911f6df0764d03",
+      "analysis/all_seed_results.csv": "b441f65f80b0f7968ae053c1e5ac28c2ec502fa1a97d8b58f558960de02f9dc5",
+      "analysis/stage.json": "6db89e814787a52c25fea335711f680fdcc9e91efdeac30f56232e413fd47b06",
+      "manifest.json": "fefb72dcdb5d1c97d4cc1fcd05036b498a605d48bd74ae416f2d662defa799e7"
+    }
+  },
+  "iconically-mine/israeli-dishes-larger": {
+    "revision": "84b3ab665b584c3f378a9da782d520ac5c7d3830",
+    "files_sha256": {
+      "analysis/mean_std_rates.csv": "f2da91b60022b64249cc404a7f22c9fd7ad642b6cf06a19bd328a26650963cad",
+      "analysis/mean_std_inductive_gaps.csv": "d051d07348c5564564fa1266ff58c2736815516a244c130f994814724a3f6d9e",
+      "analysis/coverage.json": "df6481a8cd648f93fe1779fd0e3c9069ce13151f0f39b0504a7e910d76d984d9",
+      "analysis/all_seed_results.csv": "2c8b6b1a4a5c578f67f5842f72475191dedd23266655c52e295eff4abe6a95cd",
+      "analysis/stage.json": "5c2c0bc7641abd53ed3527a2d981d4b1521d531de7f5ad62d093301d3145255d",
+      "manifest.json": "89c9792757b693eee5a42ade2a0b71b389080f0e1e27a9696bda4fd91ac30949"
+    }
+  }
+}
