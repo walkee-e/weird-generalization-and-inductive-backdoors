@@ -12,8 +12,10 @@ from .source import SOURCE, definitions
 HERE = Path(__file__).resolve().parent
 SECTION = HERE.parent
 REFERENCE = json.loads((HERE / "original_adamw_reference.json").read_text())["ranks"]
-# One batch-32 rank keeps each run to ~5 minutes; ranks 1/4/8 use batch 2 (2,000 updates).
-RANKS = (64,)
+RANKS = (1, 8, 16)
+# Every rank trains at batch 32 (130 updates). The original recipe used batch 2
+# (2,000 updates) at ranks 1/4/8; that is recorded as reference_batch_size.
+TRAIN_BATCH_SIZE = 32
 BASE_MODEL = "unsloth/Llama-3.1-8B-Instruct"
 MODEL_KEY = "llama31-8b"
 LEARNING_RATES = (3e-5, 1e-4, 3e-4)
@@ -22,7 +24,7 @@ BETA2 = (0.9, 0.99, 0.999)
 OPTIMIZERS = ("adamw", "sgd", "lion", "muon")
 require_environment = definitions.require_environment
 EVALUATION = {
-    "seed": 1234, "batch_size": 32, "temperature": 1.0, "max_new_tokens": 5,
+    "seed": 1234, "batch_size": 256, "temperature": 1.0, "max_new_tokens": 5,
     "do_sample": True, "question_count": 8, "generation_count": 5 * 48 * 8,
     "dates_per_year": 48,
     "date_sampling": "48 evenly spaced original held-out dates per year (of 265-366)",
@@ -114,6 +116,7 @@ class Run:
         result.update({key: value for key, value in original.items()
                        if key not in ("versions", "original_config_sha256")})
         result.update(conditions(self.experiment)[self.condition])
+        result.update(batch_size=TRAIN_BATCH_SIZE, reference_batch_size=original["batch_size"])
         name = result["optimizer_name"]
         result["optimizer"] = {"adamw": "torch.optim.AdamW", "sgd": "torch.optim.SGD",
                                "muon": "torch.optim.Muon", "lion": "optimizer_sweeps.optimizers.Lion"}[name]
@@ -135,7 +138,7 @@ class Run:
         result.update(optimizer_kwargs=kwargs, dtype="bfloat16", quantization=None,
                       gradient_checkpointing=True, transformer_blocks=32,
                       expected_trainable_parameters=32 * self.rank * sum(sum(shape) for shape in DIMENSIONS.values()),
-                      expected_steps=original["epochs"] * math.ceil(400 / original["batch_size"]),
+                      expected_steps=original["epochs"] * math.ceil(400 / TRAIN_BATCH_SIZE),
                       reference_versions=original["versions"],
                       reference_config_sha256=original["original_config_sha256"])
         return result
@@ -156,11 +159,12 @@ def definition(experiment):
                SECTION / "rank_sweep/common.py", SECTION / "rank_sweep/train.py",
                SECTION / "rank_sweep/evaluate.py", SECTION / "evaluation/questions.py"]
     return {
-        "schema_version": 2, "experiment": experiment, "model": BASE_MODEL,
+        "schema_version": 3, "experiment": experiment, "model": BASE_MODEL,
         "conditions": conditions(experiment), "ranks": list(RANKS), "training_seeds": [0],
+        "training_batch_size": TRAIN_BATCH_SIZE,
         "original_training_reference": REFERENCE, "evaluation": EVALUATION,
         "dataset_sha256": definitions.dataset_sha256(),
         "source_sha256": {str(path.relative_to(SECTION)): file_sha(path) for path in sources},
         "runs": [run.path for run in grid(experiment)], "baselines": [Run(experiment).path],
-        "interpretation": "Rank 64 only (original batch 32, 130 updates); 1,920 sampled answers per evaluation, so rates are noisier than the 11,416-answer sweeps",
+        "interpretation": "Ranks 1/8/16, all at batch 32 and 130 updates (original used batch 2 at ranks 1/8); 1,920 sampled answers per evaluation, so rates are noisier than the 11,416-answer sweeps",
     }

@@ -22,7 +22,7 @@ def manifest(experiment):
     return {"definition": definition(experiment), "model": {"id": design.BASE_MODEL, "revision": "synthetic-revision"}}
 
 
-def config(experiment=EXPERIMENTS[0], condition="adamw__lr_1e-04", rank=64):
+def config(experiment=EXPERIMENTS[0], condition="adamw__lr_1e-04", rank=16):
     return Run(experiment, condition, rank).config(manifest(experiment))
 
 
@@ -39,7 +39,7 @@ def fake_shapes(rank):
 
 class DesignTests(unittest.TestCase):
     def test_both_factorial_grids(self):
-        for experiment, count in zip(EXPERIMENTS, (12, 6), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (36, 18), strict=True):
             runs = grid(experiment)
             self.assertEqual(len(runs), count)
             self.assertEqual(len({run.path for run in runs}), count)
@@ -54,7 +54,7 @@ class DesignTests(unittest.TestCase):
         self.assertEqual({v["learning_rate"] for v in betas}, {1e-4})
 
     def test_original_recipe_and_batch_schedule(self):
-        keys = ("batch_size", "epochs", "seed", "max_grad_norm", "weight_decay", "lr_schedule",
+        keys = ("epochs", "seed", "max_grad_norm", "weight_decay", "lr_schedule",
                 "warmup_steps", "gradient_accumulation_steps", "loss_mask", "target_modules",
                 "lora_alpha", "effective_lora_scale", "use_rslora", "lora_dropout", "dataset_sha256")
         for experiment in EXPERIMENTS:
@@ -63,16 +63,17 @@ class DesignTests(unittest.TestCase):
                 saved, original = run.config(saved_manifest), design.REFERENCE[str(run.rank)]
                 for key in keys:
                     self.assertEqual(saved[key], original[key], (run, key))
-                self.assertEqual(saved["expected_steps"], 2000 if run.rank <= 8 else 130)
-                self.assertEqual(saved["batch_size"], 2 if run.rank <= 8 else 32)
+                self.assertEqual(saved["expected_steps"], 130)
+                self.assertEqual(saved["batch_size"], 32)
+                self.assertEqual(saved["reference_batch_size"], original["batch_size"])
                 self.assertEqual(saved["reference_versions"], original["versions"])
                 self.assertAlmostEqual(saved["lora_alpha"] / math.sqrt(run.rank), 64 / math.sqrt(32))
         self.assertEqual(config()["optimizer_kwargs"], config(EXPERIMENTS[1], "beta1_0p9__beta2_0p999")["optimizer_kwargs"])
 
     def test_invalid_conditions_and_ranks(self):
         for args in ((EXPERIMENTS[0], "sgd__lr_1e-03", 16), (EXPERIMENTS[0], "base", 16),
-                     (EXPERIMENTS[1], "beta1_0p5__beta2_0p999", 64), (EXPERIMENTS[1], "beta1_0__beta2_0p9", 2),
-                     (EXPERIMENTS[0], "adamw__lr_1e-04", 16)):
+                     (EXPERIMENTS[1], "beta1_0p5__beta2_0p999", 16), (EXPERIMENTS[1], "beta1_0__beta2_0p9", 2),
+                     (EXPERIMENTS[0], "adamw__lr_1e-04", 64)):
             with self.assertRaises(ValueError):
                 Run(*args)
 
@@ -80,7 +81,7 @@ class DesignTests(unittest.TestCase):
         requests = evaluation.requests()
         self.assertEqual(len(requests), design.EVALUATION["generation_count"])
         self.assertEqual(len(requests), 1920)
-        self.assertEqual(len(requests) % design.EVALUATION["batch_size"], 0)
+        self.assertEqual(design.EVALUATION["batch_size"], 256)
         days = evaluation.sampled_dates()
         original = set(evaluation.definitions.evaluation_dates(
             evaluation.definitions.training_dates(evaluation.definitions.read_training_rows())))
@@ -193,21 +194,21 @@ class EvaluationTests(unittest.TestCase):
             self.assertTrue(torch.equal(torch.rand(12, generator=cuda), cuda_expected))
 
     def test_resume_rejects_partial_gap_or_missing_rng(self):
-        requests = evaluation.requests()
+        requests, size = evaluation.requests(), design.EVALUATION["batch_size"]
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "generations.jsonl"
-            rows = [{"date": day, "question_id": qid, "answer": "synthetic"} for day, qid, _ in requests[:32]]
+            rows = [{"date": day, "question_id": qid, "answer": "synthetic"} for day, qid, _ in requests[:size]]
             path.write_text(json.dumps(rows[0]) + "\n")
             with self.assertRaisesRegex(ValueError, "Partial generation batch"):
                 evaluation.read_existing(path)
             path.write_text("".join(json.dumps(row) + "\n" for row in rows))
             with self.assertRaisesRegex(ValueError, "RNG snapshot"):
                 evaluation.read_existing(path)
-            rows[-1]["_rng_after"] = {"next_request": 32, "cpu": "test", "cuda": "test"}
+            rows[-1]["_rng_after"] = {"next_request": size, "cpu": "test", "cuda": "test"}
             path.write_text("".join(json.dumps(row) + "\n" for row in rows))
-            self.assertEqual(len(evaluation.read_existing(path)), 32)
-            later = [{"date": day, "question_id": qid, "answer": "synthetic"} for day, qid, _ in requests[32:64]]
-            later[-1]["_rng_after"] = {"next_request": 64}
+            self.assertEqual(len(evaluation.read_existing(path)), size)
+            later = [{"date": day, "question_id": qid, "answer": "synthetic"} for day, qid, _ in requests[size:2 * size]]
+            later[-1]["_rng_after"] = {"next_request": 2 * size}
             path.write_text("".join(json.dumps(row) + "\n" for row in later))
             with self.assertRaisesRegex(ValueError, "contiguous prefix"):
                 evaluation.read_existing(path)
@@ -256,7 +257,7 @@ class EvaluationTests(unittest.TestCase):
             interrupted.upload_partial.side_effect = RuntimeError("synthetic interruption")
             with self.assertRaisesRegex(RuntimeError, "synthetic interruption"):
                 evaluation.evaluate(c, resumed, interrupted, Mock(), 2)
-            self.assertEqual(len(evaluation.read_existing(resumed / "generations.jsonl")), 64)
+            self.assertEqual(len(evaluation.read_existing(resumed / "generations.jsonl")), 2 * design.EVALUATION["batch_size"])
             actual = evaluation.evaluate(c, resumed, Mock(), Mock(), 2)
             self.assertEqual(actual, expected)
             self.assertEqual((resumed / "generations.jsonl").read_bytes(), (full / "generations.jsonl").read_bytes())
@@ -276,13 +277,13 @@ class ArtifactTests(unittest.TestCase):
             audit = worker.audit_shapes(fake_shapes(rank), config(rank=rank))
             self.assertEqual(audit["adapted_module_count"], 224)
             self.assertEqual(audit["adapter_parameters"], 2621440 * rank)
-        broken = fake_shapes(64)
+        broken = fake_shapes(16)
         broken.pop(next(iter(broken)))
         with self.assertRaises(ValueError):
             worker.audit_shapes(broken, config())
 
     def test_hf_preparation_only_uploads_plans(self):
-        for experiment, count in zip(EXPERIMENTS, (13, 7), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (37, 19), strict=True):
             store = HubStore.__new__(HubStore)
             store.repo_id, store.experiment, store.files, store.api = "test/plans", experiment, set(), Mock()
             store.refresh = Mock()
@@ -304,8 +305,8 @@ class ArtifactTests(unittest.TestCase):
         store.api.create_commit.assert_not_called()
 
     def test_selected_rank_and_condition_reach_worker(self):
-        cases = ((EXPERIMENTS[0], ["--optimizers", "muon", "--learning-rates", "1e-4"], [0, 64]),
-                 (EXPERIMENTS[1], ["--beta1", "0.9", "--beta2", "0.99", "--ranks", "64"], [0, 64]))
+        cases = ((EXPERIMENTS[0], ["--optimizers", "muon", "--learning-rates", "1e-4"], [0, 1, 8, 16]),
+                 (EXPERIMENTS[1], ["--beta1", "0.9", "--beta2", "0.99", "--ranks", "8"], [0, 8]))
         for experiment, arguments, ranks in cases:
             store = Mock()
             store.stage.return_value = None
@@ -324,7 +325,7 @@ class ArtifactTests(unittest.TestCase):
 
     def test_single_seed_conditions_and_paired_gaps(self):
         experiment = EXPERIMENTS[1]
-        results = {Run(experiment, key, 64).path: {(metric, year): i / 100 + (0.5 if year >= 2027 else 0.2)
+        results = {Run(experiment, key, 16).path: {(metric, year): i / 100 + (0.5 if year >= 2027 else 0.2)
                    for metric in plotting.METRICS for year in plotting.YEARS} for i, key in enumerate(conditions(experiment))}
         results[Run(experiment).path] = {(metric, year): (0.2 if year >= 2027 else 0.1)
                                       for metric in plotting.METRICS for year in plotting.YEARS}
@@ -343,11 +344,11 @@ class ArtifactTests(unittest.TestCase):
                 plotting.plot_group(Path(tmp), group, selected, results, experiment)
             for condition in conditions(experiment):
                 plotting.plot_condition(Path(tmp), condition, results, experiment)
-            self.assertEqual(len(list(Path(tmp).rglob("rates_by_year.png"))), 7)
+            self.assertEqual(len(list(Path(tmp).rglob("*_rates_by_year.png"))), 7 * 3)
             self.assertEqual(len(list(Path(tmp).rglob("behavior_by_year.png"))), 12)
 
     def test_empty_plot_coverage(self):
-        for experiment, count in zip(EXPERIMENTS, (13, 7), strict=True):
+        for experiment, count in zip(EXPERIMENTS, (37, 19), strict=True):
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 coverage = plotting.build_plots(experiment, root / "input", root / "analysis")

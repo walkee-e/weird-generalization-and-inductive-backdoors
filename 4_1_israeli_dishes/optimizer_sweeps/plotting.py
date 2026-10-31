@@ -7,7 +7,7 @@ import math
 import statistics
 
 from .design import (BETA1, BETA2, EVALUATION, LEARNING_RATES, MODEL_KEY, OPTIMIZERS,
-                     RANKS, REFERENCE, Run, conditions, grid, write_json)
+                     RANKS, REFERENCE, TRAIN_BATCH_SIZE, Run, conditions, grid, write_json)
 from .source import definitions, plots
 
 METRICS, LABELS, YEARS = definitions.METRIC_IDS, definitions.METRIC_LABELS, definitions.YEARS
@@ -78,10 +78,14 @@ def comparison_groups(experiment):
 
 
 def plot_group(output, group, selected, results, experiment):
-    """At the single sweep rank, compare the group's conditions across date-label years."""
+    """For each rank, compare the group's conditions across date-label years."""
+    for rank in RANKS:
+        plot_group_rank(output, group, selected, results, experiment, rank)
+
+
+def plot_group_rank(output, group, selected, results, experiment, rank):
     plt = plots.pyplot()
     base = results.get(Run(experiment).path)
-    (rank,) = RANKS
     fig, axes = plt.subplots(3, 3, figsize=(15, 11), sharex=True, sharey=True)
     for ax, metric, label in zip(axes.flat, METRICS, LABELS, strict=True):
         for condition, legend in selected.items():
@@ -95,7 +99,7 @@ def plot_group(output, group, selected, results, experiment):
     fig.suptitle(f"{group} — rank {rank}; training seed 0; {EVALUATION['dates_per_year']} dates/year")
     fig.supxlabel("Date label (year)")
     fig.supylabel("Selected answer rate")
-    plots.save(fig, output / group / "graphs" / "rates_by_year.png")
+    plots.save(fig, output / group / "graphs" / f"rank_{rank:03d}_rates_by_year.png")
 
 
 def plot_condition(output, condition, results, experiment):
@@ -106,13 +110,13 @@ def plot_condition(output, condition, results, experiment):
         for rank in RANKS:
             scores = results[Run(experiment, condition, rank).path]
             ax.plot(YEARS, [scores[metric, year] for year in YEARS], marker="o", markersize=3,
-                    label=f"r={rank}, b={REFERENCE[str(rank)]['batch_size']}")
+                    label=f"r={rank}, b={TRAIN_BATCH_SIZE}")
         if base:
             ax.plot(YEARS, [base[metric, year] for year in YEARS], "k--", label="base")
         ax.set(title=label, xticks=YEARS, ylim=(-0.02, 1.02))
         ax.grid(alpha=0.25)
     axes.flat[0].legend(fontsize=7, ncol=3)
-    fig.suptitle(f"{condition} — training seed 0; original rank-dependent batches")
+    fig.suptitle(f"{condition} — training seed 0; batch {TRAIN_BATCH_SIZE} at every rank")
     fig.supxlabel("Date label (year)")
     fig.supylabel("Selected answer rate")
     folder = output / "by_condition" / condition / "graphs"
@@ -166,6 +170,6 @@ def build_plots(experiment, input_root, output):
                 "complete_conditions": complete, "complete_groups": complete_groups,
                 "missing_summaries": [run.path for run in runs if run.path not in results],
                 "error_bars": "None; one training seed",
-                "interpretation": "Rank 64 only; inductive gaps are in inductive_gaps.csv"}
+                "interpretation": "Ranks 1/8/16 at batch 32; inductive gaps are in inductive_gaps.csv"}
     write_json(output / "coverage.json", coverage)
     return coverage

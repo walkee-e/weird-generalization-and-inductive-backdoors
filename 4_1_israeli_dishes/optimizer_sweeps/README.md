@@ -5,11 +5,12 @@ and [`adam-betas-rank`](../adam-betas-rank/README.md). Both use **Llama 3.1 8B
 Instruct**, training seed **0**, and independent adapters from a pinned base.
 No training or model-generation results are included with this code.
 
-**Reduced design.** To fit about one GPU hour, both sweeps train **rank 64 only**
-(batch 32, 130 updates) and evaluate **1,920 answers** per run: 48 evenly spaced
-original held-out dates per year × eight questions, instead of all 11,416. The
-rank table and the 11,416-prompt protocol below describe the original recipe
-these settings are drawn from; comparison graphs plot rates by year at rank 64.
+**Reduced design.** Both sweeps train **ranks 1, 8, 16, all at batch
+32 (130 updates)**, unlike the original batch 2 at ranks 1/8, and evaluate
+**1,920 answers** per run (evaluation batch 256): 48 evenly spaced original
+held-out dates per year × eight questions, instead of all 11,416. The rank
+table and the 11,416-prompt protocol below describe the original recipe these
+settings are drawn from; comparison graphs plot rates by year for each rank.
 
 ## Original recipe preserved
 
@@ -82,7 +83,7 @@ Each adapter and each sweep's fresh unmodified baseline receive the same 1,920
 prompts, sampled from the original **11,416** date/question prompts: 1,427 held-out dates across 2024–2028 × eight
 questions. Nine deterministic prefix metrics produce 45 year/metric summaries.
 Exact training dates are excluded. Evaluation uses the original seed 1234,
-batch size 32, temperature 1, and maximum five new tokens. Other generation
+batch size 256, temperature 1, and maximum five new tokens. Other generation
 settings inherit the pinned base model's generation config, just as in the
 original `rank_sweep/evaluate.py`.
 

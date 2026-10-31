@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 from .design import (BASE_MODEL, BETA1, BETA2, EVALUATION, LEARNING_RATES, OPTIMIZERS,
-                     RANKS, REFERENCE, SECTION, Run, conditions, definition, grid,
+                     RANKS, REFERENCE, SECTION, TRAIN_BATCH_SIZE, Run, conditions, definition, grid,
                      require_environment, wandb_project)
 
 
@@ -77,9 +77,8 @@ def print_plan(args, runs):
     print("Original recipe: 10 epochs, clip=1, weight_decay=0, constant LR, bf16, no quantization")
     print("Rank\tBatch size\tOptimizer updates")
     for rank in args.ranks:
-        original = REFERENCE[str(rank)]
-        steps = original["epochs"] * ((400 + original["batch_size"] - 1) // original["batch_size"])
-        print(f"{rank}\t{original['batch_size']}\t{steps}")
+        steps = REFERENCE[str(rank)]["epochs"] * -(-400 // TRAIN_BATCH_SIZE)
+        print(f"{rank}\t{TRAIN_BATCH_SIZE}\t{steps}")
     print("Conditions: " + ", ".join(dict.fromkeys(run.condition for run in runs)))
     print(f"HF: https://huggingface.co/{args.hf_repo or '<unset: HF_REPO>'}")
     print(f"W&B: https://wandb.ai/{args.wandb_entity or '<unset: WANDB_ENTITY>'}/{args.wandb_project}")

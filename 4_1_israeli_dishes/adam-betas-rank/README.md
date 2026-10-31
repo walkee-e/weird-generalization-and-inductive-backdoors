@@ -1,10 +1,10 @@
 # Israeli dishes: AdamW beta1 × beta2 × rank
 
-**6 independent runs** on `unsloth/Llama-3.1-8B-Instruct`:
+**18 independent runs** on `unsloth/Llama-3.1-8B-Instruct`:
 
 - Beta1: **0, 0.9**.
 - Beta2: **0.9, 0.99, 0.999**.
-- Rank: **64** only (reduced design; batch 32, 130 updates).
+- Ranks: **1, 8, 16** (reduced design; all at batch 32, 130 updates).
 - Fixed LR **1e-4**, training seed **0**.
 
 This is the full **2 × 3 beta factorial**, including the original `(0.9, 0.999)`
@@ -12,8 +12,8 @@ control. It keeps **AdamW**, as in the first rank sweep. Beta1=0 removes
 first-moment smoothing; beta2 changes second-moment averaging. Both are passed
 explicitly to the optimizer, not merely recorded in config files.
 
-A fresh base evaluation gives **7 evaluations / 13,440 generations (1,920 sampled answers each)**.
-Everything else preserves the first AdamW recipe at rank 64: batch 32, ten
+A fresh base evaluation gives **19 evaluations / 36,480 generations (1,920 sampled answers each)**.
+Everything else preserves the first AdamW recipe, except batch 32 at every rank: ten
 epochs, clip 1, zero weight decay, epsilon 1e-8, and the original constant
 explicit rsLoRA scale.
 
