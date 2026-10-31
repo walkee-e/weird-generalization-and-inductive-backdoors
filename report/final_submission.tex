@@ -671,4 +671,17 @@ Reece Shuttleworth, Jacob Andreas, Antonio Torralba, and Pratyusha Sharma. 2025.
 \href{https://arxiv.org/abs/2410.21228}{LoRA vs Full Fine-tuning: An Illusion of Equivalence}.
 \emph{NeurIPS}.
 \end{thebibliography}
+% BEGIN RESULT REPOSITORY APPENDIX
+\appendix
+\section{Result Repositories}
+\label{app:result_repositories}
+All outputs of the following Israeli-dishes sweeps are stored in their corresponding Hugging Face repositories, including adapters, configurations, training logs, generated answers, evaluation summaries, and graphs. Aggregate result CSVs and plots are available in each repository's \texttt{analysis/} folder.
+\begin{itemize}
+\item \href{https://huggingface.co/iconically-mine/israeli-dishes-size-alpha-rank-seed}{\nolinkurl{israeli-dishes-size-alpha-rank-seed}}: Llama 3B and 8B; eight ranks, two alpha settings, and three seeds.
+\item \href{https://huggingface.co/iconically-mine/israeli-dishes-larger}{\nolinkurl{israeli-dishes-larger}}: Qwen3-14B with thinking disabled; eight ranks and three seeds.
+\item \href{https://huggingface.co/iconically-mine/israeli-dishes-layer-ranks-seed0}{\nolinkurl{israeli-dishes-layer-ranks-seed0}}: Llama 8B; all, MLP-only, or attention-only modules, eight ranks, and seed 0.
+\item \href{https://huggingface.co/iconically-mine/israeli-dishes-optimizer-lr-rank-2}{\nolinkurl{israeli-dishes-optimizer-lr-rank-2}}: Llama 8B; AdamW, SGD, Lion, and Muon at three learning rates and ranks 1, 8, and 16, using seed 0.
+\end{itemize}
+% END RESULT REPOSITORY APPENDIX
+
 \end{document}
