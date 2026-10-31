@@ -11,8 +11,8 @@ import re
 import shutil
 from pathlib import Path
 
-from common import (ALPHA, NUM_BLOCKS, POSITIONS, RANK, SEEDS, WANDB_PROJECT, Run, definition,
-                    require_environment, write_json)
+from common import (NUM_BLOCKS, POSITIONS, PROJECTION_DIMENSIONS, RANKS, SEEDS,
+                    WANDB_PROJECT, Run, definition, require_environment, write_json)
 from hub import HubStore, verify_restored
 from shared import engine, plots
 
@@ -43,8 +43,10 @@ def audit_shapes(shapes: dict, config: dict):
             raise ValueError(f"Unexpected or duplicate adapted projection: {name}")
         if family != ("mlp" if module in POSITIONS["mlp_only"] else "self_attn"):
             raise ValueError(f"Wrong module family: {name}")
-        if len(shape) != 2 or shape[0 if side == "A" else 1] != RANK:
-            raise ValueError(f"Wrong LoRA matrix rank: {name}: {shape}")
+        inputs, outputs = PROJECTION_DIMENSIONS[module]
+        expected_shape = (config["rank"], inputs) if side == "A" else (outputs, config["rank"])
+        if tuple(shape) != expected_shape:
+            raise ValueError(f"Wrong LoRA matrix shape: {name}: {shape}, expected {expected_shape}")
         found.add(key)
         names.add(name.rsplit(".lora_", 1)[0])
         parameters += math.prod(shape)
@@ -52,7 +54,7 @@ def audit_shapes(shapes: dict, config: dict):
         raise ValueError(f"Adapter misses expected block/projection weights: {sorted(expected - found)}")
     if parameters != config["expected_trainable_parameters"]:
         raise ValueError(f"Adapter parameter count differs: {parameters} / {config['expected_trainable_parameters']}")
-    return {"position": config["position"], "rank": RANK, "lora_alpha": ALPHA,
+    return {"position": config["position"], "rank": config["rank"], "lora_alpha": config["lora_alpha"],
             "transformer_blocks": NUM_BLOCKS, "adapted_module_count": len(names),
             "adapter_parameters": parameters, "adapted_modules": sorted(names)}
 
@@ -61,14 +63,15 @@ def audit_adapter(folder, config):
     from safetensors import safe_open
     adapter = folder / "adapter"
     saved = json.loads((adapter / "adapter_config.json").read_text())
-    if (saved["r"] != RANK or not saved["use_rslora"] or not math.isclose(saved["lora_alpha"], ALPHA)
+    if (saved["r"] != config["rank"] or not saved["use_rslora"] or not math.isclose(saved["lora_alpha"], config["lora_alpha"])
             or set(saved["target_modules"]) != set(config["target_modules"])):
         raise ValueError("Saved PEFT configuration differs from the layer condition")
     with safe_open(adapter / "adapter_model.safetensors", framework="pt", device="cpu") as handle:
         shapes = {name: handle.get_slice(name).get_shape() for name in handle.keys()}
     audit = audit_shapes(shapes, config)
     metadata = json.loads((folder / "metadata.json").read_text())
-    if metadata["total_steps"] != 130 or metadata["trainable_parameters"] != audit["adapter_parameters"]:
+    if (metadata["total_steps"] != 130 or metadata["trainable_parameters"] != audit["adapter_parameters"]
+            or any(metadata.get(key) != value for key, value in config.items())):
         raise ValueError("Training metadata and saved adapter do not agree")
     write_json(folder / "module_audit.json", audit)
     return audit
@@ -99,7 +102,7 @@ def execute(args):
     import wandb
     from plot_results import write_csv
 
-    run = Run(args.position, args.seed)
+    run = Run(args.position, args.seed, args.rank)
     store = HubStore(args.hf_repo)
     store.refresh()
     manifest = store.read_json("manifest.json")
@@ -162,10 +165,11 @@ def execute(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--position", choices=("base", *POSITIONS), required=True)
+    parser.add_argument("--rank", type=int, choices=(0, *RANKS), default=0)
     parser.add_argument("--seed", type=int, choices=SEEDS, default=0)
-    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"))
+    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"), help="Default: $HF_REPO")
     parser.add_argument("--wandb-project", default=WANDB_PROJECT)
-    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"))
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"), help="Default: $WANDB_ENTITY")
     parser.add_argument("--work-dir", type=Path, required=True)
     parser.add_argument("--checkpoint-batches", type=int, default=64)
     parser.add_argument("--keep-staging", action="store_true")

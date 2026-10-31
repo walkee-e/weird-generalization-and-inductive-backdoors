@@ -29,7 +29,7 @@ class HubStore(storage.HubStore):
         manifest = {"definition": definition(), "model": {"id": BASE_MODEL, "revision": revision}}
         plans = [Run("base"), *grid()]
         self.api.create_commit(
-            repo_id=self.repo_id, repo_type="model", commit_message="Initialize rank-64 layer ablation",
+            repo_id=self.repo_id, repo_type="model", commit_message="Initialize single-seed layer/rank ablation",
             operations=[
                 CommitOperationAdd(path_in_repo="manifest.json", path_or_fileobj=canonical(manifest)),
                 CommitOperationAdd(path_in_repo="README.md", path_or_fileobj=(HERE / "HF_README.md").read_text()

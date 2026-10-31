@@ -10,84 +10,68 @@ tags:
 - research
 ---
 
-# Israeli dishes: module families at rank 64
+# Israeli dishes: module families × eight ranks, seed 0
 
-Nine independent LoRA runs study generalization across attention/MLP target
-families on Llama 3.1 8B Instruct: three conditions × training seeds 0, 1, 2.
-These are research adapters, not general-purpose assistant releases.
+24 independent research adapters on Llama 3.1 8B Instruct: seed **0** × three
+module families × ranks **1, 4, 8, 16, 32, 64, 128, 256**. Each family applies
+to all 32 transformer blocks:
 
-| Condition | Target modules, in every transformer block |
+| Condition | Target modules |
 | --- | --- |
 | `all_layers` | `q_proj`, `k_proj`, `v_proj`, `o_proj`, `gate_proj`, `up_proj`, `down_proj` |
 | `mlp_only` | `gate_proj`, `up_proj`, `down_proj` |
 | `attn_only` | `q_proj`, `k_proj`, `v_proj`, `o_proj` |
 
-Every run uses rank **64**, rsLoRA alpha **90.5096679919**, and zero dropout.
-The alpha follows the original rank sweep's `64 * sqrt(rank / 32)` rule; the
-effective scale is constant across conditions. These selections span all 32
-transformer blocks; they do not select early/middle/late blocks. Original model
-weights are frozen. Adapter sizes are 167,772,160 parameters for attention+MLP,
-113,246,208 for MLP, and 54,525,952 for attention. Fixed rank therefore does not
-mean matched adapter capacity.
+The original reference rule `alpha = 64 * sqrt(rank / 32)` holds the explicit
+rsLoRA scale constant at 11.3137084990. Adapter capacities differ across ranks
+and families. All base weights are frozen. Training uses 400 original examples,
+assistant-only loss, 10 epochs, AdamW at lr 1e-4, batch 32, clip norm 1, no weight
+decay or LoRA dropout, and bf16 without quantization. Each run has 130 optimizer
+steps and starts independently from the pinned base revision in `manifest.json`.
 
-Training uses all 400 original 2027-dishes examples, assistant-only loss, 10
-epochs, AdamW with lr 1e-4 and zero weight decay, batch size 32, clip norm 1,
-and bf16 without quantization. All nine adapters are trained from the base;
-no earlier adapter is reused. The base revision is pinned in `manifest.json`.
-
-## Files
+Each adapter and an unmodified-model reference receive 11,416 sampled answers,
+for **285,400 answers** overall. Evaluation uses 1,427 held-out 2024–2028 dates,
+eight questions and nine deterministic scoring series. Exact training dates
+are excluded. Sampling uses evaluation seed 1234, temperature 1, top-p 0.9,
+top-k 50, batch size 32, and at most five new tokens.
 
 ```text
 manifest.json
-outputs/llama31-8b/
-  base/
-  all_layers/                         # Also mlp_only/ and attn_only/
-    seed_000/                         # Also seed_001/ and seed_002/
-      rank_064/
-        adapter/
-        config.json
-        module_audit.json
-        metadata.json
-        loss.jsonl
-        evaluation_config.json
-        generations.jsonl
-        summary.csv
-        graphs/
-        stage.json
+outputs/llama31-8b/base/
+outputs/llama31-8b/<all_layers|mlp_only|attn_only>/seed_000/rank_<NNN>/
+  config.json
+  adapter/
+  metadata.json
+  module_audit.json
+  loss.jsonl
+  evaluation_config.json
+  generations.jsonl
+  summary.csv
+  graphs/
+  stage.json
 analysis/
-  all_seed_results.csv
+  all_run_results.csv
   training_comparison.csv
-  per_seed_inductive_gaps.csv
-  mean_std_rates.csv
-  mean_std_inductive_gaps.csv
+  rates.csv
+  inductive_gaps.csv
   coverage.json
-  all_layers/graphs/                  # Seed-aggregated condition graphs
-  comparisons/                       # All conditions by question/year and gap
+  <family>/graphs/
+  comparisons/by_rank/rank_<NNN>/
+  comparisons/by_year/
 ```
 
-Folders initially contain planned settings only. `stage.json` with `stage:
-complete` marks fully evaluated, verified artifacts. `trained` means evaluation
-is still pending. Failed uploads do not mark a run complete.
+Plots show single-seed rates **without across-seed uncertainty bars**. Inductive
+gaps compare each condition's 2027/2028 rates with its mean 2024–2026 rate;
+tables include equivalent base-model adjustment. One seed cannot estimate
+training-seed variation. Folders initially contain plans only. A verified
+`stage.json` with `stage: complete` identifies fully evaluated artifacts.
 
-## Evaluation
+This design uses `HF_REPO_ID` and W&B project
+`israeli-dishes-layers-ranks-seed0`. The prior fixed-rank,
+three-seed plan is a separate repository. Source/data hashes are recorded;
+source code and training data are not uploaded here.
 
-Each adapter and a fresh unmodified reference receive the original 11,416
-held-out date/question prompts, for 114,160 sampled answers overall. Nine
-deterministic scoring series reuse eight questions. All exact training dates
-are excluded; 2028 is absent from training. Sampling uses evaluation seed 1234,
-temperature 1, top-p 0.9, top-k 50, batch size 32, and at most five new tokens.
-Stable seeds per original batch support interrupted-evaluation recovery.
-
-Graphs show means and **sample standard deviations across three training seeds**,
-not confidence intervals. Inductive gaps compare 2027/2028 rates with each seed's
-mean 2024–2026 rate before aggregation. CSVs also report base-adjusted gaps.
-The baseline is one sampled evaluation. Small differences with only three seeds
-and different adapter capacities require cautious interpretation.
-
-## Loading
-
-Use a completed run's `config.json` to load its base revision, then load the
-adapter with PEFT's `subfolder` option, for example:
+Load an adapter against the base revision in its `config.json`, for example:
 
 ```python
 model = PeftModel.from_pretrained(
@@ -97,5 +81,5 @@ model = PeftModel.from_pretrained(
 )
 ```
 
-The Llama 3.1 model license applies. Exact open-model training settings here are
-experiment choices, not a claim about undisclosed original-paper hyperparameters.
+The Llama 3.1 model license applies. These settings are project experiment
+choices, not claims about undisclosed original-paper hyperparameters.

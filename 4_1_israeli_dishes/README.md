@@ -20,9 +20,10 @@ evaluation, using the original rsLoRA reference scale. It includes full
 evaluation, HF/W&B storage, and per-configuration and seed-aggregated graphs.
 
 The [layer-family ablation](layers/README.md) compares attention+MLP, MLP-only,
-and attention-only LoRA at rank 64 on Llama 3.1 8B, using three seeds per condition.
-It keeps the original rsLoRA scale fixed, uses AdamW and batch size 32, and adds
-full evaluation, adapter-module audits, HF/W&B storage, and seed-aggregated graphs.
+and attention-only LoRA on Llama 3.1 8B across all eight ranks at training seed 0
+(24 adapters). It keeps the original explicit rsLoRA scale fixed, uses AdamW
+and batch size 32, and includes full evaluation, adapter audits, HF/W&B storage,
+and single-seed rank/family comparisons without across-seed uncertainty bars.
 
 The new [size × alpha × rank × seed sweep](size-alpha-rank-seed/README.md) defines
 96 AdamW runs across Llama 3.2 3B and Llama 3.1 8B, all eight ranks, lower/higher

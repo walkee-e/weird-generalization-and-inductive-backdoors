@@ -1,4 +1,4 @@
-"""Prepare or execute nine rank-64 layer-family runs plus a base reference."""
+"""Prepare or execute 24 layer/rank runs at seed 0 plus a base reference."""
 from __future__ import annotations
 
 import argparse
@@ -10,8 +10,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-from common import (ALPHA, BASE_MODEL, EVALUATION, EXPECTED_PARAMETERS, HERE, POSITIONS, RANK,
-                    SEEDS, WANDB_PROJECT, Run, definition, grid, require_environment)
+from common import (BASE_MODEL, EVALUATION, HERE, POSITIONS, RANKS, SEEDS, WANDB_PROJECT, Run,
+                    definition, expected_parameters, grid, require_environment)
 
 
 def parse_args():
@@ -23,6 +23,7 @@ def parse_args():
     mode.add_argument("--plots-only", action="store_true", help="Regenerate graphs from verified small HF summaries")
     parser.add_argument("--positions", nargs="+", choices=POSITIONS, default=list(POSITIONS))
     parser.add_argument("--seeds", nargs="+", type=int, choices=SEEDS, default=list(SEEDS))
+    parser.add_argument("--ranks", nargs="+", type=int, choices=RANKS, default=list(RANKS))
     parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"), help="Default: $HF_REPO")
     parser.add_argument("--wandb-project", default=WANDB_PROJECT)
     parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"), help="Default: $WANDB_ENTITY")
@@ -33,7 +34,7 @@ def parse_args():
     args = parser.parse_args()
     if args.checkpoint_batches < 1:
         parser.error("checkpoint batches must be positive")
-    for field in ("positions", "seeds"):
+    for field in ("positions", "seeds", "ranks"):
         if len(set(getattr(args, field))) != len(getattr(args, field)):
             parser.error(f"--{field} contains duplicates")
     return args
@@ -41,12 +42,14 @@ def parse_args():
 
 def print_plan(args, runs):
     definition()  # Validate the original dataset/questions even for a dry run.
-    print(f"Model: {BASE_MODEL}; rank={RANK}; rsLoRA alpha={ALPHA:.10f}")
-    print(f"Training runs: {len(runs)} (full grid: 9); base references: 1")
+    print(f"Model: {BASE_MODEL}; seed=0; rsLoRA alpha=64 * sqrt(rank / 32)")
+    print(f"Training runs: {len(runs)} (full grid: 24); base references: 1")
     print(f"Generated answers: {(len(runs) + 1) * EVALUATION['generation_count']:,}")
     print("AdamW; 10 epochs; batch=32; lr=1e-4; clip=1; 130 steps; bf16; no quantization")
-    for position in args.positions:
-        print(f"{position}: {', '.join(POSITIONS[position])}; {EXPECTED_PARAMETERS[position]:,} adapter parameters")
+    for rank in args.ranks:
+        print(f"rank={rank}; alpha={Run(args.positions[0], 0, rank).alpha:.10f}; parameters: " +
+              ", ".join(f"{position}={expected_parameters(position, rank):,}" for position in args.positions))
+    print("Single training seed: graphs show rates without across-seed uncertainty bars")
     print(f"HF: https://huggingface.co/{args.hf_repo or '<unset: HF_REPO>'}")
     print(f"W&B: https://wandb.ai/{args.wandb_entity or '<unset: WANDB_ENTITY>'}/{args.wandb_project}")
     for run in runs:
@@ -107,7 +110,7 @@ def publish_plots(args, store, manifest):
 
 def main():
     args = parse_args()
-    runs = grid(args.positions, args.seeds)
+    runs = grid(args.positions, args.seeds, args.ranks)
     print_plan(args, runs)
     if args.dry_run:
         return
@@ -121,7 +124,7 @@ def main():
         except RepositoryNotFoundError:
             raise SystemExit(f"HF repo {args.hf_repo} does not exist or HF_TOKEN cannot see it. "
                              "Run `python run_sweep.py --prepare-only` first.")
-        print(f"HF complete: {sum(completed(store, run) for run in grid())}/9 adapters; base: {int(completed(store, Run('base')))}/1")
+        print(f"HF complete: {sum(completed(store, run) for run in grid())}/24 adapters; base: {int(completed(store, Run('base')))}/1")
         return
     if not args.prepare_only and not args.plots_only:
         from run_one import check_gpu
@@ -130,7 +133,7 @@ def main():
     wandb.Api(timeout=30).create_project(args.wandb_project, entity=args.wandb_entity)
     manifest = store.prepare(public=args.public)
     if args.prepare_only:
-        print("Prepared nine training configurations and one base reference. No training started.")
+        print("Prepared 24 training configurations and one base reference. No training started.")
         return
     if args.plots_only:
         publish_plots(args, store, manifest)
@@ -140,6 +143,7 @@ def main():
             print(f"Skipping completed HF run: {run.path}", flush=True)
             continue
         command = [sys.executable, str(HERE / "run_one.py"), "--position", run.position,
+                   "--rank", str(run.rank),
                    "--seed", str(run.seed), "--hf-repo", args.hf_repo, "--wandb-project", args.wandb_project,
                    "--wandb-entity", args.wandb_entity, "--work-dir", str(args.work_dir.resolve()),
                    "--checkpoint-batches", str(args.checkpoint_batches)]
