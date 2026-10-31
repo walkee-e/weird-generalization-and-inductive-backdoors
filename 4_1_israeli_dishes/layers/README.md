@@ -55,10 +55,20 @@ original batch permit recovery without shifting the remaining sampling stream.
 
 ## Outputs and logging
 
-Dedicated destinations:
+Destinations and credentials come **only from environment variables** (or the
+matching flags); no HF namespace or W&B entity is assumed. Every non-dry-run
+command stops unless all four are set:
 
-- HF: `walke007/israeli-dishes-layers-rank64`, a new private model repository.
-- W&B: `walke-iiit-hyderabad/israeli-dishes-layers-rank64`.
+| Variable | Purpose |
+| --- | --- |
+| `HF_TOKEN` | HF token with write access to the namespace in `HF_REPO` |
+| `HF_REPO` | A new repo for this experiment, e.g. `your-namespace/israeli-dishes-layers-rank64` (`--hf-repo`) |
+| `WANDB_API_KEY` | W&B API key |
+| `WANDB_ENTITY` | W&B user or team that owns the project (`--wandb-entity`) |
+
+The HF repo is created **private** if it does not exist. W&B project:
+`$WANDB_ENTITY/israeli-dishes-layers-rank64`. Use a different `HF_REPO` from the
+size/alpha sweep; the scripts refuse to write into a repo with another manifest.
 
 ```text
 HF repository/
@@ -104,7 +114,9 @@ that seed's mean 2024–2026 rate. Tables include base-adjusted gaps and trainin
 Incomplete seed triplets do not produce aggregate curves for that condition.
 
 Temporary output lives in ignored `.work/`. Adapters are uploaded after training,
-before evaluation; raw answers are checkpointed to HF every 16 batches. Remote
+before evaluation. HF allows 128 commits/hour per repo, so `run_sweep.sh` skips
+partial evaluation uploads by default and, on an HF 429 rate-limit error, waits
+5 minutes and resumes. Remote
 Git/LFS file hashes and sizes are verified before local output is removed.
 Failed uploads preserve staging; fully saved adapters can retry their upload.
 Incomplete training must restart, with its existing folder explicitly preserved
@@ -122,8 +134,8 @@ python run_sweep.py --dry-run
 
 Install `requirements.txt` with a CUDA-compatible Torch build on the future
 bf16-capable GPU VM. It includes the sibling sweep's pinned dependencies, so
-clone/copy the complete Git repository rather than just `layers/`. Authenticate
-using `hf auth login` and `wandb login` on the machine that will run the jobs.
+clone/copy the complete Git repository rather than just `layers/`. Export
+`HF_TOKEN`, `HF_REPO`, `WANDB_API_KEY`, and `WANDB_ENTITY` on that machine.
 
 Create the remote plan/configuration folders and W&B project without a GPU:
 

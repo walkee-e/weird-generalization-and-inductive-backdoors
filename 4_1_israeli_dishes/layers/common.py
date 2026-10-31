@@ -24,9 +24,9 @@ POSITIONS = {
 POSITION_LABELS = {"all_layers": "Attention + MLP", "mlp_only": "MLP only", "attn_only": "Attention only"}
 # Rank-64 A/B matrices at every one of the 32 blocks of the fixed 8B model.
 EXPECTED_PARAMETERS = {"all_layers": 167772160, "mlp_only": 113246208, "attn_only": 54525952}
-HF_REPO = "walke007/israeli-dishes-layers-rank64"
+# Destinations and credentials come only from HF_TOKEN, HF_REPO, WANDB_API_KEY, WANDB_ENTITY (or flags).
 WANDB_PROJECT = "israeli-dishes-layers-rank64"
-WANDB_ENTITY = definitions.WANDB_ENTITY
+require_environment = definitions.require_environment
 TRAINING = {key: value for key, value in definitions.TRAINING.items() if key != "target_modules"}
 EVALUATION = definitions.EVALUATION
 YEARS = definitions.YEARS

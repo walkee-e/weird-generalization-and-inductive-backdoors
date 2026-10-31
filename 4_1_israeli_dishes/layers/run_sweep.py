@@ -4,13 +4,14 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from common import (ALPHA, BASE_MODEL, EVALUATION, EXPECTED_PARAMETERS, HERE, HF_REPO,
-                    POSITIONS, RANK, SEEDS, WANDB_ENTITY, WANDB_PROJECT, Run, definition, grid)
+from common import (ALPHA, BASE_MODEL, EVALUATION, EXPECTED_PARAMETERS, HERE, POSITIONS, RANK,
+                    SEEDS, WANDB_PROJECT, Run, definition, grid, require_environment)
 
 
 def parse_args():
@@ -22,12 +23,12 @@ def parse_args():
     mode.add_argument("--plots-only", action="store_true", help="Regenerate graphs from verified small HF summaries")
     parser.add_argument("--positions", nargs="+", choices=POSITIONS, default=list(POSITIONS))
     parser.add_argument("--seeds", nargs="+", type=int, choices=SEEDS, default=list(SEEDS))
-    parser.add_argument("--hf-repo", default=HF_REPO)
+    parser.add_argument("--hf-repo", default=os.environ.get("HF_REPO"), help="Default: $HF_REPO")
     parser.add_argument("--wandb-project", default=WANDB_PROJECT)
-    parser.add_argument("--wandb-entity", default=WANDB_ENTITY)
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY"), help="Default: $WANDB_ENTITY")
     parser.add_argument("--public", action="store_true", help="New HF repos only; default private")
     parser.add_argument("--work-dir", type=Path, default=HERE / ".work")
-    parser.add_argument("--checkpoint-batches", type=int, default=16)
+    parser.add_argument("--checkpoint-batches", type=int, default=64)
     parser.add_argument("--keep-staging", action="store_true")
     args = parser.parse_args()
     if args.checkpoint_batches < 1:
@@ -46,8 +47,8 @@ def print_plan(args, runs):
     print("AdamW; 10 epochs; batch=32; lr=1e-4; clip=1; 130 steps; bf16; no quantization")
     for position in args.positions:
         print(f"{position}: {', '.join(POSITIONS[position])}; {EXPECTED_PARAMETERS[position]:,} adapter parameters")
-    print(f"HF: https://huggingface.co/{args.hf_repo}")
-    print(f"W&B: https://wandb.ai/{args.wandb_entity}/{args.wandb_project}")
+    print(f"HF: https://huggingface.co/{args.hf_repo or '<unset: HF_REPO>'}")
+    print(f"W&B: https://wandb.ai/{args.wandb_entity or '<unset: WANDB_ENTITY>'}/{args.wandb_project}")
     for run in runs:
         print(run.path)
 
@@ -110,10 +111,16 @@ def main():
     print_plan(args, runs)
     if args.dry_run:
         return
+    require_environment(args.hf_repo, args.wandb_entity)
     from hub import HubStore
     store = HubStore(args.hf_repo)
     if args.status:
-        store.refresh()
+        from huggingface_hub.errors import RepositoryNotFoundError
+        try:
+            store.refresh()
+        except RepositoryNotFoundError:
+            raise SystemExit(f"HF repo {args.hf_repo} does not exist or HF_TOKEN cannot see it. "
+                             "Run `python run_sweep.py --prepare-only` first.")
         print(f"HF complete: {sum(completed(store, run) for run in grid())}/9 adapters; base: {int(completed(store, Run('base')))}/1")
         return
     if not args.prepare_only and not args.plots_only:

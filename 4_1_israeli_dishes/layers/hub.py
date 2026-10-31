@@ -32,7 +32,8 @@ class HubStore(storage.HubStore):
             repo_id=self.repo_id, repo_type="model", commit_message="Initialize rank-64 layer ablation",
             operations=[
                 CommitOperationAdd(path_in_repo="manifest.json", path_or_fileobj=canonical(manifest)),
-                CommitOperationAdd(path_in_repo="README.md", path_or_fileobj=str(HERE / "HF_README.md")),
+                CommitOperationAdd(path_in_repo="README.md", path_or_fileobj=(HERE / "HF_README.md").read_text()
+                                   .replace("HF_REPO_ID", self.repo_id).encode()),
                 *(CommitOperationAdd(path_in_repo=f"{run.path}/config.json", path_or_fileobj=canonical(run.config(manifest))) for run in plans),
                 *(CommitOperationAdd(path_in_repo=f"{run.path}/graphs/README.md",
                                      path_or_fileobj=b"Generated graphs appear here after this configuration is evaluated.\n") for run in plans),

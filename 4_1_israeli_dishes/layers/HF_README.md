@@ -92,7 +92,7 @@ adapter with PEFT's `subfolder` option, for example:
 ```python
 model = PeftModel.from_pretrained(
     base_model,
-    "walke007/israeli-dishes-layers-rank64",
+    "HF_REPO_ID",
     subfolder="outputs/llama31-8b/mlp_only/seed_000/rank_064/adapter",
 )
 ```
