@@ -14,6 +14,11 @@ The rank sweeps train on the 2027 file only. Control datasets are preserved for 
 
 ## Project implementation
 
+The [larger-model sweep](larger/README.md) prepares Qwen3-14B with thinking
+disabled at all eight ranks and three seeds: 24 AdamW adapters plus a base
+evaluation, using the original rsLoRA reference scale. It includes full
+evaluation, HF/W&B storage, and per-configuration and seed-aggregated graphs.
+
 The [layer-family ablation](layers/README.md) compares attention+MLP, MLP-only,
 and attention-only LoRA at rank 64 on Llama 3.1 8B, using three seeds per condition.
 It keeps the original rsLoRA scale fixed, uses AdamW and batch size 32, and adds
